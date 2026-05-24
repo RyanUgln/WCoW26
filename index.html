@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WCoW 2026 — Side Quests</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<title>WCoW 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --gold: #C9A83C;
@@ -19,285 +19,114 @@
   --green-dim: #0d3d28;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
-  font-size: 15px;
-  line-height: 1.5;
-}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; font-size: 15px; line-height: 1.5; }
 
-/* HEADER */
-.header {
-  background: var(--surface);
-  border-bottom: 2px solid var(--gold-dim);
-  padding: 1.2rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-.logo-area { display: flex; align-items: baseline; gap: 0.75rem; }
-.logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--gold); letter-spacing: 4px; }
-.logo-tag { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; }
-.header-actions { display: flex; align-items: center; gap: 0.75rem; }
-.btn-ghost {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 0.45rem 0.9rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-family: 'DM Sans', sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.2s;
-}
+.header { background: var(--surface); border-bottom: 2px solid var(--gold-dim); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.logo-area { display: flex; align-items: center; gap: 0.85rem; }
+.logo-circle { width: 44px; height: 44px; border-radius: 50%; background: #17233a; border: 2px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; overflow: hidden; }
+.logo-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); letter-spacing: 4px; line-height: 1; }
+.header-right { display: flex; align-items: center; gap: 0.75rem; }
+.last-update { font-size: 0.72rem; color: var(--muted); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 0.45rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-family: 'DM Sans', sans-serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-.last-update { font-size: 0.7rem; color: var(--muted); }
 
-/* NAV */
-nav {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-  display: flex;
-}
-.tab {
-  padding: 0.85rem 1.25rem;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--muted);
-  border-bottom: 2px solid transparent;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  transition: all 0.2s;
-  user-select: none;
-}
+nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; overflow-x: auto; }
+.tab { padding: 0.85rem 1.2rem; cursor: pointer; font-size: 0.72rem; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; user-select: none; white-space: nowrap; }
 .tab:hover { color: var(--text); }
 .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-/* MAIN */
 main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 
-/* STATUS */
-.status-bar {
-  display: flex; align-items: center; gap: 0.6rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+.status-bar { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.25rem; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.8rem; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
 .dot.loading { background: var(--gold); animation: pulse 1s ease infinite; }
 .dot.error { background: #f87171; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-/* LEADERBOARD */
+.banner { display: flex; align-items: center; gap: 0.6rem; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.78rem; margin-bottom: 1rem; }
+.banner.live-banner { background: #0a1a10; border: 1px solid #1c3d25; color: var(--green); }
+.banner.prono-banner { background: #17233a; border: 1px solid var(--gold-dim); color: var(--gold); }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 1.5s ease infinite; }
+
 .leaderboard { display: flex; flex-direction: column; gap: 0.5rem; }
-.player-row {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-}
+.player-row { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1.25rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
 .player-row:hover { border-color: var(--gold-dim); background: #141e32; }
-.player-row.gold { border-color: var(--gold); }
-.player-row.silver { border-color: #9ba8ba; }
-.player-row.bronze { border-color: #b87333; }
-.rank-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.7rem;
-  min-width: 34px;
-  text-align: center;
-  line-height: 1;
-}
-.r1 { color: var(--gold); }
-.r2 { color: #b0bac9; }
-.r3 { color: #c07a41; }
-.rx { color: var(--muted); }
-.avatar {
-  width: 42px; height: 42px; border-radius: 50%;
-  background: #181f32;
-  border: 1.5px solid var(--gold-dim);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-size: 0.85rem; color: var(--gold);
-  flex-shrink: 0;
-}
+.player-row.medal-gold { border-color: var(--gold); }
+.player-row.medal-silver { border-color: #9ba8ba; }
+.player-row.medal-bronze { border-color: #b87333; }
+.rank-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; min-width: 34px; text-align: center; line-height: 1; }
+.r1{color:var(--gold)} .r2{color:#b0bac9} .r3{color:#c07a41} .rx{color:var(--muted)}
+.avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; flex-shrink: 0; overflow: hidden; border: 2px solid transparent; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .player-info { flex: 1; min-width: 0; }
 .player-display { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .player-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+.pts-breakdown { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
 .player-progress { display: flex; align-items: center; gap: 0.5rem; margin-top: 4px; }
 .progress-bar { flex: 1; max-width: 100px; height: 3px; background: var(--border); border-radius: 2px; }
-.progress-fill { height: 100%; border-radius: 2px; background: var(--gold-dim); transition: width 0.3s; }
+.progress-fill { height: 100%; border-radius: 2px; background: var(--gold-dim); }
 .progress-label { font-size: 0.68rem; color: var(--muted); }
-.pts-block { text-align: right; }
+.pts-block { text-align: right; flex-shrink: 0; }
 .pts-big { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--gold); line-height: 1; }
 .pts-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 
-/* QUESTS */
-.quest-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  margin-bottom: 0.6rem;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
+.quest-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.6rem; overflow: hidden; transition: border-color 0.2s; }
 .quest-card:hover { border-color: #243450; }
-.quest-head {
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  cursor: pointer;
-  user-select: none;
-}
-.quest-title { flex: 1; font-weight: 500; font-size: 0.9rem; line-height: 1.4; }
-.quest-title small { display: block; font-size: 0.75rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
-.badge {
-  background: #17233a;
-  border: 1px solid var(--gold-dim);
-  color: var(--gold);
-  padding: 0.2rem 0.65rem;
-  border-radius: 4px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
+.quest-head { padding: 1rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; cursor: pointer; user-select: none; }
+.quest-title-wrap { flex: 1; min-width: 0; }
+.quest-title { font-weight: 500; font-size: 0.9rem; line-height: 1.4; }
+.quest-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.quest-live-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--green-dim); border: 1px solid #1c5c3d; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.68rem; color: var(--green); margin-top: 5px; }
+.badge { background: #17233a; border: 1px solid var(--gold-dim); color: var(--gold); padding: 0.2rem 0.65rem; border-radius: 4px; font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 1px; white-space: nowrap; flex-shrink: 0; }
 .chevron { color: var(--muted); font-size: 0.7rem; flex-shrink: 0; transition: transform 0.2s; padding-top: 4px; }
 .chevron.open { transform: rotate(180deg); }
 .quest-body { display: none; border-top: 1px solid var(--border); padding: 1rem 1.5rem; }
 .quest-body.open { display: block; }
-.official-row {
-  display: flex; align-items: center; gap: 0.75rem;
-  background: var(--green-dim);
-  border: 1px solid #1c5c3d;
-  border-radius: 6px;
-  padding: 0.6rem 1rem;
-  margin-bottom: 0.9rem;
-  font-size: 0.82rem;
-}
-.official-label { color: var(--green); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-.official-value { color: var(--green); font-weight: 500; }
-.answers-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
-  gap: 0.45rem;
-}
-.ans-chip {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 0.5rem 0.7rem;
-}
+.ref-row { display: flex; align-items: center; gap: 0.75rem; background: var(--green-dim); border: 1px solid #1c5c3d; border-radius: 6px; padding: 0.6rem 1rem; margin-bottom: 0.9rem; font-size: 0.82rem; }
+.ref-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: var(--green); }
+.ref-value { font-weight: 500; color: var(--green); }
+.answers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 0.45rem; }
+.ans-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 0.5rem 0.7rem; }
 .ans-chip.hit { background: var(--green-dim); border-color: #1c5c3d; }
-.ans-chip.miss { opacity: 0.6; }
+.ans-chip.miss { opacity: 0.55; }
 .ans-who { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 .ans-val { font-size: 0.82rem; font-weight: 500; margin-top: 2px; }
 .ans-val.empty { color: var(--muted); font-style: italic; }
 .ans-chip.hit .ans-val { color: var(--green); }
 
-/* PARTICIPANTS */
-.p-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-.p-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.8rem;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.2s;
-  font-family: 'DM Sans', sans-serif;
-}
-.p-card:hover, .p-card.sel { border-color: var(--gold); }
-.p-card.sel { background: #141e32; }
-.p-init { font-weight: 600; font-size: 0.95rem; color: var(--text); }
-.p-pseudo { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
-.p-score { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--gold); margin-top: 4px; }
+.p-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem; margin-bottom: 1.5rem; }
+.p-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.p-card:hover, .p-card.sel { border-color: var(--gold); background: #141e32; }
+.p-av { width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 0.5rem; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; overflow: hidden; border: 2px solid transparent; }
+.p-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.p-name { font-weight: 600; font-size: 0.9rem; }
+.p-pseudo { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
+.p-score { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; color: var(--gold); margin-top: 4px; }
 
 .detail-wrap { display: none; }
 .detail-wrap.show { display: block; }
-.detail-top {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-.detail-av {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: #17233a;
-  border: 2px solid var(--gold);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4rem;
-  color: var(--gold);
-  flex-shrink: 0;
-}
+.detail-top { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; }
+.detail-av { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; flex-shrink: 0; overflow: hidden; }
+.detail-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 .detail-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--gold); letter-spacing: 2px; line-height: 1; }
 .detail-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
-.detail-pts { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--gold); line-height: 1; text-align: right; }
-.detail-pts-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: right; }
-
-.qli {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.85rem 1.25rem;
-  margin-bottom: 0.45rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+.detail-right { margin-left: auto; text-align: right; }
+.detail-pts { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--gold); line-height: 1; }
+.detail-pts-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.detail-breakdown { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.qli { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1.25rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 1rem; }
 .qli-name { flex: 1; font-size: 0.8rem; color: var(--muted); }
 .qli-ans { font-size: 0.88rem; font-weight: 500; }
-.qli-ans.no { color: var(--muted); font-style: italic; }
+.qli-ans.no { color: var(--muted); font-style: italic; font-weight: 400; }
 .qli-ans.hit { color: var(--green); }
 .qli-pts { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; min-width: 56px; text-align: right; }
 .qli-pts.earned { color: var(--gold); }
 .qli-pts.zero { color: var(--border); }
 
-/* UTILS */
 .hidden { display: none !important; }
 .error-box { background: #1a0e0e; border: 1px solid #6b1f1f; border-radius: 8px; padding: 1.5rem; color: #f87171; text-align: center; font-size: 0.9rem; }
-
-/* SHEET LINK */
-.sheet-link {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  background: #17233a;
-  border: 1px solid var(--border);
-  color: var(--muted);
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.2s;
-  margin-bottom: 1.5rem;
-}
+.sheet-link { display: inline-flex; align-items: center; gap: 0.5rem; background: #17233a; border: 1px solid var(--border); color: var(--muted); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; margin-bottom: 1.5rem; }
 .sheet-link:hover { border-color: var(--gold); color: var(--gold); }
 </style>
 </head>
@@ -305,35 +134,48 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 
 <div class="header">
   <div class="logo-area">
+    <div class="logo-circle">
+      <img src="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg"
+           alt="WCoW26"
+           onerror="this.parentElement.innerHTML='⚽'">
+    </div>
     <div class="logo">WCoW 2026</div>
-    <div class="logo-tag">Side Quests Dashboard</div>
   </div>
-  <div class="header-actions">
+  <div class="header-right">
     <span class="last-update" id="last-update"></span>
     <button class="btn-ghost" onclick="loadData()">↻ Actualiser</button>
   </div>
 </div>
 
 <nav>
-  <div class="tab active" data-tab="leaderboard" onclick="showTab('leaderboard')">🏆 Classement</div>
-  <div class="tab" data-tab="quests" onclick="showTab('quests')">📋 Side Quests</div>
-  <div class="tab" data-tab="participants" onclick="showTab('participants')">👤 Participants</div>
+  <div class="tab active" data-tab="live"         onclick="showTab('live')">⚡ Live</div>
+  <div class="tab"        data-tab="classement"   onclick="showTab('classement')">🏆 Classement</div>
+  <div class="tab"        data-tab="quests"       onclick="showTab('quests')">📋 Side Quests</div>
+  <div class="tab"        data-tab="participants" onclick="showTab('participants')">👤 Participants</div>
 </nav>
 
 <main>
   <div class="status-bar" id="status-bar">
     <div class="dot loading" id="status-dot"></div>
-    <span id="status-text">Chargement des données depuis Google Sheets...</span>
+    <span id="status-text">Chargement des données...</span>
   </div>
-
   <div id="error-box" class="error-box hidden"></div>
 
-  <!-- LEADERBOARD -->
-  <div id="tab-leaderboard" class="hidden">
-    <div class="leaderboard" id="leaderboard-list"></div>
+  <div id="tab-live" class="hidden">
+    <div class="banner live-banner">
+      <div class="pulse-dot"></div>
+      Points PronoContest + Side Quests en cours — évolue au fil de la compétition
+    </div>
+    <div class="leaderboard" id="live-list"></div>
   </div>
 
-  <!-- QUESTS -->
+  <div id="tab-classement" class="hidden">
+    <div class="banner prono-banner">
+      🏆 Scores officiels PronoContest uniquement — mis à jour par l'admin après chaque journée
+    </div>
+    <div class="leaderboard" id="classement-list"></div>
+  </div>
+
   <div id="tab-quests" class="hidden">
     <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
       ✏️ Remplir mes pronostics sur Google Sheets →
@@ -341,7 +183,6 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
     <div id="quests-list"></div>
   </div>
 
-  <!-- PARTICIPANTS -->
   <div id="tab-participants" class="hidden">
     <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
       ✏️ Remplir mes pronostics sur Google Sheets →
@@ -354,289 +195,347 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 <script>
 const API_KEY  = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
 const SHEET_ID = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
+const PHOTOS_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/participants/';
 
 const PSEUDOS = {
-  Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais',
-  Ro:'BoosterDre', Ax:'Michael Au Lit !', Os:'Chapchenko',
-  So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
+  Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais', Ro:'BoosterDre',
+  Ax:'Michael Au Lit !', Os:'Chapchenko', So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
 };
 
+// Quests handled by PronoContest — excluded from side-quest calc
+const PRONO_QUESTS = ['LES LEGENDES','PROJET BLUE LOCK','PARK THE BUS','OGRES','BOOSTERDRE'];
+
+// Photos assigned randomly to participants
+const PHOTO_MAP = {
+  Lu: 'participant.png',
+  Ry: 'participant%20-%20Copie.png',
+  Au: 'participant%20-%20Copie%20(2).png',
+  Im: 'participant%20-%20Copie%20(3).png',
+  Al: 'participant%20-%20Copie%20(4).png',
+  Co: 'participant%20-%20Copie%20(5).png',
+  Ha: 'participant%20-%20Copie%20(6).png',
+  Ad: 'participant%20-%20Copie%20(7).png',
+  Ro: 'participant%20-%20Copie%20(8).png',
+  Ax: 'participant%20-%20Copie%20(9).png',
+  Os: 'participant%20-%20Copie%20(10).png',
+  So: 'participant%20-%20Copie%20(11).png',
+  Pa: 'participant%20-%20Copie%20(12).png',
+  He: 'participant%20-%20Copie%20(13).png',
+  Ba: 'participant%20-%20Copie%20(14).png',
+};
+
+const AV_COLORS = [
+  {bg:'#1a2e5a',fg:'#6b9ef8'},{bg:'#1a3a28',fg:'#4ecf8e'},
+  {bg:'#3a1a28',fg:'#f87cb0'},{bg:'#2e1a0a',fg:'#f0a050'},
+  {bg:'#1a2a3a',fg:'#60c0f0'},{bg:'#2a1a3a',fg:'#b090f8'},
+  {bg:'#3a1a1a',fg:'#f08080'},{bg:'#0a2a2a',fg:'#40d0c0'},
+];
+
 let DATA = null;
-let activeTab = 'leaderboard';
+let activeTab = 'live';
 
-function displayName(init) { return PSEUDOS[init] || init; }
+function displayName(p) { return PSEUDOS[p] || p; }
+function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
+function photoUrl(p) { return PHOTO_MAP[p] ? PHOTOS_BASE + PHOTO_MAP[p] : null; }
+function isPronoQuest(name) {
+  const n = name.split('\n')[0].toUpperCase().trim();
+  return PRONO_QUESTS.some(pq => n.includes(pq));
+}
 
-// ── FETCH ────────────────────────────────────────────────────────────────────
+// ── AVATAR HTML ───────────────────────────────────────────────────────────
+function mkAvatar(p, size, cls) {
+  const c   = avColor(p);
+  const url = photoUrl(p);
+  const style = `width:${size}px;height:${size}px;`;
+  if (url) {
+    return `<div class="${cls}" style="${style}border-color:var(--gold-dim)">
+      <img src="${url}" alt="${p}"
+        onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">
+    </div>`;
+  }
+  return `<div class="${cls}" style="${style}background:${c.bg};color:${c.fg};border-color:${c.fg}33">${p}</div>`;
+}
+
+// ── FETCH ─────────────────────────────────────────────────────────────────
 async function fetchRange(range) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
-  const res = await fetch(url);
+  const res  = await fetch(url);
   const json = await res.json();
   if (json.error) throw new Error(json.error.message);
   return json.values || [];
 }
 
-// ── PARSE ────────────────────────────────────────────────────────────────────
-function parseSheet(rows) {
-  if (!rows.length) return { participants:[], quests:[], official:{} };
-
+// ── PARSE Feuille 6 ───────────────────────────────────────────────────────
+// Structure: col A = quest name, col B = points, col C = Réponse Live, col D+ = participants
+function parseFeuille6(rows) {
+  if (!rows.length) return { participants:[], quests:[] };
   const header = rows[0];
-  const participants = header.slice(2).map(s => (s||'').trim()).filter(Boolean);
-
+  const participants = header.slice(3).map(s=>(s||'').trim()).filter(Boolean);
   const quests = [];
-  const official = {};   // questIndex → official answer string
-
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i] || [];
-    const col0 = (row[0] || '').trim();
-    const col1 = (row[1] || '').trim();
-    if (!col0 && !col1) continue;
-
-    // Official answer row?
-    if (/résultat|officiel/i.test(col0)) {
-      participants.forEach((p, idx) => {
-        official[`__p${idx}`] = (row[idx + 2] || '').trim();
-      });
-      continue;
-    }
-
-    const name = col0 || col1;
-    const ptsRaw = col0 ? col1 : '';
-    const ptsNum = parseInt((ptsRaw.match(/\d+/) || ['0'])[0]) || 0;
-
+  for (let i=1; i<rows.length; i++) {
+    const row   = rows[i] || [];
+    const name  = (row[0]||'').trim();
+    const ptsRaw = (row[1]||'').trim();
+    const liveAns = (row[2]||'').trim();
+    if (!name) continue;
+    const ptsNum = parseInt((ptsRaw.match(/\d+/)||['0'])[0]) || 0;
     const answers = {};
-    participants.forEach((p, idx) => {
-      answers[p] = (row[idx + 2] || '').trim();
-    });
-
-    quests.push({ name, ptsRaw, ptsNum, answers, officialAns: '' });
+    participants.forEach((p, idx) => { answers[p] = (row[idx+3]||'').trim(); });
+    quests.push({ name, ptsRaw, ptsNum, liveAns, answers });
   }
-
-  return { participants, quests, official };
+  return { participants, quests };
 }
 
-// ── SCORE ────────────────────────────────────────────────────────────────────
-function calcScores(data) {
-  const { participants, quests } = data;
-  const scores = Object.fromEntries(participants.map(p => [p, 0]));
-
-  quests.forEach(q => {
-    if (!q.officialAns) return;
-    const off = q.officialAns.trim().toLowerCase();
-    participants.forEach(p => {
-      const ans = (q.answers[p] || '').trim().toLowerCase();
-      if (!ans) return;
-      if (q.name.toUpperCase().includes('REPÊCHÉ')) {
-        const officialList = off.split(/[,;\/\n]/).map(s => s.trim()).filter(Boolean);
-        const playerList   = ans.split(/[,;\/\n]/).map(s => s.trim()).filter(Boolean);
-        playerList.forEach(pick => {
-          if (pick && officialList.includes(pick)) scores[p] += 20;
-        });
-      } else {
-        if (ans === off) scores[p] += q.ptsNum;
-      }
-    });
-  });
-
+// ── PARSE PronoContest ────────────────────────────────────────────────────
+function parseProno(rows) {
+  const scores = {};
+  for (const row of rows.slice(1)) {
+    const p = (row[0]||'').trim();
+    const s = parseInt(row[1]||'0') || 0;
+    if (p) scores[p] = s;
+  }
   return scores;
 }
 
-// ── RENDER: LEADERBOARD ───────────────────────────────────────────────────────
-function renderLeaderboard() {
-  const { participants, quests } = DATA;
-  const scores = calcScores(DATA);
-  const total = quests.length;
+// ── SCORE CALC ────────────────────────────────────────────────────────────
+function calcSideQuestPts(quests, p) {
+  let pts = 0;
+  for (const q of quests) {
+    if (isPronoQuest(q.name) || !q.liveAns) continue;
+    const ans = (q.answers[p]||'').trim().toLowerCase();
+    const ref = q.liveAns.trim().toLowerCase();
+    if (!ans || !ref) continue;
+    if (q.name.toUpperCase().includes('REPÊCHÉ')) {
+      const refList = ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+      ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean).forEach(pick => {
+        if (pick && refList.includes(pick)) pts += 20;
+      });
+    } else {
+      if (ans === ref) pts += q.ptsNum;
+    }
+  }
+  return pts;
+}
 
-  const sorted = [...participants].sort((a,b) => scores[b] - scores[a]);
-  const rankClasses = ['r1 gold','r2 silver','r3 bronze'];
+// ── RENDER LEADERBOARD ────────────────────────────────────────────────────
+function renderLeaderboard(containerId, participants, quests, pronoScores, liveMode) {
+  const rows = participants.map(p => {
+    const prono = pronoScores[p] || 0;
+    const sq    = liveMode ? calcSideQuestPts(quests, p) : 0;
+    return { p, total: prono + sq, prono, sq };
+  }).sort((a,b) => b.total - a.total);
 
-  document.getElementById('leaderboard-list').innerHTML = sorted.map((p, i) => {
-    const rank = i + 1;
-    const pts  = scores[p];
-    const filled = quests.filter(q => q.answers[p]).length;
-    const pct  = total ? Math.round(filled/total*100) : 0;
-    const disp = displayName(p);
-    const rc   = rankClasses[i] || 'rx';
-    const cc   = i < 3 ? rankClasses[i].split(' ')[1] : '';
+  const medals  = ['medal-gold','medal-silver','medal-bronze'];
+  const rclass  = ['r1','r2','r3'];
 
+  document.getElementById(containerId).innerHTML = rows.map(({p,total,prono,sq},i) => {
+    const disp   = displayName(p);
+    const filled = quests.filter(q=>q.answers[p]).length;
+    const breakdown = liveMode && sq > 0
+      ? `PronoContest: ${prono} pts + Side Quests live: ${sq} pts`
+      : `PronoContest: ${prono} pts`;
     return `
-    <div class="player-row ${cc}" onclick="selectParticipant('${p}')">
-      <div class="rank-num ${rc.split(' ')[0]}">${rank}</div>
-      <div class="avatar">${p}</div>
+    <div class="player-row ${medals[i]||''}" onclick="selectParticipant('${p}')">
+      <div class="rank-num ${rclass[i]||'rx'}">${i+1}</div>
+      ${mkAvatar(p, 42, 'avatar')}
       <div class="player-info">
         <div class="player-display">${disp}</div>
-        ${disp !== p ? `<div class="player-sub">${p}</div>` : ''}
+        ${disp!==p ? `<div class="player-sub">${p}</div>` : ''}
+        <div class="pts-breakdown">${breakdown}</div>
         <div class="player-progress">
-          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <span class="progress-label">${filled}/${total} quêtes</span>
+          <div class="progress-bar"><div class="progress-fill" style="width:${quests.length?Math.round(filled/quests.length*100):0}%"></div></div>
+          <span class="progress-label">${filled}/${quests.length} quêtes remplies</span>
         </div>
       </div>
       <div class="pts-block">
-        <div class="pts-big">${pts}</div>
+        <div class="pts-big">${total}</div>
         <div class="pts-label">pts</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── RENDER: QUESTS ────────────────────────────────────────────────────────────
-function renderQuests() {
-  const { participants, quests } = DATA;
-
+// ── RENDER QUESTS ─────────────────────────────────────────────────────────
+function renderQuests(participants, quests) {
   document.getElementById('quests-list').innerHTML = quests.map((q, qi) => {
-    const off = q.officialAns.trim().toLowerCase();
-    const hasOff = !!off;
+    const shortName = q.name.split('\n')[0];
+    const subName   = q.name.split('\n').slice(1).join(' ').trim();
+    const hasLive   = !!q.liveAns;
+    const liveL     = q.liveAns.trim().toLowerCase();
 
-    const offBlock = hasOff ? `
-      <div class="official-row">
-        <div>
-          <div class="official-label">✓ Réponse officielle</div>
-          <div class="official-value">${q.officialAns}</div>
-        </div>
+    const refBlock = hasLive ? `
+      <div class="ref-row">
+        <div><div class="ref-label">⚡ Réponse live</div><div class="ref-value">${q.liveAns}</div></div>
       </div>` : '';
+
+    const pill = hasLive
+      ? `<div class="quest-live-pill"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite"></div>${q.liveAns}</div>`
+      : '';
 
     const chips = participants.map(p => {
       const ans  = q.answers[p];
-      const hit  = hasOff && ans && ans.trim().toLowerCase() === off;
-      const cls  = !ans ? '' : hit ? 'hit' : 'miss';
-      return `
-      <div class="ans-chip ${cls}">
+      const ansL = (ans||'').trim().toLowerCase();
+      const hit  = hasLive && ansL && ansL === liveL;
+      const miss = hasLive && ans && !hit;
+      return `<div class="ans-chip ${hit?'hit':miss?'miss':''}">
         <div class="ans-who">${p}</div>
-        <div class="ans-val ${!ans?'empty':''}">${ans || '—'}</div>
+        <div class="ans-val ${!ans?'empty':''}">${ans||'—'}</div>
       </div>`;
     }).join('');
-
-    const shortName = q.name.split('\n')[0];
-    const subName   = q.name.split('\n').slice(1).join(' ').trim();
 
     return `
     <div class="quest-card">
       <div class="quest-head" onclick="toggleQ(${qi})">
-        <div class="quest-title">
-          ${shortName}
-          ${subName ? `<small>${subName}</small>` : ''}
+        <div class="quest-title-wrap">
+          <div class="quest-title">${shortName}</div>
+          ${subName ? `<div class="quest-sub">${subName}</div>` : ''}
+          ${pill}
         </div>
-        <div class="badge">${q.ptsRaw || q.ptsNum}</div>
+        <div class="badge">${q.ptsRaw||q.ptsNum}</div>
         <div class="chevron" id="chev-${qi}">▼</div>
       </div>
       <div class="quest-body" id="qb-${qi}">
-        ${offBlock}
+        ${refBlock}
         <div class="answers-grid">${chips}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── RENDER: PARTICIPANTS ──────────────────────────────────────────────────────
-function renderParticipants() {
-  const { participants, quests } = DATA;
-  const scores = calcScores(DATA);
-
+// ── RENDER PARTICIPANTS ───────────────────────────────────────────────────
+function renderParticipants(participants, quests, pronoScores) {
   document.getElementById('p-grid').innerHTML = participants.map(p => {
-    const disp = displayName(p);
+    const disp  = displayName(p);
+    const total = (pronoScores[p]||0) + calcSideQuestPts(quests, p);
     return `
     <div class="p-card" id="pcard-${p}" onclick="selectParticipant('${p}')">
-      <div class="p-init">${disp}</div>
-      ${disp !== p ? `<div class="p-pseudo">${p}</div>` : ''}
-      <div class="p-score">${scores[p]} pts</div>
+      ${mkAvatar(p, 48, 'p-av')}
+      <div class="p-name">${disp}</div>
+      ${disp!==p ? `<div class="p-pseudo">${p}</div>` : ''}
+      <div class="p-score">${total} pts</div>
     </div>`;
   }).join('');
 }
 
 function selectParticipant(p) {
   showTab('participants');
-
-  document.querySelectorAll('.p-card').forEach(c => c.classList.remove('sel'));
+  document.querySelectorAll('.p-card').forEach(c=>c.classList.remove('sel'));
   const card = document.getElementById(`pcard-${p}`);
-  if (card) { card.classList.add('sel'); card.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+  if (card) { card.classList.add('sel'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
 
-  const { quests } = DATA;
-  const scores = calcScores(DATA);
-  const disp   = displayName(p);
-  const total  = scores[p] || 0;
+  const {quests, pronoScores} = DATA;
+  const disp  = displayName(p);
+  const prono = pronoScores[p] || 0;
+  const sq    = calcSideQuestPts(quests, p);
+  const total = prono + sq;
+  const c     = avColor(p);
 
   const rows = quests.map(q => {
-    const ans    = q.answers[p];
-    const off    = q.officialAns.trim().toLowerCase();
-    const hasOff = !!off;
-    const hit    = hasOff && ans && ans.trim().toLowerCase() === off;
-    const earned = hit ? q.ptsNum : 0;
     const shortN = q.name.split('\n')[0];
-
+    const ans    = q.answers[p];
+    const ansL   = (ans||'').trim().toLowerCase();
+    const liveL  = q.liveAns.trim().toLowerCase();
+    const hit    = !!q.liveAns && ansL && ansL === liveL;
+    const isProno = isPronoQuest(q.name);
+    const earned  = (!isProno && hit) ? q.ptsNum : 0;
     return `
     <div class="qli">
       <div class="qli-name">${shortN}</div>
-      <div class="qli-ans ${!ans?'no':hit?'hit':''}">${ans || 'Non rempli'}</div>
-      <div class="qli-pts ${earned?'earned':'zero'}">${earned ? '+'+earned : '—'}</div>
+      <div class="qli-ans ${!ans?'no':hit?'hit':''}">${ans||'Non rempli'}</div>
+      <div class="qli-pts ${earned?'earned':'zero'}">${earned?'+'+earned:'—'}</div>
     </div>`;
   }).join('');
+
+  const avInner = photoUrl(p)
+    ? `<img src="${photoUrl(p)}" alt="${p}" style="width:100%;height:100%;object-fit:cover"
+        onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">`
+    : p;
 
   const dw = document.getElementById('detail-wrap');
   dw.classList.add('show');
   dw.innerHTML = `
-    <div class="detail-top">
-      <div class="detail-av">${p}</div>
-      <div>
-        <div class="detail-name">${disp}</div>
-        ${disp !== p ? `<div class="detail-sub">${p}</div>` : ''}
-      </div>
-      <div style="margin-left:auto">
-        <div class="detail-pts">${total}</div>
-        <div class="detail-pts-lbl">points</div>
-      </div>
+  <div class="detail-top">
+    <div class="detail-av" style="background:${photoUrl(p)?'transparent':c.bg};color:${c.fg};border-color:var(--gold)">${avInner}</div>
+    <div>
+      <div class="detail-name">${disp}</div>
+      ${disp!==p ? `<div class="detail-sub">${p}</div>` : ''}
     </div>
-    ${rows}`;
+    <div class="detail-right">
+      <div class="detail-pts">${total}</div>
+      <div class="detail-pts-lbl">points</div>
+      <div class="detail-breakdown">PronoContest: ${prono} · Side Quests: ${sq}</div>
+    </div>
+  </div>
+  ${rows}`;
 }
 
-// ── TOGGLE QUEST ─────────────────────────────────────────────────────────────
+// ── UTILS ─────────────────────────────────────────────────────────────────
 function toggleQ(qi) {
   const body = document.getElementById(`qb-${qi}`);
   const chev = document.getElementById(`chev-${qi}`);
-  const open = body.classList.toggle('open');
-  chev.classList.toggle('open', open);
+  body.classList.toggle('open');
+  chev.classList.toggle('open', body.classList.contains('open'));
 }
 
-// ── TABS ─────────────────────────────────────────────────────────────────────
 function showTab(tab) {
   activeTab = tab;
-  document.querySelectorAll('.tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.tab === tab));
-  ['leaderboard','quests','participants'].forEach(id =>
-    document.getElementById(`tab-${id}`).classList.toggle('hidden', id !== tab));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  ['live','classement','quests','participants'].forEach(id=>
+    document.getElementById(`tab-${id}`).classList.toggle('hidden', id!==tab));
 }
 
-// ── LOAD ─────────────────────────────────────────────────────────────────────
-async function loadData() {
-  setStatus('loading', 'Chargement des données...');
-  document.getElementById('error-box').classList.add('hidden');
-
-  try {
-    const rows = await fetchRange("'Feuille 6'!A1:S200");
-    DATA = parseSheet(rows);
-
-    renderLeaderboard();
-    renderQuests();
-    renderParticipants();
-
-    const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
-    document.getElementById('last-update').textContent = `Mis à jour à ${now}`;
-    setStatus('ok', `${DATA.participants.length} participants · ${DATA.quests.length} side quests`);
-    document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
-
-  } catch(err) {
-    setStatus('error', 'Erreur de chargement');
-    const eb = document.getElementById('error-box');
-    eb.classList.remove('hidden');
-    eb.textContent = `Erreur : ${err.message}. Vérifiez que le fichier est public en lecture.`;
-  }
+function formatUpdateTime(t) {
+  const now     = new Date();
+  const isToday = t.toDateString() === now.toDateString();
+  const time    = t.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  if (isToday) return `Mis à jour Aujourd'hui à ${time}`;
+  const d = String(t.getDate()).padStart(2,'0');
+  const m = String(t.getMonth()+1).padStart(2,'0');
+  const y = String(t.getFullYear()).slice(-2);
+  return `Mis à jour le ${d}/${m}/${y} à ${time}`;
 }
 
 function setStatus(type, msg) {
-  const dot  = document.getElementById('status-dot');
-  const text = document.getElementById('status-text');
-  dot.className  = 'dot ' + (type === 'loading' ? 'loading' : type === 'error' ? 'error' : '');
-  text.textContent = msg;
-  ['leaderboard','quests','participants'].forEach(id =>
+  document.getElementById('status-dot').className = 'dot'+(type==='loading'?' loading':type==='error'?' error':'');
+  document.getElementById('status-text').textContent = msg;
+  ['live','classement','quests','participants'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.add('hidden'));
+}
+
+// ── LOAD ──────────────────────────────────────────────────────────────────
+async function loadData() {
+  setStatus('loading','Chargement des données...');
+  document.getElementById('error-box').classList.add('hidden');
+  try {
+    const [f6rows, pronoRows] = await Promise.all([
+      fetchRange("'Feuille 6'!A1:T200"),
+      fetchRange("'PronoContests Classement Live'!A1:B20").catch(()=>[]),
+    ]);
+
+    const parsed      = parseFeuille6(f6rows);
+    const pronoScores = parseProno(pronoRows);
+
+    DATA = { ...parsed, pronoScores };
+
+    renderLeaderboard('live-list',       DATA.participants, DATA.quests, pronoScores, true);
+    renderLeaderboard('classement-list', DATA.participants, DATA.quests, pronoScores, false);
+    renderQuests(DATA.participants, DATA.quests);
+    renderParticipants(DATA.participants, DATA.quests, pronoScores);
+
+    document.getElementById('last-update').textContent = formatUpdateTime(new Date());
+    const liveActive = DATA.quests.filter(q=>q.liveAns).length;
+    setStatus('ok', `${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveActive} quête(s) live`);
+
+    ['live','classement','quests','participants'].forEach(id=>
+      document.getElementById(`tab-${id}`).classList.add('hidden'));
+    document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
+
+  } catch(err) {
+    setStatus('error','Erreur de chargement');
+    const eb = document.getElementById('error-box');
+    eb.classList.remove('hidden');
+    eb.textContent = `Erreur : ${err.message}`;
+  }
 }
 
 loadData();
