@@ -247,6 +247,8 @@ const AV_COLORS = [
 let DATA = null;
 let activeTab = 'classement';
 let activeSub = 'fictif';
+let lastLoadTime = null;
+const COOLDOWN_MS = 60000;
 
 function displayName(p) { return PSEUDOS[p] || p; }
 function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
@@ -493,6 +495,22 @@ function setStatus(type, msg) {
 }
 
 async function loadData() {
+  if (lastLoadTime && (Date.now() - lastLoadTime < COOLDOWN_MS)) {
+    const secsLeft = Math.ceil((COOLDOWN_MS - (Date.now() - lastLoadTime)) / 1000);
+    const btn = document.querySelector('.btn-ghost');
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.style.opacity = '0.4';
+    btn.style.cursor  = 'not-allowed';
+    btn.textContent   = `Attends ${secsLeft}s`;
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.style.opacity = '';
+      btn.style.cursor  = '';
+      btn.textContent   = orig;
+    }, secsLeft * 1000);
+    return;
+  }
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
@@ -510,7 +528,8 @@ async function loadData() {
     renderQuests(DATA.participants, DATA.quests);
     renderParticipants(DATA.participants, DATA.quests, pronoScores);
 
-    document.getElementById('last-update').textContent = formatUpdateTime(new Date());
+    lastLoadTime = Date.now();
+    document.getElementById('last-update').textContent = formatUpdateTime(new Date(lastLoadTime));
     const liveActive = DATA.quests.filter(q=>q.liveAns).length;
     setStatus('ok', `${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveActive} quête(s) live`);
 
