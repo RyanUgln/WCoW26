@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WCoW 2026 — Side Quests</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A83C;
+  --gold-dim: #7a6220;
+  --bg: #070a17;
+  --surface: #0c1022;
+  --card: #111828;
+  --border: #1c2a42;
+  --text: #dde4f0;
+  --muted: #5a6a85;
+  --green: #3ecf8e;
+  --green-dim: #0d3d28;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* HEADER */
+.header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--gold-dim);
+  padding: 1.2rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.logo-area { display: flex; align-items: baseline; gap: 0.75rem; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--gold); letter-spacing: 4px; }
+.logo-tag { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; }
+.header-actions { display: flex; align-items: center; gap: 0.75rem; }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: 'DM Sans', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.last-update { font-size: 0.7rem; color: var(--muted); }
+
+/* NAV */
+nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex;
+}
+.tab {
+  padding: 0.85rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.2s;
+  user-select: none;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* MAIN */
+main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+
+/* STATUS */
+.status-bar {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+.dot.loading { background: var(--gold); animation: pulse 1s ease infinite; }
+.dot.error { background: #f87171; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* LEADERBOARD */
+.leaderboard { display: flex; flex-direction: column; gap: 0.5rem; }
+.player-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+.player-row:hover { border-color: var(--gold-dim); background: #141e32; }
+.player-row.gold { border-color: var(--gold); }
+.player-row.silver { border-color: #9ba8ba; }
+.player-row.bronze { border-color: #b87333; }
+.rank-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.7rem;
+  min-width: 34px;
+  text-align: center;
+  line-height: 1;
+}
+.r1 { color: var(--gold); }
+.r2 { color: #b0bac9; }
+.r3 { color: #c07a41; }
+.rx { color: var(--muted); }
+.avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: #181f32;
+  border: 1.5px solid var(--gold-dim);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 0.85rem; color: var(--gold);
+  flex-shrink: 0;
+}
+.player-info { flex: 1; min-width: 0; }
+.player-display { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+.player-progress { display: flex; align-items: center; gap: 0.5rem; margin-top: 4px; }
+.progress-bar { flex: 1; max-width: 100px; height: 3px; background: var(--border); border-radius: 2px; }
+.progress-fill { height: 100%; border-radius: 2px; background: var(--gold-dim); transition: width 0.3s; }
+.progress-label { font-size: 0.68rem; color: var(--muted); }
+.pts-block { text-align: right; }
+.pts-big { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--gold); line-height: 1; }
+.pts-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+/* QUESTS */
+.quest-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.quest-card:hover { border-color: #243450; }
+.quest-head {
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+.quest-title { flex: 1; font-weight: 500; font-size: 0.9rem; line-height: 1.4; }
+.quest-title small { display: block; font-size: 0.75rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+.badge {
+  background: #17233a;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  padding: 0.2rem 0.65rem;
+  border-radius: 4px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.chevron { color: var(--muted); font-size: 0.7rem; flex-shrink: 0; transition: transform 0.2s; padding-top: 4px; }
+.chevron.open { transform: rotate(180deg); }
+.quest-body { display: none; border-top: 1px solid var(--border); padding: 1rem 1.5rem; }
+.quest-body.open { display: block; }
+.official-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: var(--green-dim);
+  border: 1px solid #1c5c3d;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.9rem;
+  font-size: 0.82rem;
+}
+.official-label { color: var(--green); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.official-value { color: var(--green); font-weight: 500; }
+.answers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+  gap: 0.45rem;
+}
+.ans-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 0.5rem 0.7rem;
+}
+.ans-chip.hit { background: var(--green-dim); border-color: #1c5c3d; }
+.ans-chip.miss { opacity: 0.6; }
+.ans-who { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.ans-val { font-size: 0.82rem; font-weight: 500; margin-top: 2px; }
+.ans-val.empty { color: var(--muted); font-style: italic; }
+.ans-chip.hit .ans-val { color: var(--green); }
+
+/* PARTICIPANTS */
+.p-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.p-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.8rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.p-card:hover, .p-card.sel { border-color: var(--gold); }
+.p-card.sel { background: #141e32; }
+.p-init { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+.p-pseudo { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.p-score { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--gold); margin-top: 4px; }
+
+.detail-wrap { display: none; }
+.detail-wrap.show { display: block; }
+.detail-top {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.detail-av {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #17233a;
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.detail-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--gold); letter-spacing: 2px; line-height: 1; }
+.detail-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+.detail-pts { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--gold); line-height: 1; text-align: right; }
+.detail-pts-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: right; }
+
+.qli {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.qli-name { flex: 1; font-size: 0.8rem; color: var(--muted); }
+.qli-ans { font-size: 0.88rem; font-weight: 500; }
+.qli-ans.no { color: var(--muted); font-style: italic; }
+.qli-ans.hit { color: var(--green); }
+.qli-pts { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; min-width: 56px; text-align: right; }
+.qli-pts.earned { color: var(--gold); }
+.qli-pts.zero { color: var(--border); }
+
+/* UTILS */
+.hidden { display: none !important; }
+.error-box { background: #1a0e0e; border: 1px solid #6b1f1f; border-radius: 8px; padding: 1.5rem; color: #f87171; text-align: center; font-size: 0.9rem; }
+
+/* SHEET LINK */
+.sheet-link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: #17233a;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+}
+.sheet-link:hover { border-color: var(--gold); color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-area">
+    <div class="logo">WCoW 2026</div>
+    <div class="logo-tag">Side Quests Dashboard</div>
+  </div>
+  <div class="header-actions">
+    <span class="last-update" id="last-update"></span>
+    <button class="btn-ghost" onclick="loadData()">↻ Actualiser</button>
+  </div>
+</div>
+
+<nav>
+  <div class="tab active" data-tab="leaderboard" onclick="showTab('leaderboard')">🏆 Classement</div>
+  <div class="tab" data-tab="quests" onclick="showTab('quests')">📋 Side Quests</div>
+  <div class="tab" data-tab="participants" onclick="showTab('participants')">👤 Participants</div>
+</nav>
+
+<main>
+  <div class="status-bar" id="status-bar">
+    <div class="dot loading" id="status-dot"></div>
+    <span id="status-text">Chargement des données depuis Google Sheets...</span>
+  </div>
+
+  <div id="error-box" class="error-box hidden"></div>
+
+  <!-- LEADERBOARD -->
+  <div id="tab-leaderboard" class="hidden">
+    <div class="leaderboard" id="leaderboard-list"></div>
+  </div>
+
+  <!-- QUESTS -->
+  <div id="tab-quests" class="hidden">
+    <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
+      ✏️ Remplir mes pronostics sur Google Sheets →
+    </a>
+    <div id="quests-list"></div>
+  </div>
+
+  <!-- PARTICIPANTS -->
+  <div id="tab-participants" class="hidden">
+    <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
+      ✏️ Remplir mes pronostics sur Google Sheets →
+    </a>
+    <div class="p-grid" id="p-grid"></div>
+    <div class="detail-wrap" id="detail-wrap"></div>
+  </div>
+</main>
+
+<script>
+const API_KEY  = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
+const SHEET_ID = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
+
+const PSEUDOS = {
+  Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais',
+  Ro:'BoosterDre', Ax:'Michael Au Lit !', Os:'Chapchenko',
+  So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
+};
+
+let DATA = null;
+let activeTab = 'leaderboard';
+
+function displayName(init) { return PSEUDOS[init] || init; }
+
+// ── FETCH ────────────────────────────────────────────────────────────────────
+async function fetchRange(range) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
+  const res = await fetch(url);
+  const json = await res.json();
+  if (json.error) throw new Error(json.error.message);
+  return json.values || [];
+}
+
+// ── PARSE ────────────────────────────────────────────────────────────────────
+function parseSheet(rows) {
+  if (!rows.length) return { participants:[], quests:[], official:{} };
+
+  const header = rows[0];
+  const participants = header.slice(2).map(s => (s||'').trim()).filter(Boolean);
+
+  const quests = [];
+  const official = {};   // questIndex → official answer string
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i] || [];
+    const col0 = (row[0] || '').trim();
+    const col1 = (row[1] || '').trim();
+    if (!col0 && !col1) continue;
+
+    // Official answer row?
+    if (/résultat|officiel/i.test(col0)) {
+      participants.forEach((p, idx) => {
+        official[`__p${idx}`] = (row[idx + 2] || '').trim();
+      });
+      continue;
+    }
+
+    const name = col0 || col1;
+    const ptsRaw = col0 ? col1 : '';
+    const ptsNum = parseInt((ptsRaw.match(/\d+/) || ['0'])[0]) || 0;
+
+    const answers = {};
+    participants.forEach((p, idx) => {
+      answers[p] = (row[idx + 2] || '').trim();
+    });
+
+    quests.push({ name, ptsRaw, ptsNum, answers, officialAns: '' });
+  }
+
+  return { participants, quests, official };
+}
+
+// ── SCORE ────────────────────────────────────────────────────────────────────
+function calcScores(data) {
+  const { participants, quests } = data;
+  const scores = Object.fromEntries(participants.map(p => [p, 0]));
+
+  quests.forEach(q => {
+    if (!q.officialAns) return;
+    const off = q.officialAns.trim().toLowerCase();
+    participants.forEach(p => {
+      const ans = (q.answers[p] || '').trim().toLowerCase();
+      if (!ans) return;
+      if (q.name.toUpperCase().includes('REPÊCHÉ')) {
+        const officialList = off.split(/[,;\/\n]/).map(s => s.trim()).filter(Boolean);
+        const playerList   = ans.split(/[,;\/\n]/).map(s => s.trim()).filter(Boolean);
+        playerList.forEach(pick => {
+          if (pick && officialList.includes(pick)) scores[p] += 20;
+        });
+      } else {
+        if (ans === off) scores[p] += q.ptsNum;
+      }
+    });
+  });
+
+  return scores;
+}
+
+// ── RENDER: LEADERBOARD ───────────────────────────────────────────────────────
+function renderLeaderboard() {
+  const { participants, quests } = DATA;
+  const scores = calcScores(DATA);
+  const total = quests.length;
+
+  const sorted = [...participants].sort((a,b) => scores[b] - scores[a]);
+  const rankClasses = ['r1 gold','r2 silver','r3 bronze'];
+
+  document.getElementById('leaderboard-list').innerHTML = sorted.map((p, i) => {
+    const rank = i + 1;
+    const pts  = scores[p];
+    const filled = quests.filter(q => q.answers[p]).length;
+    const pct  = total ? Math.round(filled/total*100) : 0;
+    const disp = displayName(p);
+    const rc   = rankClasses[i] || 'rx';
+    const cc   = i < 3 ? rankClasses[i].split(' ')[1] : '';
+
+    return `
+    <div class="player-row ${cc}" onclick="selectParticipant('${p}')">
+      <div class="rank-num ${rc.split(' ')[0]}">${rank}</div>
+      <div class="avatar">${p}</div>
+      <div class="player-info">
+        <div class="player-display">${disp}</div>
+        ${disp !== p ? `<div class="player-sub">${p}</div>` : ''}
+        <div class="player-progress">
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <span class="progress-label">${filled}/${total} quêtes</span>
+        </div>
+      </div>
+      <div class="pts-block">
+        <div class="pts-big">${pts}</div>
+        <div class="pts-label">pts</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER: QUESTS ────────────────────────────────────────────────────────────
+function renderQuests() {
+  const { participants, quests } = DATA;
+
+  document.getElementById('quests-list').innerHTML = quests.map((q, qi) => {
+    const off = q.officialAns.trim().toLowerCase();
+    const hasOff = !!off;
+
+    const offBlock = hasOff ? `
+      <div class="official-row">
+        <div>
+          <div class="official-label">✓ Réponse officielle</div>
+          <div class="official-value">${q.officialAns}</div>
+        </div>
+      </div>` : '';
+
+    const chips = participants.map(p => {
+      const ans  = q.answers[p];
+      const hit  = hasOff && ans && ans.trim().toLowerCase() === off;
+      const cls  = !ans ? '' : hit ? 'hit' : 'miss';
+      return `
+      <div class="ans-chip ${cls}">
+        <div class="ans-who">${p}</div>
+        <div class="ans-val ${!ans?'empty':''}">${ans || '—'}</div>
+      </div>`;
+    }).join('');
+
+    const shortName = q.name.split('\n')[0];
+    const subName   = q.name.split('\n').slice(1).join(' ').trim();
+
+    return `
+    <div class="quest-card">
+      <div class="quest-head" onclick="toggleQ(${qi})">
+        <div class="quest-title">
+          ${shortName}
+          ${subName ? `<small>${subName}</small>` : ''}
+        </div>
+        <div class="badge">${q.ptsRaw || q.ptsNum}</div>
+        <div class="chevron" id="chev-${qi}">▼</div>
+      </div>
+      <div class="quest-body" id="qb-${qi}">
+        ${offBlock}
+        <div class="answers-grid">${chips}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER: PARTICIPANTS ──────────────────────────────────────────────────────
+function renderParticipants() {
+  const { participants, quests } = DATA;
+  const scores = calcScores(DATA);
+
+  document.getElementById('p-grid').innerHTML = participants.map(p => {
+    const disp = displayName(p);
+    return `
+    <div class="p-card" id="pcard-${p}" onclick="selectParticipant('${p}')">
+      <div class="p-init">${disp}</div>
+      ${disp !== p ? `<div class="p-pseudo">${p}</div>` : ''}
+      <div class="p-score">${scores[p]} pts</div>
+    </div>`;
+  }).join('');
+}
+
+function selectParticipant(p) {
+  showTab('participants');
+
+  document.querySelectorAll('.p-card').forEach(c => c.classList.remove('sel'));
+  const card = document.getElementById(`pcard-${p}`);
+  if (card) { card.classList.add('sel'); card.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+
+  const { quests } = DATA;
+  const scores = calcScores(DATA);
+  const disp   = displayName(p);
+  const total  = scores[p] || 0;
+
+  const rows = quests.map(q => {
+    const ans    = q.answers[p];
+    const off    = q.officialAns.trim().toLowerCase();
+    const hasOff = !!off;
+    const hit    = hasOff && ans && ans.trim().toLowerCase() === off;
+    const earned = hit ? q.ptsNum : 0;
+    const shortN = q.name.split('\n')[0];
+
+    return `
+    <div class="qli">
+      <div class="qli-name">${shortN}</div>
+      <div class="qli-ans ${!ans?'no':hit?'hit':''}">${ans || 'Non rempli'}</div>
+      <div class="qli-pts ${earned?'earned':'zero'}">${earned ? '+'+earned : '—'}</div>
+    </div>`;
+  }).join('');
+
+  const dw = document.getElementById('detail-wrap');
+  dw.classList.add('show');
+  dw.innerHTML = `
+    <div class="detail-top">
+      <div class="detail-av">${p}</div>
+      <div>
+        <div class="detail-name">${disp}</div>
+        ${disp !== p ? `<div class="detail-sub">${p}</div>` : ''}
+      </div>
+      <div style="margin-left:auto">
+        <div class="detail-pts">${total}</div>
+        <div class="detail-pts-lbl">points</div>
+      </div>
+    </div>
+    ${rows}`;
+}
+
+// ── TOGGLE QUEST ─────────────────────────────────────────────────────────────
+function toggleQ(qi) {
+  const body = document.getElementById(`qb-${qi}`);
+  const chev = document.getElementById(`chev-${qi}`);
+  const open = body.classList.toggle('open');
+  chev.classList.toggle('open', open);
+}
+
+// ── TABS ─────────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === tab));
+  ['leaderboard','quests','participants'].forEach(id =>
+    document.getElementById(`tab-${id}`).classList.toggle('hidden', id !== tab));
+}
+
+// ── LOAD ─────────────────────────────────────────────────────────────────────
+async function loadData() {
+  setStatus('loading', 'Chargement des données...');
+  document.getElementById('error-box').classList.add('hidden');
+
+  try {
+    const rows = await fetchRange("'Feuille 6'!A1:S200");
+    DATA = parseSheet(rows);
+
+    renderLeaderboard();
+    renderQuests();
+    renderParticipants();
+
+    const now = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('last-update').textContent = `Mis à jour à ${now}`;
+    setStatus('ok', `${DATA.participants.length} participants · ${DATA.quests.length} side quests`);
+    document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
+
+  } catch(err) {
+    setStatus('error', 'Erreur de chargement');
+    const eb = document.getElementById('error-box');
+    eb.classList.remove('hidden');
+    eb.textContent = `Erreur : ${err.message}. Vérifiez que le fichier est public en lecture.`;
+  }
+}
+
+function setStatus(type, msg) {
+  const dot  = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  dot.className  = 'dot ' + (type === 'loading' ? 'loading' : type === 'error' ? 'error' : '');
+  text.textContent = msg;
+  ['leaderboard','quests','participants'].forEach(id =>
+    document.getElementById(`tab-${id}`).classList.add('hidden'));
+}
+
+loadData();
+</script>
+</body>
+</html>
