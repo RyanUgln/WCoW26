@@ -496,19 +496,10 @@ function setStatus(type, msg) {
 
 async function loadData() {
   if (lastLoadTime && (Date.now() - lastLoadTime < COOLDOWN_MS)) {
-    const secsLeft = Math.ceil((COOLDOWN_MS - (Date.now() - lastLoadTime)) / 1000);
-    const btn = document.querySelector('.btn-ghost');
-    const orig = btn.textContent;
-    btn.disabled = true;
-    btn.style.opacity = '0.4';
-    btn.style.cursor  = 'not-allowed';
-    btn.textContent   = `Attends ${secsLeft}s`;
+    document.getElementById('last-update').textContent = 'Données déjà à jour';
     setTimeout(() => {
-      btn.disabled = false;
-      btn.style.opacity = '';
-      btn.style.cursor  = '';
-      btn.textContent   = orig;
-    }, secsLeft * 1000);
+      document.getElementById('last-update').textContent = formatUpdateTime(new Date(lastLoadTime));
+    }, 2000);
     return;
   }
   setStatus('loading','Chargement des données...');
