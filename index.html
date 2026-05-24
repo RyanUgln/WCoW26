@@ -31,10 +31,17 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 0.45rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-family: 'DM Sans', sans-serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
 
+/* MAIN NAV */
 nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; overflow-x: auto; }
 .tab { padding: 0.85rem 1.2rem; cursor: pointer; font-size: 0.72rem; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; user-select: none; white-space: nowrap; }
 .tab:hover { color: var(--text); }
 .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* SUB NAV */
+.sub-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+.sub-tab { padding: 0.5rem 1.25rem; cursor: pointer; font-size: 0.72rem; font-weight: 500; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; user-select: none; background: transparent; }
+.sub-tab:hover { color: var(--text); border-color: var(--gold-dim); }
+.sub-tab.active { color: var(--gold); border-color: var(--gold); background: #17233a; }
 
 main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 
@@ -136,8 +143,7 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
   <div class="logo-area">
     <div class="logo-circle">
       <img src="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg"
-           alt="WCoW26"
-           onerror="this.parentElement.innerHTML='⚽'">
+           alt="WCoW26" onerror="this.parentElement.innerHTML='⚽'">
     </div>
     <div class="logo">WCoW 2026</div>
   </div>
@@ -148,10 +154,9 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 </div>
 
 <nav>
-  <div class="tab active" data-tab="live"         onclick="showTab('live')">⚡ Live</div>
-  <div class="tab"        data-tab="classement"   onclick="showTab('classement')">🏆 Classement</div>
-  <div class="tab"        data-tab="quests"       onclick="showTab('quests')">📋 Side Quests</div>
-  <div class="tab"        data-tab="participants" onclick="showTab('participants')">👤 Participants</div>
+  <div class="tab active" data-tab="classement" onclick="showTab('classement')">Classement</div>
+  <div class="tab"        data-tab="quests"     onclick="showTab('quests')">Side Quests</div>
+  <div class="tab"        data-tab="participants" onclick="showTab('participants')">Participants</div>
 </nav>
 
 <main>
@@ -161,31 +166,41 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
   </div>
   <div id="error-box" class="error-box hidden"></div>
 
-  <div id="tab-live" class="hidden">
-    <div class="banner live-banner">
-      <div class="pulse-dot"></div>
-      Points PronoContest + Side Quests en cours — évolue au fil de la compétition
-    </div>
-    <div class="leaderboard" id="live-list"></div>
-  </div>
-
+  <!-- CLASSEMENT -->
   <div id="tab-classement" class="hidden">
-    <div class="banner prono-banner">
-      🏆 Scores officiels PronoContest uniquement — mis à jour par l'admin après chaque journée
+    <div class="sub-nav">
+      <div class="sub-tab active" data-sub="fictif" onclick="showSub('fictif')">Fictif</div>
+      <div class="sub-tab"        data-sub="reel"   onclick="showSub('reel')">Réel</div>
     </div>
-    <div class="leaderboard" id="classement-list"></div>
+
+    <div id="sub-fictif">
+      <div class="banner live-banner">
+        <div class="pulse-dot"></div>
+        Points PronoContest + Side Quests en cours — évolue au fil de la compétition
+      </div>
+      <div class="leaderboard" id="live-list"></div>
+    </div>
+
+    <div id="sub-reel" class="hidden">
+      <div class="banner prono-banner">
+        Scores officiels PronoContest uniquement — mis à jour par l'admin après chaque journée
+      </div>
+      <div class="leaderboard" id="classement-list"></div>
+    </div>
   </div>
 
+  <!-- SIDE QUESTS -->
   <div id="tab-quests" class="hidden">
     <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
-      ✏️ Remplir mes pronostics sur Google Sheets →
+      Remplir mes pronostics sur Google Sheets →
     </a>
     <div id="quests-list"></div>
   </div>
 
+  <!-- PARTICIPANTS -->
   <div id="tab-participants" class="hidden">
     <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
-      ✏️ Remplir mes pronostics sur Google Sheets →
+      Remplir mes pronostics sur Google Sheets →
     </a>
     <div class="p-grid" id="p-grid"></div>
     <div class="detail-wrap" id="detail-wrap"></div>
@@ -202,26 +217,24 @@ const PSEUDOS = {
   Ax:'Michael Au Lit !', Os:'Chapchenko', So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
 };
 
-// Quests handled by PronoContest — excluded from side-quest calc
 const PRONO_QUESTS = ['LES LEGENDES','PROJET BLUE LOCK','PARK THE BUS','OGRES','BOOSTERDRE'];
 
-// Photos assigned randomly to participants
 const PHOTO_MAP = {
-  Lu: 'participant.png',
-  Ry: 'participant%20-%20Copie.png',
-  Au: 'participant%20-%20Copie%20(2).png',
-  Im: 'participant%20-%20Copie%20(3).png',
-  Al: 'participant%20-%20Copie%20(4).png',
-  Co: 'participant%20-%20Copie%20(5).png',
-  Ha: 'participant%20-%20Copie%20(6).png',
-  Ad: 'participant%20-%20Copie%20(7).png',
-  Ro: 'participant%20-%20Copie%20(8).png',
-  Ax: 'participant%20-%20Copie%20(9).png',
-  Os: 'participant%20-%20Copie%20(10).png',
-  So: 'participant%20-%20Copie%20(11).png',
-  Pa: 'participant%20-%20Copie%20(12).png',
-  He: 'participant%20-%20Copie%20(13).png',
-  Ba: 'participant%20-%20Copie%20(14).png',
+  Lu:'participant.png',
+  Ry:'participant%20-%20Copie.png',
+  Au:'participant%20-%20Copie%20(2).png',
+  Im:'participant%20-%20Copie%20(3).png',
+  Al:'participant%20-%20Copie%20(4).png',
+  Co:'participant%20-%20Copie%20(5).png',
+  Ha:'participant%20-%20Copie%20(6).png',
+  Ad:'participant%20-%20Copie%20(7).png',
+  Ro:'participant%20-%20Copie%20(8).png',
+  Ax:'participant%20-%20Copie%20(9).png',
+  Os:'participant%20-%20Copie%20(10).png',
+  So:'participant%20-%20Copie%20(11).png',
+  Pa:'participant%20-%20Copie%20(12).png',
+  He:'participant%20-%20Copie%20(13).png',
+  Ba:'participant%20-%20Copie%20(14).png',
 };
 
 const AV_COLORS = [
@@ -232,7 +245,8 @@ const AV_COLORS = [
 ];
 
 let DATA = null;
-let activeTab = 'live';
+let activeTab = 'classement';
+let activeSub = 'fictif';
 
 function displayName(p) { return PSEUDOS[p] || p; }
 function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
@@ -242,51 +256,39 @@ function isPronoQuest(name) {
   return PRONO_QUESTS.some(pq => n.includes(pq));
 }
 
-// ── AVATAR HTML ───────────────────────────────────────────────────────────
 function mkAvatar(p, size, cls) {
-  const c   = avColor(p);
-  const url = photoUrl(p);
-  const style = `width:${size}px;height:${size}px;`;
-  if (url) {
-    return `<div class="${cls}" style="${style}border-color:var(--gold-dim)">
-      <img src="${url}" alt="${p}"
-        onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">
-    </div>`;
-  }
-  return `<div class="${cls}" style="${style}background:${c.bg};color:${c.fg};border-color:${c.fg}33">${p}</div>`;
+  const c = avColor(p), url = photoUrl(p);
+  if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${p}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'"></div>`;
+  return `<div class="${cls}" style="width:${size}px;height:${size}px;background:${c.bg};color:${c.fg};border-color:${c.fg}33">${p}</div>`;
 }
 
-// ── FETCH ─────────────────────────────────────────────────────────────────
 async function fetchRange(range) {
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
-  const res  = await fetch(url);
+  const res = await fetch(url);
   const json = await res.json();
   if (json.error) throw new Error(json.error.message);
   return json.values || [];
 }
 
-// ── PARSE Feuille 6 ───────────────────────────────────────────────────────
-// Structure: col A = quest name, col B = points, col C = Réponse Live, col D+ = participants
 function parseFeuille6(rows) {
   if (!rows.length) return { participants:[], quests:[] };
   const header = rows[0];
   const participants = header.slice(3).map(s=>(s||'').trim()).filter(Boolean);
   const quests = [];
   for (let i=1; i<rows.length; i++) {
-    const row   = rows[i] || [];
-    const name  = (row[0]||'').trim();
-    const ptsRaw = (row[1]||'').trim();
-    const liveAns = (row[2]||'').trim();
+    const row = rows[i]||[];
+    const name = (row[0]||'').trim();
     if (!name) continue;
-    const ptsNum = parseInt((ptsRaw.match(/\d+/)||['0'])[0]) || 0;
+    const ptsRaw  = (row[1]||'').trim();
+    const liveAns = (row[2]||'').trim();
+    const ptsNum  = parseInt((ptsRaw.match(/\d+/)||['0'])[0]) || 0;
     const answers = {};
-    participants.forEach((p, idx) => { answers[p] = (row[idx+3]||'').trim(); });
+    participants.forEach((p,idx) => { answers[p] = (row[idx+3]||'').trim(); });
     quests.push({ name, ptsRaw, ptsNum, liveAns, answers });
   }
   return { participants, quests };
 }
 
-// ── PARSE PronoContest ────────────────────────────────────────────────────
 function parseProno(rows) {
   const scores = {};
   for (const row of rows.slice(1)) {
@@ -297,7 +299,6 @@ function parseProno(rows) {
   return scores;
 }
 
-// ── SCORE CALC ────────────────────────────────────────────────────────────
 function calcSideQuestPts(quests, p) {
   let pts = 0;
   for (const q of quests) {
@@ -306,9 +307,9 @@ function calcSideQuestPts(quests, p) {
     const ref = q.liveAns.trim().toLowerCase();
     if (!ans || !ref) continue;
     if (q.name.toUpperCase().includes('REPÊCHÉ')) {
-      const refList = ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+      const rl = ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
       ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean).forEach(pick => {
-        if (pick && refList.includes(pick)) pts += 20;
+        if (pick && rl.includes(pick)) pts += 20;
       });
     } else {
       if (ans === ref) pts += q.ptsNum;
@@ -317,7 +318,6 @@ function calcSideQuestPts(quests, p) {
   return pts;
 }
 
-// ── RENDER LEADERBOARD ────────────────────────────────────────────────────
 function renderLeaderboard(containerId, participants, quests, pronoScores, liveMode) {
   const rows = participants.map(p => {
     const prono = pronoScores[p] || 0;
@@ -325,22 +325,22 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, liveM
     return { p, total: prono + sq, prono, sq };
   }).sort((a,b) => b.total - a.total);
 
-  const medals  = ['medal-gold','medal-silver','medal-bronze'];
-  const rclass  = ['r1','r2','r3'];
+  const medals = ['medal-gold','medal-silver','medal-bronze'];
+  const rclass = ['r1','r2','r3'];
 
   document.getElementById(containerId).innerHTML = rows.map(({p,total,prono,sq},i) => {
-    const disp   = displayName(p);
-    const filled = quests.filter(q=>q.answers[p]).length;
+    const disp    = displayName(p);
+    const filled  = quests.filter(q=>q.answers[p]).length;
     const breakdown = liveMode && sq > 0
-      ? `PronoContest: ${prono} pts + Side Quests live: ${sq} pts`
+      ? `PronoContest: ${prono} pts + Side Quests: ${sq} pts`
       : `PronoContest: ${prono} pts`;
     return `
     <div class="player-row ${medals[i]||''}" onclick="selectParticipant('${p}')">
       <div class="rank-num ${rclass[i]||'rx'}">${i+1}</div>
-      ${mkAvatar(p, 42, 'avatar')}
+      ${mkAvatar(p,42,'avatar')}
       <div class="player-info">
         <div class="player-display">${disp}</div>
-        ${disp!==p ? `<div class="player-sub">${p}</div>` : ''}
+        ${disp!==p?`<div class="player-sub">${p}</div>`:''}
         <div class="pts-breakdown">${breakdown}</div>
         <div class="player-progress">
           <div class="progress-bar"><div class="progress-fill" style="width:${quests.length?Math.round(filled/quests.length*100):0}%"></div></div>
@@ -355,32 +355,22 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, liveM
   }).join('');
 }
 
-// ── RENDER QUESTS ─────────────────────────────────────────────────────────
 function renderQuests(participants, quests) {
-  document.getElementById('quests-list').innerHTML = quests.map((q, qi) => {
+  document.getElementById('quests-list').innerHTML = quests.map((q,qi) => {
     const shortName = q.name.split('\n')[0];
     const subName   = q.name.split('\n').slice(1).join(' ').trim();
     const hasLive   = !!q.liveAns;
     const liveL     = q.liveAns.trim().toLowerCase();
 
-    const refBlock = hasLive ? `
-      <div class="ref-row">
-        <div><div class="ref-label">⚡ Réponse live</div><div class="ref-value">${q.liveAns}</div></div>
-      </div>` : '';
-
-    const pill = hasLive
-      ? `<div class="quest-live-pill"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite"></div>${q.liveAns}</div>`
-      : '';
+    const refBlock = hasLive ? `<div class="ref-row"><div><div class="ref-label">Réponse live</div><div class="ref-value">${q.liveAns}</div></div></div>` : '';
+    const pill = hasLive ? `<div class="quest-live-pill"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;flex-shrink:0"></div>${q.liveAns}</div>` : '';
 
     const chips = participants.map(p => {
       const ans  = q.answers[p];
       const ansL = (ans||'').trim().toLowerCase();
       const hit  = hasLive && ansL && ansL === liveL;
       const miss = hasLive && ans && !hit;
-      return `<div class="ans-chip ${hit?'hit':miss?'miss':''}">
-        <div class="ans-who">${p}</div>
-        <div class="ans-val ${!ans?'empty':''}">${ans||'—'}</div>
-      </div>`;
+      return `<div class="ans-chip ${hit?'hit':miss?'miss':''}"><div class="ans-who">${p}</div><div class="ans-val ${!ans?'empty':''}">${ans||'—'}</div></div>`;
     }).join('');
 
     return `
@@ -388,30 +378,26 @@ function renderQuests(participants, quests) {
       <div class="quest-head" onclick="toggleQ(${qi})">
         <div class="quest-title-wrap">
           <div class="quest-title">${shortName}</div>
-          ${subName ? `<div class="quest-sub">${subName}</div>` : ''}
+          ${subName?`<div class="quest-sub">${subName}</div>`:''}
           ${pill}
         </div>
         <div class="badge">${q.ptsRaw||q.ptsNum}</div>
         <div class="chevron" id="chev-${qi}">▼</div>
       </div>
-      <div class="quest-body" id="qb-${qi}">
-        ${refBlock}
-        <div class="answers-grid">${chips}</div>
-      </div>
+      <div class="quest-body" id="qb-${qi}">${refBlock}<div class="answers-grid">${chips}</div></div>
     </div>`;
   }).join('');
 }
 
-// ── RENDER PARTICIPANTS ───────────────────────────────────────────────────
 function renderParticipants(participants, quests, pronoScores) {
   document.getElementById('p-grid').innerHTML = participants.map(p => {
     const disp  = displayName(p);
     const total = (pronoScores[p]||0) + calcSideQuestPts(quests, p);
     return `
     <div class="p-card" id="pcard-${p}" onclick="selectParticipant('${p}')">
-      ${mkAvatar(p, 48, 'p-av')}
+      ${mkAvatar(p,48,'p-av')}
       <div class="p-name">${disp}</div>
-      ${disp!==p ? `<div class="p-pseudo">${p}</div>` : ''}
+      ${disp!==p?`<div class="p-pseudo">${p}</div>`:''}
       <div class="p-score">${total} pts</div>
     </div>`;
   }).join('');
@@ -429,47 +415,43 @@ function selectParticipant(p) {
   const sq    = calcSideQuestPts(quests, p);
   const total = prono + sq;
   const c     = avColor(p);
+  const url   = photoUrl(p);
 
   const rows = quests.map(q => {
-    const shortN = q.name.split('\n')[0];
-    const ans    = q.answers[p];
-    const ansL   = (ans||'').trim().toLowerCase();
-    const liveL  = q.liveAns.trim().toLowerCase();
-    const hit    = !!q.liveAns && ansL && ansL === liveL;
-    const isProno = isPronoQuest(q.name);
-    const earned  = (!isProno && hit) ? q.ptsNum : 0;
-    return `
-    <div class="qli">
+    const shortN  = q.name.split('\n')[0];
+    const ans     = q.answers[p];
+    const ansL    = (ans||'').trim().toLowerCase();
+    const liveL   = q.liveAns.trim().toLowerCase();
+    const hit     = !!q.liveAns && ansL && ansL === liveL;
+    const earned  = (!isPronoQuest(q.name) && hit) ? q.ptsNum : 0;
+    return `<div class="qli">
       <div class="qli-name">${shortN}</div>
       <div class="qli-ans ${!ans?'no':hit?'hit':''}">${ans||'Non rempli'}</div>
       <div class="qli-pts ${earned?'earned':'zero'}">${earned?'+'+earned:'—'}</div>
     </div>`;
   }).join('');
 
-  const avInner = photoUrl(p)
-    ? `<img src="${photoUrl(p)}" alt="${p}" style="width:100%;height:100%;object-fit:cover"
-        onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">`
+  const avInner = url
+    ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">`
     : p;
 
   const dw = document.getElementById('detail-wrap');
   dw.classList.add('show');
   dw.innerHTML = `
   <div class="detail-top">
-    <div class="detail-av" style="background:${photoUrl(p)?'transparent':c.bg};color:${c.fg};border-color:var(--gold)">${avInner}</div>
+    <div class="detail-av" style="background:${url?'transparent':c.bg};color:${c.fg};border-color:var(--gold)">${avInner}</div>
     <div>
       <div class="detail-name">${disp}</div>
-      ${disp!==p ? `<div class="detail-sub">${p}</div>` : ''}
+      ${disp!==p?`<div class="detail-sub">${p}</div>`:''}
     </div>
     <div class="detail-right">
       <div class="detail-pts">${total}</div>
       <div class="detail-pts-lbl">points</div>
       <div class="detail-breakdown">PronoContest: ${prono} · Side Quests: ${sq}</div>
     </div>
-  </div>
-  ${rows}`;
+  </div>${rows}`;
 }
 
-// ── UTILS ─────────────────────────────────────────────────────────────────
 function toggleQ(qi) {
   const body = document.getElementById(`qb-${qi}`);
   const chev = document.getElementById(`chev-${qi}`);
@@ -480,8 +462,16 @@ function toggleQ(qi) {
 function showTab(tab) {
   activeTab = tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
-  ['live','classement','quests','participants'].forEach(id=>
+  ['classement','quests','participants'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.toggle('hidden', id!==tab));
+  if (tab === 'participants') document.getElementById('detail-wrap').classList.remove('show');
+}
+
+function showSub(sub) {
+  activeSub = sub;
+  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.toggle('active', t.dataset.sub===sub));
+  document.getElementById('sub-fictif').classList.toggle('hidden', sub !== 'fictif');
+  document.getElementById('sub-reel').classList.toggle('hidden', sub !== 'reel');
 }
 
 function formatUpdateTime(t) {
@@ -498,11 +488,10 @@ function formatUpdateTime(t) {
 function setStatus(type, msg) {
   document.getElementById('status-dot').className = 'dot'+(type==='loading'?' loading':type==='error'?' error':'');
   document.getElementById('status-text').textContent = msg;
-  ['live','classement','quests','participants'].forEach(id=>
+  ['classement','quests','participants'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.add('hidden'));
 }
 
-// ── LOAD ──────────────────────────────────────────────────────────────────
 async function loadData() {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
@@ -514,7 +503,6 @@ async function loadData() {
 
     const parsed      = parseFeuille6(f6rows);
     const pronoScores = parseProno(pronoRows);
-
     DATA = { ...parsed, pronoScores };
 
     renderLeaderboard('live-list',       DATA.participants, DATA.quests, pronoScores, true);
@@ -526,9 +514,10 @@ async function loadData() {
     const liveActive = DATA.quests.filter(q=>q.liveAns).length;
     setStatus('ok', `${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveActive} quête(s) live`);
 
-    ['live','classement','quests','participants'].forEach(id=>
+    ['classement','quests','participants'].forEach(id=>
       document.getElementById(`tab-${id}`).classList.add('hidden'));
     document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
+    showSub(activeSub);
 
   } catch(err) {
     setStatus('error','Erreur de chargement');
