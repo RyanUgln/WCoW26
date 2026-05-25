@@ -7,134 +7,165 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --gold: #C9A83C;
-  --gold-dim: #7a6220;
-  --bg: #070a17;
-  --surface: #0c1022;
-  --card: #111828;
-  --border: #1c2a42;
-  --text: #dde4f0;
-  --muted: #5a6a85;
-  --green: #3ecf8e;
-  --green-dim: #0d3d28;
+  --gold: #C9A83C; --gold-dim: #7a6220;
+  --bg: #070a17; --surface: #0c1022; --card: #111828; --border: #1c2a42;
+  --text: #dde4f0; --muted: #5a6a85;
+  --green: #3ecf8e; --green-dim: #0d3d28;
+  --red: #f87171; --red-dim: #3a1010;
+  --blue: #60a0f0; --blue-dim: #0d1f3a;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; font-size: 15px; line-height: 1.5; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; font-size:15px; line-height:1.5; }
 
-.header { background: var(--surface); border-bottom: 2px solid var(--gold-dim); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.logo-area { display: flex; align-items: center; gap: 0.85rem; }
-.logo-circle { width: 44px; height: 44px; border-radius: 50%; background: #17233a; border: 2px solid var(--gold-dim); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; overflow: hidden; }
-.logo-circle img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); letter-spacing: 4px; line-height: 1; }
-.header-right { display: flex; align-items: center; gap: 0.75rem; }
-.last-update { font-size: 0.72rem; color: var(--muted); }
-.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 0.45rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-family: 'DM Sans', sans-serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
-.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+/* HEADER */
+.header { background:var(--surface); border-bottom:2px solid var(--gold-dim); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+.logo-area { display:flex; align-items:center; gap:.85rem; }
+.logo-circle { width:44px; height:44px; border-radius:50%; background:#17233a; border:2px solid var(--gold-dim); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; overflow:hidden; }
+.logo-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.logo-text { display:flex; flex-direction:column; }
+.logo { font-family:'Bebas Neue',sans-serif; font-size:2rem; color:var(--gold); letter-spacing:4px; line-height:1; }
+.logo-sub { font-size:.65rem; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-top:1px; }
+.header-right { display:flex; align-items:center; gap:.75rem; }
+.last-update { font-size:.72rem; color:var(--muted); }
+.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--muted); padding:.45rem .9rem; border-radius:6px; cursor:pointer; font-size:.72rem; font-family:'DM Sans',sans-serif; text-transform:uppercase; letter-spacing:1px; transition:all .2s; }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
 
-/* MAIN NAV */
-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; overflow-x: auto; }
-.tab { padding: 0.85rem 1.2rem; cursor: pointer; font-size: 0.72rem; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; user-select: none; white-space: nowrap; }
-.tab:hover { color: var(--text); }
-.tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+/* NAV */
+nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 2rem; display:flex; overflow-x:auto; }
+.tab { padding:.85rem 1.2rem; cursor:pointer; font-size:.72rem; font-weight:500; color:var(--muted); border-bottom:2px solid transparent; text-transform:uppercase; letter-spacing:1.5px; transition:all .2s; user-select:none; white-space:nowrap; }
+.tab:hover { color:var(--text); }
+.tab.active { color:var(--gold); border-bottom-color:var(--gold); }
 
 /* SUB NAV */
-.sub-nav { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
-.sub-tab { padding: 0.5rem 1.25rem; cursor: pointer; font-size: 0.72rem; font-weight: 500; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.2s; user-select: none; background: transparent; }
-.sub-tab:hover { color: var(--text); border-color: var(--gold-dim); }
-.sub-tab.active { color: var(--gold); border-color: var(--gold); background: #17233a; }
+.sub-nav { display:flex; gap:.5rem; margin-bottom:1.5rem; }
+.sub-tab { padding:.5rem 1.25rem; cursor:pointer; font-size:.72rem; font-weight:500; color:var(--muted); border:1px solid var(--border); border-radius:6px; text-transform:uppercase; letter-spacing:1.5px; transition:all .2s; user-select:none; background:transparent; }
+.sub-tab:hover { color:var(--text); border-color:var(--gold-dim); }
+.sub-tab.active { color:var(--gold); border-color:var(--gold); background:#17233a; }
 
-main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
+main { max-width:1000px; margin:0 auto; padding:2rem; }
 
-.status-bar { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.25rem; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.8rem; color: var(--muted); }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
-.dot.loading { background: var(--gold); animation: pulse 1s ease infinite; }
-.dot.error { background: #f87171; }
+/* STATUS */
+.status-bar { display:flex; align-items:center; gap:.6rem; padding:.75rem 1.25rem; background:var(--card); border:1px solid var(--border); border-radius:8px; margin-bottom:1.5rem; font-size:.8rem; color:var(--muted); }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--green); flex-shrink:0; }
+.dot.loading { background:var(--gold); animation:pulse 1s ease infinite; }
+.dot.error { background:var(--red); }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-.banner { display: flex; align-items: center; gap: 0.6rem; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.78rem; margin-bottom: 1rem; }
-.banner.live-banner { background: #0a1a10; border: 1px solid #1c3d25; color: var(--green); }
-.banner.prono-banner { background: #17233a; border: 1px solid var(--gold-dim); color: var(--gold); }
-.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; animation: pulse 1.5s ease infinite; }
+/* BANNER */
+.banner { display:flex; align-items:center; gap:.6rem; border-radius:8px; padding:.6rem 1rem; font-size:.78rem; margin-bottom:1rem; }
+.banner.live-banner { background:#0a1a10; border:1px solid #1c3d25; color:var(--green); }
+.banner.prono-banner { background:#17233a; border:1px solid var(--gold-dim); color:var(--gold); }
+.pulse-dot { width:8px; height:8px; border-radius:50%; background:var(--green); flex-shrink:0; animation:pulse 1.5s ease infinite; }
 
-.leaderboard { display: flex; flex-direction: column; gap: 0.5rem; }
-.player-row { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1.25rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
-.player-row:hover { border-color: var(--gold-dim); background: #141e32; }
-.player-row.medal-gold { border-color: var(--gold); }
-.player-row.medal-silver { border-color: #9ba8ba; }
-.player-row.medal-bronze { border-color: #b87333; }
-.rank-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; min-width: 34px; text-align: center; line-height: 1; }
+/* LEADERBOARD */
+.leaderboard { display:flex; flex-direction:column; gap:.5rem; }
+.player-row { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem 1.5rem; display:flex; align-items:center; gap:1.25rem; cursor:pointer; transition:border-color .2s,background .2s; }
+.player-row:hover { border-color:var(--gold-dim); background:#141e32; }
+.player-row.medal-gold   { border-color:var(--gold); }
+.player-row.medal-silver { border-color:#9ba8ba; }
+.player-row.medal-bronze { border-color:#b87333; }
+.rank-num { font-family:'Bebas Neue',sans-serif; font-size:1.7rem; min-width:34px; text-align:center; line-height:1; }
 .r1{color:var(--gold)} .r2{color:#b0bac9} .r3{color:#c07a41} .rx{color:var(--muted)}
-.avatar { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; flex-shrink: 0; overflow: hidden; border: 2px solid transparent; }
-.avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.player-info { flex: 1; min-width: 0; }
-.player-display { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.player-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
-.pts-breakdown { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
-.player-progress { display: flex; align-items: center; gap: 0.5rem; margin-top: 4px; }
-.progress-bar { flex: 1; max-width: 100px; height: 3px; background: var(--border); border-radius: 2px; }
-.progress-fill { height: 100%; border-radius: 2px; background: var(--gold-dim); }
-.progress-label { font-size: 0.68rem; color: var(--muted); }
-.pts-block { text-align: right; flex-shrink: 0; }
-.pts-big { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; color: var(--gold); line-height: 1; }
-.pts-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.avatar { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.85rem; flex-shrink:0; overflow:hidden; border:2px solid transparent; }
+.avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.player-info { flex:1; min-width:0; }
+.player-display { font-weight:600; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.player-sub { font-size:.72rem; color:var(--muted); margin-top:1px; }
+.pts-breakdown { font-size:.68rem; color:var(--muted); margin-top:2px; }
+.player-progress { display:flex; align-items:center; gap:.5rem; margin-top:4px; }
+.progress-bar { flex:1; max-width:100px; height:3px; background:var(--border); border-radius:2px; }
+.progress-fill { height:100%; border-radius:2px; background:var(--gold-dim); }
+.progress-label { font-size:.68rem; color:var(--muted); }
+.pts-block { text-align:right; flex-shrink:0; }
+.pts-big { font-family:'Bebas Neue',sans-serif; font-size:2.2rem; color:var(--gold); line-height:1; }
+.pts-label { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
 
-.quest-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.6rem; overflow: hidden; transition: border-color 0.2s; }
-.quest-card:hover { border-color: #243450; }
-.quest-head { padding: 1rem 1.5rem; display: flex; align-items: flex-start; gap: 1rem; cursor: pointer; user-select: none; }
-.quest-title-wrap { flex: 1; min-width: 0; }
-.quest-title { font-weight: 500; font-size: 0.9rem; line-height: 1.4; }
-.quest-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
-.quest-live-pill { display: inline-flex; align-items: center; gap: 0.35rem; background: var(--green-dim); border: 1px solid #1c5c3d; border-radius: 4px; padding: 0.15rem 0.5rem; font-size: 0.68rem; color: var(--green); margin-top: 5px; }
-.badge { background: #17233a; border: 1px solid var(--gold-dim); color: var(--gold); padding: 0.2rem 0.65rem; border-radius: 4px; font-family: 'Bebas Neue', sans-serif; font-size: 0.9rem; letter-spacing: 1px; white-space: nowrap; flex-shrink: 0; }
-.chevron { color: var(--muted); font-size: 0.7rem; flex-shrink: 0; transition: transform 0.2s; padding-top: 4px; }
-.chevron.open { transform: rotate(180deg); }
-.quest-body { display: none; border-top: 1px solid var(--border); padding: 1rem 1.5rem; }
-.quest-body.open { display: block; }
-.ref-row { display: flex; align-items: center; gap: 0.75rem; background: var(--green-dim); border: 1px solid #1c5c3d; border-radius: 6px; padding: 0.6rem 1rem; margin-bottom: 0.9rem; font-size: 0.82rem; }
-.ref-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; color: var(--green); }
-.ref-value { font-weight: 500; color: var(--green); }
-.answers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 0.45rem; }
-.ans-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 0.5rem 0.7rem; }
-.ans-chip.hit { background: var(--green-dim); border-color: #1c5c3d; }
-.ans-chip.miss { opacity: 0.55; }
-.ans-who { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-.ans-val { font-size: 0.82rem; font-weight: 500; margin-top: 2px; }
-.ans-val.empty { color: var(--muted); font-style: italic; }
-.ans-chip.hit .ans-val { color: var(--green); }
+/* QUEST CARDS */
+.quest-card { background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:.6rem; overflow:hidden; transition:border-color .2s; }
+.quest-card:hover { background:#141e32; }
+.quest-head { padding:1rem 1.5rem; display:flex; align-items:flex-start; gap:1rem; cursor:pointer; user-select:none; }
+.quest-title-wrap { flex:1; min-width:0; }
+.quest-title { font-weight:500; font-size:.9rem; line-height:1.4; }
+.quest-sub { font-size:.75rem; color:var(--muted); margin-top:2px; }
+.quest-pills { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:5px; }
+.pill { display:inline-flex; align-items:center; gap:.3rem; border-radius:4px; padding:.15rem .5rem; font-size:.68rem; }
+.pill.live     { background:var(--green-dim); border:1px solid #1c5c3d; color:var(--green); }
+.pill.final    { background:#17233a; border:1px solid var(--gold-dim); color:var(--gold); }
+.pill.prono-pill { background:#1a1a2a; border:1px solid var(--border); color:var(--muted); }
+.badge { background:#17233a; border:1px solid var(--gold-dim); color:var(--gold); padding:.2rem .65rem; border-radius:4px; font-family:'Bebas Neue',sans-serif; font-size:.9rem; letter-spacing:1px; white-space:nowrap; flex-shrink:0; }
+.chevron { color:var(--muted); font-size:.7rem; flex-shrink:0; transition:transform .2s; padding-top:4px; }
+.chevron.open { transform:rotate(180deg); }
+.quest-body { display:none; border-top:1px solid var(--border); padding:1rem 1.5rem; }
+.quest-body.open { display:block; }
 
-.p-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem; margin-bottom: 1.5rem; }
-.p-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.9rem; cursor: pointer; text-align: center; transition: all 0.2s; }
-.p-card:hover, .p-card.sel { border-color: var(--gold); background: #141e32; }
-.p-av { width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 0.5rem; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; overflow: hidden; border: 2px solid transparent; }
-.p-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.p-name { font-weight: 600; font-size: 0.9rem; }
-.p-pseudo { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
-.p-score { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; color: var(--gold); margin-top: 4px; }
+/* REF ROW */
+.ref-row { display:flex; align-items:center; gap:.75rem; border-radius:6px; padding:.6rem 1rem; margin-bottom:.9rem; font-size:.82rem; }
+.ref-row.live    { background:var(--green-dim); border:1px solid #1c5c3d; }
+.ref-row.neutral { background:#17233a; border:1px solid var(--gold-dim); }
+.ref-label { font-size:.65rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+.ref-row.live    .ref-label { color:var(--green); }
+.ref-row.neutral .ref-label { color:var(--gold); }
+.ref-value { font-weight:500; }
+.ref-row.live    .ref-value { color:var(--green); }
+.ref-row.neutral .ref-value { color:var(--gold); }
 
-.detail-wrap { display: none; }
-.detail-wrap.show { display: block; }
-.detail-top { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem; }
-.detail-av { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; flex-shrink: 0; overflow: hidden; }
-.detail-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.detail-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; color: var(--gold); letter-spacing: 2px; line-height: 1; }
-.detail-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
-.detail-right { margin-left: auto; text-align: right; }
-.detail-pts { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--gold); line-height: 1; }
-.detail-pts-lbl { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-.detail-breakdown { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
-.qli { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1.25rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 1rem; }
-.qli-name { flex: 1; font-size: 0.8rem; color: var(--muted); }
-.qli-ans { font-size: 0.88rem; font-weight: 500; }
-.qli-ans.no { color: var(--muted); font-style: italic; font-weight: 400; }
-.qli-ans.hit { color: var(--green); }
-.qli-pts { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; min-width: 56px; text-align: right; }
-.qli-pts.earned { color: var(--gold); }
-.qli-pts.zero { color: var(--border); }
+/* ANSWERS GRID */
+.answers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:.45rem; }
+.ans-chip { background:var(--surface); border:1px solid var(--border); border-radius:7px; padding:.5rem .7rem; }
+.ans-chip.state-validé    { background:var(--green-dim); border-color:#1c5c3d; }
+.ans-chip.state-impossible{ background:var(--red-dim); border-color:#5c1c1c; opacity:.6; }
+.ans-chip.state-possible-hit { background:var(--blue-dim); border-color:#2a5a9a; }
+.ans-who { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.ans-val { font-size:.82rem; font-weight:500; margin-top:2px; }
+.ans-val.empty { color:var(--muted); font-style:italic; }
+.ans-chip.state-validé .ans-val     { color:var(--green); }
+.ans-chip.state-impossible .ans-val { color:var(--red); }
+.ans-chip.state-possible-hit .ans-val { color:var(--blue); }
+.ans-etat { font-size:.6rem; margin-top:2px; text-transform:uppercase; letter-spacing:.5px; }
+.ans-chip.state-validé .ans-etat     { color:var(--green); }
+.ans-chip.state-impossible .ans-etat { color:var(--red); }
+.ans-chip.state-possible-hit .ans-etat { color:var(--blue); }
 
-.hidden { display: none !important; }
-.error-box { background: #1a0e0e; border: 1px solid #6b1f1f; border-radius: 8px; padding: 1.5rem; color: #f87171; text-align: center; font-size: 0.9rem; }
-.sheet-link { display: inline-flex; align-items: center; gap: 0.5rem; background: #17233a; border: 1px solid var(--border); color: var(--muted); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; margin-bottom: 1.5rem; }
-.sheet-link:hover { border-color: var(--gold); color: var(--gold); }
+/* PARTICIPANTS */
+.p-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:.5rem; margin-bottom:1.5rem; }
+.p-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:.9rem; cursor:pointer; text-align:center; transition:all .2s; }
+.p-card:hover,.p-card.sel { border-color:var(--gold); background:#141e32; }
+.p-av { width:48px; height:48px; border-radius:50%; margin:0 auto .5rem; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.9rem; overflow:hidden; border:2px solid transparent; }
+.p-av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.p-name { font-weight:600; font-size:.9rem; }
+.p-pseudo { font-size:.7rem; color:var(--muted); margin-top:1px; }
+.p-score { font-family:'Bebas Neue',sans-serif; font-size:1.25rem; color:var(--gold); margin-top:4px; }
+
+.detail-wrap { display:none; }
+.detail-wrap.show { display:block; }
+.detail-top { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.5rem; margin-bottom:1rem; display:flex; align-items:center; gap:1.5rem; }
+.detail-av { width:60px; height:60px; border-radius:50%; border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:1.5rem; flex-shrink:0; overflow:hidden; }
+.detail-av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.detail-name { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; color:var(--gold); letter-spacing:2px; line-height:1; }
+.detail-sub { font-size:.72rem; color:var(--muted); margin-top:4px; }
+.detail-right { margin-left:auto; text-align:right; }
+.detail-pts { font-family:'Bebas Neue',sans-serif; font-size:2.5rem; color:var(--gold); line-height:1; }
+.detail-pts-lbl { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.detail-breakdown { font-size:.7rem; color:var(--muted); margin-top:2px; }
+
+.qli { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:.85rem 1.25rem; margin-bottom:.4rem; display:flex; align-items:center; gap:1rem; }
+.qli.qli-validé    { border-color:#1c5c3d; }
+.qli.qli-impossible{ opacity:.4; }
+.qli.qli-hit       { border-color:#2a5a9a; }
+.qli-name { flex:1; font-size:.8rem; color:var(--muted); }
+.qli-ans { font-size:.88rem; font-weight:500; }
+.qli-ans.no  { color:var(--muted); font-style:italic; font-weight:400; }
+.qli-ans.hit-confirmed { color:var(--green); }
+.qli-ans.hit-live      { color:var(--blue); }
+.qli-ans.impossible    { color:var(--red); }
+.qli-pts { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; min-width:56px; text-align:right; }
+.qli-pts.earned { color:var(--gold); }
+.qli-pts.zero   { color:var(--border); }
+
+.hidden { display:none !important; }
+.error-box { background:#1a0e0e; border:1px solid #6b1f1f; border-radius:8px; padding:1.5rem; color:var(--red); text-align:center; font-size:.9rem; }
+.sheet-link { display:inline-flex; align-items:center; gap:.5rem; background:#17233a; border:1px solid var(--border); color:var(--muted); padding:.5rem 1rem; border-radius:6px; text-decoration:none; font-size:.78rem; text-transform:uppercase; letter-spacing:1px; transition:all .2s; margin-bottom:1.5rem; }
+.sheet-link:hover { border-color:var(--gold); color:var(--gold); }
 </style>
 </head>
 <body>
@@ -145,7 +176,10 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
       <img src="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg"
            alt="WCoW26" onerror="this.parentElement.innerHTML='⚽'">
     </div>
-    <div class="logo">WCoW 2026</div>
+    <div class="logo-text">
+      <div class="logo">WCoW 2026</div>
+      <div class="logo-sub">World Champion of What ?</div>
+    </div>
   </div>
   <div class="header-right">
     <span class="last-update" id="last-update"></span>
@@ -154,8 +188,8 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 </div>
 
 <nav>
-  <div class="tab active" data-tab="classement" onclick="showTab('classement')">Classement</div>
-  <div class="tab"        data-tab="quests"     onclick="showTab('quests')">Side Quests</div>
+  <div class="tab active" data-tab="classement"   onclick="showTab('classement')">Classement</div>
+  <div class="tab"        data-tab="quests"       onclick="showTab('quests')">Side Quests</div>
   <div class="tab"        data-tab="participants" onclick="showTab('participants')">Participants</div>
 </nav>
 
@@ -166,30 +200,26 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
   </div>
   <div id="error-box" class="error-box hidden"></div>
 
-  <!-- CLASSEMENT -->
   <div id="tab-classement" class="hidden">
     <div class="sub-nav">
-      <div class="sub-tab active" data-sub="fictif" onclick="showSub('fictif')">Fictif</div>
-      <div class="sub-tab"        data-sub="reel"   onclick="showSub('reel')">Réel</div>
+      <div class="sub-tab active" data-sub="reel"   onclick="showSub('reel')">Réel</div>
+      <div class="sub-tab"        data-sub="fictif" onclick="showSub('fictif')">Fictif</div>
     </div>
-
-    <div id="sub-fictif">
+    <div id="sub-reel">
+      <div class="banner prono-banner">
+        PronoContest + side quests validées — points officiels uniquement
+      </div>
+      <div class="leaderboard" id="reel-list"></div>
+    </div>
+    <div id="sub-fictif" class="hidden">
       <div class="banner live-banner">
         <div class="pulse-dot"></div>
-        Points PronoContest + Side Quests en cours — évolue au fil de la compétition
+        PronoContest + side quests en cours — points provisoires
       </div>
-      <div class="leaderboard" id="live-list"></div>
-    </div>
-
-    <div id="sub-reel" class="hidden">
-      <div class="banner prono-banner">
-        Scores officiels PronoContest uniquement — mis à jour par l'admin après chaque journée
-      </div>
-      <div class="leaderboard" id="classement-list"></div>
+      <div class="leaderboard" id="fictif-list"></div>
     </div>
   </div>
 
-  <!-- SIDE QUESTS -->
   <div id="tab-quests" class="hidden">
     <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
       Remplir mes pronostics sur Google Sheets →
@@ -197,7 +227,6 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
     <div id="quests-list"></div>
   </div>
 
-  <!-- PARTICIPANTS -->
   <div id="tab-participants" class="hidden">
     <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
       Remplir mes pronostics sur Google Sheets →
@@ -208,35 +237,24 @@ main { max-width: 1000px; margin: 0 auto; padding: 2rem; }
 </main>
 
 <script>
-const API_KEY  = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
-const SHEET_ID = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
+const API_KEY     = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
+const SHEET_ID    = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
 const PHOTOS_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/participants/';
 
 const PSEUDOS = {
   Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais', Ro:'BoosterDre',
   Ax:'Michael Au Lit !', Os:'Chapchenko', So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
 };
-
-const PRONO_QUESTS = ['LES LEGENDES','PROJET BLUE LOCK','PARK THE BUS','OGRES','BOOSTERDRE'];
-
 const PHOTO_MAP = {
-  Lu:'participant.png',
-  Ry:'participant%20-%20Copie.png',
-  Au:'participant%20-%20Copie%20(2).png',
-  Im:'participant%20-%20Copie%20(3).png',
-  Al:'participant%20-%20Copie%20(4).png',
-  Co:'participant%20-%20Copie%20(5).png',
-  Ha:'participant%20-%20Copie%20(6).png',
-  Ad:'participant%20-%20Copie%20(7).png',
-  Ro:'participant%20-%20Copie%20(8).png',
-  Ax:'participant%20-%20Copie%20(9).png',
-  Os:'participant%20-%20Copie%20(10).png',
-  So:'participant%20-%20Copie%20(11).png',
-  Pa:'participant%20-%20Copie%20(12).png',
-  He:'participant%20-%20Copie%20(13).png',
+  Lu:'participant.png', Ry:'participant%20-%20Copie.png',
+  Au:'participant%20-%20Copie%20(2).png', Im:'participant%20-%20Copie%20(3).png',
+  Al:'participant%20-%20Copie%20(4).png', Co:'participant%20-%20Copie%20(5).png',
+  Ha:'participant%20-%20Copie%20(6).png', Ad:'participant%20-%20Copie%20(7).png',
+  Ro:'participant%20-%20Copie%20(8).png', Ax:'participant%20-%20Copie%20(9).png',
+  Os:'participant%20-%20Copie%20(10).png', So:'participant%20-%20Copie%20(11).png',
+  Pa:'participant%20-%20Copie%20(12).png', He:'participant%20-%20Copie%20(13).png',
   Ba:'participant%20-%20Copie%20(14).png',
 };
-
 const AV_COLORS = [
   {bg:'#1a2e5a',fg:'#6b9ef8'},{bg:'#1a3a28',fg:'#4ecf8e'},
   {bg:'#3a1a28',fg:'#f87cb0'},{bg:'#2e1a0a',fg:'#f0a050'},
@@ -244,98 +262,140 @@ const AV_COLORS = [
   {bg:'#3a1a1a',fg:'#f08080'},{bg:'#0a2a2a',fg:'#40d0c0'},
 ];
 
-let DATA = null;
-let activeTab = 'classement';
-let activeSub = 'fictif';
+// Quest type detection
+function questType(name) {
+  const n = name.toUpperCase();
+  if (n.includes("VIF D'OR") || n.includes('VIF D')) return 'vif_or';
+  if (n.includes('REPÊCHÉ') || n.includes('REPECHE'))  return 'repeches';
+  if (['MESSI','BUILD THE WALL','ON PROLONGE','LA FORCE'].some(k=>n.includes(k))) return 'final_only';
+  if (['LEGENDES','OGRES','BOOSTERDRE'].some(k=>n.includes(k))) return 'prono';
+  // live_3: SAUVAGES, LET HIM COOK, RÉSERVISTES, DUELS, MUTINERIE, FESTIVAL, ALEX HUNTER, PROJET BLUE LOCK, PARK THE BUS
+  return 'live_3';
+}
+
+let DATA = null, activeTab = 'classement', activeSub = 'reel';
 let lastLoadTime = null;
 const COOLDOWN_MS = 60000;
 
 function displayName(p) { return PSEUDOS[p] || p; }
 function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
-function photoUrl(p) { return PHOTO_MAP[p] ? PHOTOS_BASE + PHOTO_MAP[p] : null; }
-function isPronoQuest(name) {
-  const n = name.split('\n')[0].toUpperCase().trim();
-  return PRONO_QUESTS.some(pq => n.includes(pq));
-}
+function photoUrl(p) { return PHOTO_MAP[p] ? PHOTOS_BASE+PHOTO_MAP[p] : null; }
 
 function mkAvatar(p, size, cls) {
-  const c = avColor(p), url = photoUrl(p);
+  const c=avColor(p), url=photoUrl(p);
   if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${p}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'"></div>`;
   return `<div class="${cls}" style="width:${size}px;height:${size}px;background:${c.bg};color:${c.fg};border-color:${c.fg}33">${p}</div>`;
 }
 
+// ── FETCH ─────────────────────────────────────────────────────────────────
 async function fetchRange(range) {
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
-  const res = await fetch(url);
-  const json = await res.json();
+  const url=`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
+  const res=await fetch(url); const json=await res.json();
   if (json.error) throw new Error(json.error.message);
-  return json.values || [];
+  return json.values||[];
 }
 
+// ── PARSE Feuille 6 ───────────────────────────────────────────────────────
+// Row 0: ["","","", "Lu","","Ry","","Au","",...]   ← participant names (merged 2 cols each)
+// Row 1: ["","","Réponse Live","Pronostic","État","Pronostic","État",...]
+// Row 2+: data
 function parseFeuille6(rows) {
-  if (!rows.length) return { participants:[], quests:[] };
-  const header = rows[0];
-  const participants = header.slice(3).map(s=>(s||'').trim()).filter(Boolean);
+  if (rows.length < 3) return { participants:[], quests:[] };
+  const nameRow = rows[0];
+  const participants = [];
+  const pCols = {}; // { p: { pro: idx, etat: idx } }
+
+  for (let i = 3; i < nameRow.length; i += 2) {
+    const p = (nameRow[i]||'').trim();
+    if (p) { participants.push(p); pCols[p] = { pro: i, etat: i+1 }; }
+  }
+
   const quests = [];
-  for (let i=1; i<rows.length; i++) {
+  for (let i = 2; i < rows.length; i++) {
     const row = rows[i]||[];
     const name = (row[0]||'').trim();
-    if (!name) continue;
+    if (!name || name.startsWith('États')) continue;
     const ptsRaw  = (row[1]||'').trim();
     const liveAns = (row[2]||'').trim();
-    const ptsNum  = parseInt((ptsRaw.match(/\d+/)||['0'])[0]) || 0;
-    const answers = {};
-    participants.forEach((p,idx) => { answers[p] = (row[idx+3]||'').trim(); });
-    quests.push({ name, ptsRaw, ptsNum, liveAns, answers });
+    const ptsNum  = parseInt((ptsRaw.match(/\d+/)||['0'])[0])||0;
+    const answers={}, etats={};
+    participants.forEach(p => {
+      answers[p] = (row[pCols[p].pro ]||'').trim();
+      etats[p]   = (row[pCols[p].etat]||'possible').trim().toLowerCase();
+    });
+    quests.push({ name, ptsRaw, ptsNum, liveAns, answers, etats, type:questType(name) });
   }
   return { participants, quests };
 }
 
-function parseProno(rows) {
-  const scores = {};
-  for (const row of rows.slice(1)) {
-    const p = (row[0]||'').trim();
-    const s = parseInt(row[1]||'0') || 0;
-    if (p) scores[p] = s;
+// ── FETCH PRONO (tries multiple sheet names) ──────────────────────────────
+async function fetchProno() {
+  for (const name of ['PronoContest','PronoContests Classement Live','Prono Contest']) {
+    try {
+      const rows = await fetchRange(`'${name}'!A1:B20`);
+      if (rows.length > 1) {
+        const scores={};
+        rows.slice(1).forEach(r => { const p=(r[0]||'').trim(); if(p) scores[p]=parseInt(r[1]||'0')||0; });
+        if (Object.keys(scores).length) return scores;
+      }
+    } catch(e) {}
   }
-  return scores;
+  return {};
 }
 
-function calcSideQuestPts(quests, p) {
-  let pts = 0;
-  for (const q of quests) {
-    if (isPronoQuest(q.name) || !q.liveAns) continue;
-    const ans = (q.answers[p]||'').trim().toLowerCase();
-    const ref = q.liveAns.trim().toLowerCase();
-    if (!ans || !ref) continue;
-    if (q.name.toUpperCase().includes('REPÊCHÉ')) {
-      const rl = ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
-      ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean).forEach(pick => {
-        if (pick && rl.includes(pick)) pts += 20;
-      });
-    } else {
-      if (ans === ref) pts += q.ptsNum;
-    }
+// ── SCORE CALC ────────────────────────────────────────────────────────────
+// mode: 'fictif' | 'reel'
+function calcQuestPts(q, p, mode) {
+  const { type, liveAns, ptsNum, answers, etats } = q;
+  const ans   = (answers[p]||'').trim().toLowerCase();
+  const ref   = liveAns.trim().toLowerCase();
+  const etat  = (etats[p]||'possible').toLowerCase();
+
+  if (type === 'prono') return 0;
+  if (etat === 'impossible') return 0;
+
+  // VIF D'OR: validé par l'admin → 300 pts (fictif + réel)
+  if (type === 'vif_or') return etat === 'validé' ? 300 : 0;
+
+  // REPÊCHÉS: uniquement quand validé — cherche combien de pays correspondent
+  if (type === 'repeches') {
+    if (etat !== 'validé' || !ref || !ans) return 0;
+    const refList = ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+    const ansList = ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+    return ansList.reduce((acc,pick) => acc+(pick&&refList.includes(pick)?20:0), 0);
   }
-  return pts;
+
+  // FINAL_ONLY: pas de fictif, réel uniquement si validé
+  if (type === 'final_only') {
+    if (mode === 'fictif') return 0;
+    if (etat !== 'validé' || !ref || !ans) return 0;
+    return ans === ref ? ptsNum : 0;
+  }
+
+  // LIVE_3: fictif si possible/validé + correspond; réel uniquement si validé
+  if (!ref || !ans) return 0;
+  if (mode === 'reel' && etat !== 'validé') return 0;
+  return ans === ref ? ptsNum : 0;
 }
 
-function renderLeaderboard(containerId, participants, quests, pronoScores, liveMode) {
+function calcTotal(quests, pronoScores, p, mode) {
+  const prono = pronoScores[p]||0;
+  const sq    = quests.reduce((acc,q) => acc+calcQuestPts(q,p,mode), 0);
+  return { total:prono+sq, prono, sq };
+}
+
+// ── RENDER LEADERBOARD ────────────────────────────────────────────────────
+function renderLeaderboard(containerId, participants, quests, pronoScores, mode) {
   const rows = participants.map(p => {
-    const prono = pronoScores[p] || 0;
-    const sq    = liveMode ? calcSideQuestPts(quests, p) : 0;
-    return { p, total: prono + sq, prono, sq };
-  }).sort((a,b) => b.total - a.total);
+    const {total,prono,sq} = calcTotal(quests,pronoScores,p,mode);
+    return {p,total,prono,sq};
+  }).sort((a,b)=>b.total-a.total);
 
-  const medals = ['medal-gold','medal-silver','medal-bronze'];
-  const rclass = ['r1','r2','r3'];
-
+  const medals=['medal-gold','medal-silver','medal-bronze'], rclass=['r1','r2','r3'];
   document.getElementById(containerId).innerHTML = rows.map(({p,total,prono,sq},i) => {
-    const disp    = displayName(p);
-    const filled  = quests.filter(q=>q.answers[p]).length;
-    const breakdown = liveMode && sq > 0
-      ? `PronoContest: ${prono} pts + Side Quests: ${sq} pts`
-      : `PronoContest: ${prono} pts`;
+    const disp   = displayName(p);
+    const filled = quests.filter(q=>q.answers[p]).length;
+    const breakdown = sq>0 ? `PronoContest: ${prono} pts + Side Quests: ${sq} pts` : `PronoContest: ${prono} pts`;
     return `
     <div class="player-row ${medals[i]||''}" onclick="selectParticipant('${p}')">
       <div class="rank-num ${rclass[i]||'rx'}">${i+1}</div>
@@ -357,22 +417,55 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, liveM
   }).join('');
 }
 
+// ── RENDER QUESTS ─────────────────────────────────────────────────────────
 function renderQuests(participants, quests) {
   document.getElementById('quests-list').innerHTML = quests.map((q,qi) => {
-    const shortName = q.name.split('\n')[0];
-    const subName   = q.name.split('\n').slice(1).join(' ').trim();
-    const hasLive   = !!q.liveAns;
-    const liveL     = q.liveAns.trim().toLowerCase();
+    const {name,ptsRaw,ptsNum,liveAns,type} = q;
+    const shortName = name.split('\n')[0];
+    const subName   = name.split('\n').slice(1).join(' ').trim();
+    const ref       = liveAns.trim().toLowerCase();
 
-    const refBlock = hasLive ? `<div class="ref-row"><div><div class="ref-label">Réponse live</div><div class="ref-value">${q.liveAns}</div></div></div>` : '';
-    const pill = hasLive ? `<div class="quest-live-pill"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;flex-shrink:0"></div>${q.liveAns}</div>` : '';
+    // Global pill describing the quest
+    let pills = '';
+    if (type==='prono')      pills=`<div class="pill prono-pill">Via PronoContest</div>`;
+    else if (type==='final_only') pills=`<div class="pill final">${liveAns?'Résultat : '+liveAns:'Résultat final uniquement'}</div>`;
+    else if (type==='repeches')   pills=`<div class="pill final">${liveAns?'Résultat : '+liveAns:'Résultat phase de groupes'}</div>`;
+    else if (type==='vif_or')     pills=`<div class="pill final">Statut individuel par admin</div>`;
+    else if (liveAns) pills=`<div class="pill live"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;flex-shrink:0"></div>${liveAns}</div>`;
 
+    // Ref block
+    let refBlock = '';
+    if (liveAns && type!=='vif_or') {
+      const cls = (type==='final_only'||type==='repeches') ? 'neutral' : 'live';
+      const lbl = (type==='final_only'||type==='repeches') ? 'Résultat confirmé' : 'En cours';
+      refBlock = `<div class="ref-row ${cls}"><div><div class="ref-label">${lbl}</div><div class="ref-value">${liveAns}</div></div></div>`;
+    } else if (!liveAns && type!=='vif_or') {
+      refBlock = `<div class="ref-row neutral"><div><div class="ref-label">En attente</div><div class="ref-value">Aucune réponse live renseignée</div></div></div>`;
+    }
+
+    // Chips — one per participant showing their answer + état
     const chips = participants.map(p => {
-      const ans  = q.answers[p];
-      const ansL = (ans||'').trim().toLowerCase();
-      const hit  = hasLive && ansL && ansL === liveL;
-      const miss = hasLive && ans && !hit;
-      return `<div class="ans-chip ${hit?'hit':miss?'miss':''}"><div class="ans-who">${p}</div><div class="ans-val ${!ans?'empty':''}">${ans||'—'}</div></div>`;
+      const ans   = q.answers[p];
+      const ansL  = (ans||'').trim().toLowerCase();
+      const etat  = (q.etats[p]||'possible').toLowerCase();
+
+      let chipCls = '', etatLabel = '';
+      if (etat==='impossible') { chipCls='state-impossible'; etatLabel='impossible'; }
+      else if (etat==='validé') {
+        // For vif_or: validé means they got the 300pts
+        // For others: validé + matching = confirmed points
+        chipCls = 'state-validé'; etatLabel='validé';
+      } else if (ref && ansL && ansL===ref) {
+        chipCls='state-possible-hit'; etatLabel='en cours ✓';
+      } else {
+        etatLabel = 'possible';
+      }
+
+      return `<div class="ans-chip ${chipCls}">
+        <div class="ans-who">${p}</div>
+        <div class="ans-val ${!ans?'empty':''}">${ans||'—'}</div>
+        <div class="ans-etat">${etatLabel}</div>
+      </div>`;
     }).join('');
 
     return `
@@ -381,20 +474,24 @@ function renderQuests(participants, quests) {
         <div class="quest-title-wrap">
           <div class="quest-title">${shortName}</div>
           ${subName?`<div class="quest-sub">${subName}</div>`:''}
-          ${pill}
+          <div class="quest-pills">${pills}</div>
         </div>
-        <div class="badge">${q.ptsRaw||q.ptsNum}</div>
+        <div class="badge">${ptsRaw||ptsNum}</div>
         <div class="chevron" id="chev-${qi}">▼</div>
       </div>
-      <div class="quest-body" id="qb-${qi}">${refBlock}<div class="answers-grid">${chips}</div></div>
+      <div class="quest-body" id="qb-${qi}">
+        ${refBlock}
+        <div class="answers-grid">${chips}</div>
+      </div>
     </div>`;
   }).join('');
 }
 
+// ── RENDER PARTICIPANTS ───────────────────────────────────────────────────
 function renderParticipants(participants, quests, pronoScores) {
   document.getElementById('p-grid').innerHTML = participants.map(p => {
-    const disp  = displayName(p);
-    const total = (pronoScores[p]||0) + calcSideQuestPts(quests, p);
+    const disp = displayName(p);
+    const {total} = calcTotal(quests,pronoScores,p,'fictif');
     return `
     <div class="p-card" id="pcard-${p}" onclick="selectParticipant('${p}')">
       ${mkAvatar(p,48,'p-av')}
@@ -408,27 +505,30 @@ function renderParticipants(participants, quests, pronoScores) {
 function selectParticipant(p) {
   showTab('participants');
   document.querySelectorAll('.p-card').forEach(c=>c.classList.remove('sel'));
-  const card = document.getElementById(`pcard-${p}`);
+  const card=document.getElementById(`pcard-${p}`);
   if (card) { card.classList.add('sel'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
 
-  const {quests, pronoScores} = DATA;
-  const disp  = displayName(p);
-  const prono = pronoScores[p] || 0;
-  const sq    = calcSideQuestPts(quests, p);
-  const total = prono + sq;
-  const c     = avColor(p);
-  const url   = photoUrl(p);
+  const {quests,pronoScores}=DATA;
+  const disp=displayName(p), prono=pronoScores[p]||0;
+  const sq=quests.reduce((acc,q)=>acc+calcQuestPts(q,p,'fictif'),0);
+  const total=prono+sq, c=avColor(p), url=photoUrl(p);
 
   const rows = quests.map(q => {
-    const shortN  = q.name.split('\n')[0];
-    const ans     = q.answers[p];
-    const ansL    = (ans||'').trim().toLowerCase();
-    const liveL   = q.liveAns.trim().toLowerCase();
-    const hit     = !!q.liveAns && ansL && ansL === liveL;
-    const earned  = (!isPronoQuest(q.name) && hit) ? q.ptsNum : 0;
-    return `<div class="qli">
+    const shortN=q.name.split('\n')[0];
+    const ans=q.answers[p];
+    const ansL=(ans||'').trim().toLowerCase();
+    const ref=q.liveAns.trim().toLowerCase();
+    const etat=(q.etats[p]||'possible').toLowerCase();
+    const earned=calcQuestPts(q,p,'fictif');
+
+    let ansCls='', qliCls='';
+    if (etat==='impossible')   { ansCls='impossible'; qliCls='qli-impossible'; }
+    else if (etat==='validé')  { ansCls='hit-confirmed'; qliCls='qli-validé'; }
+    else if (ref&&ansL&&ansL===ref) { ansCls='hit-live'; qliCls='qli-hit'; }
+
+    return `<div class="qli ${qliCls}">
       <div class="qli-name">${shortN}</div>
-      <div class="qli-ans ${!ans?'no':hit?'hit':''}">${ans||'Non rempli'}</div>
+      <div class="qli-ans ${!ans?'no':ansCls}">${ans||'Non rempli'}</div>
       <div class="qli-pts ${earned?'earned':'zero'}">${earned?'+'+earned:'—'}</div>
     </div>`;
   }).join('');
@@ -437,9 +537,9 @@ function selectParticipant(p) {
     ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">`
     : p;
 
-  const dw = document.getElementById('detail-wrap');
+  const dw=document.getElementById('detail-wrap');
   dw.classList.add('show');
-  dw.innerHTML = `
+  dw.innerHTML=`
   <div class="detail-top">
     <div class="detail-av" style="background:${url?'transparent':c.bg};color:${c.fg};border-color:var(--gold)">${avInner}</div>
     <div>
@@ -448,92 +548,78 @@ function selectParticipant(p) {
     </div>
     <div class="detail-right">
       <div class="detail-pts">${total}</div>
-      <div class="detail-pts-lbl">points</div>
+      <div class="detail-pts-lbl">points fictifs</div>
       <div class="detail-breakdown">PronoContest: ${prono} · Side Quests: ${sq}</div>
     </div>
   </div>${rows}`;
 }
 
+// ── UTILS ─────────────────────────────────────────────────────────────────
 function toggleQ(qi) {
-  const body = document.getElementById(`qb-${qi}`);
-  const chev = document.getElementById(`chev-${qi}`);
-  body.classList.toggle('open');
-  chev.classList.toggle('open', body.classList.contains('open'));
+  const body=document.getElementById(`qb-${qi}`), chev=document.getElementById(`chev-${qi}`);
+  body.classList.toggle('open'); chev.classList.toggle('open',body.classList.contains('open'));
 }
-
 function showTab(tab) {
-  activeTab = tab;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  activeTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   ['classement','quests','participants'].forEach(id=>
-    document.getElementById(`tab-${id}`).classList.toggle('hidden', id!==tab));
-  if (tab === 'participants') document.getElementById('detail-wrap').classList.remove('show');
+    document.getElementById(`tab-${id}`).classList.toggle('hidden',id!==tab));
+  if (tab==='participants') document.getElementById('detail-wrap').classList.remove('show');
 }
-
 function showSub(sub) {
-  activeSub = sub;
-  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.toggle('active', t.dataset.sub===sub));
-  document.getElementById('sub-fictif').classList.toggle('hidden', sub !== 'fictif');
-  document.getElementById('sub-reel').classList.toggle('hidden', sub !== 'reel');
+  activeSub=sub;
+  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.toggle('active',t.dataset.sub===sub));
+  document.getElementById('sub-reel').classList.toggle('hidden',   sub!=='reel');
+  document.getElementById('sub-fictif').classList.toggle('hidden', sub!=='fictif');
 }
-
 function formatUpdateTime(t) {
-  const now     = new Date();
-  const isToday = t.toDateString() === now.toDateString();
-  const time    = t.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  const now=new Date(), isToday=t.toDateString()===now.toDateString();
+  const time=t.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
   if (isToday) return `Mis à jour Aujourd'hui à ${time}`;
-  const d = String(t.getDate()).padStart(2,'0');
-  const m = String(t.getMonth()+1).padStart(2,'0');
-  const y = String(t.getFullYear()).slice(-2);
+  const d=String(t.getDate()).padStart(2,'0'), m=String(t.getMonth()+1).padStart(2,'0'), y=String(t.getFullYear()).slice(-2);
   return `Mis à jour le ${d}/${m}/${y} à ${time}`;
 }
-
-function setStatus(type, msg) {
-  document.getElementById('status-dot').className = 'dot'+(type==='loading'?' loading':type==='error'?' error':'');
-  document.getElementById('status-text').textContent = msg;
-  ['classement','quests','participants'].forEach(id=>
-    document.getElementById(`tab-${id}`).classList.add('hidden'));
+function setStatus(type,msg) {
+  document.getElementById('status-dot').className='dot'+(type==='loading'?' loading':type==='error'?' error':'');
+  document.getElementById('status-text').textContent=msg;
+  ['classement','quests','participants'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
 }
 
+// ── LOAD ──────────────────────────────────────────────────────────────────
 async function loadData() {
-  if (lastLoadTime && (Date.now() - lastLoadTime < COOLDOWN_MS)) {
-    document.getElementById('last-update').textContent = 'Données déjà à jour';
-    setTimeout(() => {
-      document.getElementById('last-update').textContent = formatUpdateTime(new Date(lastLoadTime));
-    }, 2000);
+  if (lastLoadTime && (Date.now()-lastLoadTime < COOLDOWN_MS)) {
+    document.getElementById('last-update').textContent='Données déjà à jour';
+    setTimeout(()=>{ document.getElementById('last-update').textContent=formatUpdateTime(new Date(lastLoadTime)); },2000);
     return;
   }
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoRows] = await Promise.all([
-      fetchRange("'Feuille 6'!A1:T200"),
-      fetchRange("'PronoContests Classement Live'!A1:B20").catch(()=>[]),
+    const [f6rows, pronoScores] = await Promise.all([
+      fetchRange("'Feuille 6'!A1:AG200"),
+      fetchProno(),
     ]);
-
-    const parsed      = parseFeuille6(f6rows);
-    const pronoScores = parseProno(pronoRows);
+    const parsed = parseFeuille6(f6rows);
     DATA = { ...parsed, pronoScores };
 
-    renderLeaderboard('live-list',       DATA.participants, DATA.quests, pronoScores, true);
-    renderLeaderboard('classement-list', DATA.participants, DATA.quests, pronoScores, false);
+    renderLeaderboard('reel-list',   DATA.participants, DATA.quests, pronoScores, 'reel');
+    renderLeaderboard('fictif-list', DATA.participants, DATA.quests, pronoScores, 'fictif');
     renderQuests(DATA.participants, DATA.quests);
     renderParticipants(DATA.participants, DATA.quests, pronoScores);
 
-    lastLoadTime = Date.now();
-    document.getElementById('last-update').textContent = formatUpdateTime(new Date(lastLoadTime));
-    const liveActive = DATA.quests.filter(q=>q.liveAns).length;
-    setStatus('ok', `${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveActive} quête(s) live`);
-
-    ['classement','quests','participants'].forEach(id=>
-      document.getElementById(`tab-${id}`).classList.add('hidden'));
+    lastLoadTime=Date.now();
+    document.getElementById('last-update').textContent=formatUpdateTime(new Date(lastLoadTime));
+    const liveCount=DATA.quests.filter(q=>q.liveAns).length;
+    const pronOk=Object.values(pronoScores).some(v=>v>0);
+    setStatus('ok',`${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveCount} live · PronoContest ${pronOk?'✓':'non configuré'}`);
+    ['classement','quests','participants'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
     document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
     showSub(activeSub);
-
   } catch(err) {
     setStatus('error','Erreur de chargement');
-    const eb = document.getElementById('error-box');
+    const eb=document.getElementById('error-box');
     eb.classList.remove('hidden');
-    eb.textContent = `Erreur : ${err.message}`;
+    eb.textContent=`Erreur : ${err.message}`;
   }
 }
 
