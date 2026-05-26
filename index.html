@@ -116,6 +116,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .ans-chip { background:var(--surface); border:1px solid var(--border); border-radius:7px; padding:.5rem .7rem; position:relative; }
 .ans-chip.state-validé    { background:var(--green-dim); border-color:#1c5c3d; }
 .ans-chip.state-impossible{ background:var(--red-dim); border-color:#5c1c1c; opacity:.6; }
+.ans-chip.state-lost      { background:var(--red-dim); border-color:#5c1c1c; }
 .ans-chip.state-possible-hit { background:var(--blue-dim); border-color:#2a5a9a; }
 .chip-pts { position:absolute; top:.4rem; right:.5rem; font-family:'Bebas Neue',sans-serif; font-size:.95rem; line-height:1; }
 .chip-pts.confirmed { color:var(--green); }
@@ -125,10 +126,12 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .ans-val.empty { color:var(--muted); font-style:italic; }
 .ans-chip.state-validé .ans-val     { color:var(--green); }
 .ans-chip.state-impossible .ans-val { color:var(--red); }
+.ans-chip.state-lost .ans-val       { color:var(--red); }
 .ans-chip.state-possible-hit .ans-val { color:var(--blue); }
 .ans-etat { font-size:.6rem; margin-top:2px; text-transform:uppercase; letter-spacing:.5px; }
 .ans-chip.state-validé .ans-etat     { color:var(--green); }
 .ans-chip.state-impossible .ans-etat { color:var(--red); }
+.ans-chip.state-lost .ans-etat       { color:var(--red); }
 .ans-chip.state-possible-hit .ans-etat { color:var(--blue); }
 
 /* PARTICIPANTS */
@@ -173,6 +176,9 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .error-box { background:#1a0e0e; border:1px solid #6b1f1f; border-radius:8px; padding:1.5rem; color:var(--red); text-align:center; font-size:.9rem; }
 .sheet-link { display:inline-flex; align-items:center; gap:.5rem; background:#17233a; border:1px solid var(--border); color:var(--muted); padding:.5rem 1rem; border-radius:6px; text-decoration:none; font-size:.78rem; text-transform:uppercase; letter-spacing:1px; transition:all .2s; margin-bottom:1.5rem; }
 .sheet-link:hover { border-color:var(--gold); color:var(--gold); }
+.quests-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.quests-toolbar .sheet-link { margin-bottom:1.5rem; }
+.quests-toolbar .btn-ghost { margin-bottom:1.5rem; }
 </style>
 </head>
 <body>
@@ -228,9 +234,12 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   </div>
 
   <div id="tab-quests" class="hidden">
-    <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
-      Remplir mes pronostics sur Google Sheets →
-    </a>
+    <div class="quests-toolbar">
+      <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
+        Remplir mes pronostics sur Google Sheets →
+      </a>
+      <button class="btn-ghost" id="toggle-all-btn" onclick="toggleAllQuests()">Tout dérouler</button>
+    </div>
     <div id="quests-list"></div>
   </div>
 
@@ -468,21 +477,24 @@ function renderQuests(participants, quests) {
       const ansL  = (ans||'').trim().toLowerCase();
       const etat  = (q.etats[p]||'possible').toLowerCase();
 
+      // Points earned by this participant on this quest
+      const ptsReel   = calcQuestPts(q, p, 'reel');
+      const ptsFictif = calcQuestPts(q, p, 'fictif');
+
       let chipCls = '', etatLabel = '';
-      if (etat==='impossible') { chipCls='state-impossible'; etatLabel='impossible'; }
-      else if (etat==='validé') {
-        // For vif_or: validé means they got the 300pts
-        // For others: validé + matching = confirmed points
-        chipCls = 'state-validé'; etatLabel='validé';
+      if (etat==='impossible') {
+        chipCls='state-impossible'; etatLabel='impossible';
+      } else if (etat==='validé') {
+        // validé = prono verrouillé. Green only if it actually earned points,
+        // red if validé but 0 points (wrong prediction).
+        if (ptsReel > 0) { chipCls='state-validé'; etatLabel='validé ✓'; }
+        else             { chipCls='state-lost';   etatLabel='validé ✗'; }
       } else if (ref && ansL && ansL===ref) {
         chipCls='state-possible-hit'; etatLabel='en cours ✓';
       } else {
         etatLabel = 'possible';
       }
 
-      // Points earned by this participant on this quest
-      const ptsReel   = calcQuestPts(q, p, 'reel');
-      const ptsFictif = calcQuestPts(q, p, 'fictif');
       let ptsBadge = '';
       if (ptsReel > 0) {
         ptsBadge = `<div class="chip-pts confirmed">+${ptsReel}</div>`;
@@ -599,6 +611,13 @@ function selectParticipant(p) {
 function toggleQ(qi) {
   const body=document.getElementById(`qb-${qi}`), chev=document.getElementById(`chev-${qi}`);
   body.classList.toggle('open'); chev.classList.toggle('open',body.classList.contains('open'));
+}
+function toggleAllQuests() {
+  const bodies = document.querySelectorAll('.quest-body');
+  const anyClosed = [...bodies].some(b => !b.classList.contains('open'));
+  bodies.forEach(b => b.classList.toggle('open', anyClosed));
+  document.querySelectorAll('.chevron').forEach(c => c.classList.toggle('open', anyClosed));
+  document.getElementById('toggle-all-btn').textContent = anyClosed ? 'Tout replier' : 'Tout dérouler';
 }
 function showTab(tab) {
   activeTab=tab;
