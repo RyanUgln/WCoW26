@@ -322,6 +322,35 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .seg-iso.dimmed { opacity:.2; }
 .seg-iso.focused { opacity:1; }
 .chart-hint { font-size:.68rem; color:var(--muted); margin-top:.5rem; font-style:italic; }
+
+/* ── OPPOSITION ── */
+.opp-selectors { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-bottom:1.2rem; }
+.opp-select { width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.55rem .7rem; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; cursor:pointer; }
+.opp-select:focus { outline:none; border-color:var(--gold); }
+.opp-table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.opp-table col.col-stat { width:34%; }
+.opp-head th { padding:1rem .6rem; text-align:center; border-bottom:1px solid var(--border); vertical-align:bottom; }
+.opp-head th.opp-corner { text-align:left; }
+.opp-head-av { width:54px; height:54px; border-radius:50%; margin:0 auto .4rem; overflow:hidden; border:2px solid var(--gold-dim); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.95rem; }
+.opp-head-av img { width:100%; height:100%; object-fit:cover; }
+.opp-head-name { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--gold); letter-spacing:1px; line-height:1; }
+.opp-head-sub { font-size:.66rem; color:var(--muted); margin-top:2px; }
+.opp-section-row td { background:var(--surface-2); font-size:.66rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--gold); font-weight:600; padding:.5rem .7rem; }
+.opp-row td { padding:.6rem .7rem; border-bottom:1px solid var(--border); font-size:.82rem; text-align:center; }
+.opp-row td.opp-stat-name { text-align:left; color:var(--muted); font-size:.76rem; }
+.opp-row:last-child td { border-bottom:none; }
+.opp-val { font-weight:600; color:var(--text); }
+.opp-val.best { color:var(--gold); }
+.opp-val.best::after { content:' ★'; font-size:.7rem; }
+.opp-val.empty { color:var(--border); }
+.opp-rank-badge { display:inline-block; min-width:20px; }
+@media (max-width:560px){
+  .opp-selectors { grid-template-columns:1fr; }
+  .opp-row td, .opp-head th { padding:.5rem .35rem; font-size:.74rem; }
+  .opp-head-av { width:42px; height:42px; }
+  .opp-head-name { font-size:.92rem; }
+  .opp-row td.opp-stat-name { font-size:.68rem; }
+}
 </style>
 </head>
 <body>
@@ -397,7 +426,16 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   </div>
 
   <div id="tab-stats" class="hidden">
-    <div id="stats-content"></div>
+    <div class="sub-nav">
+      <div class="sub-tab active" data-statsub="general"    onclick="showStatsSub('general')">Stats générales</div>
+      <div class="sub-tab"        data-statsub="opposition" onclick="showStatsSub('opposition')">Opposition</div>
+    </div>
+    <div id="statsub-general">
+      <div id="stats-content"></div>
+    </div>
+    <div id="statsub-opposition" class="hidden">
+      <div id="opposition-content"></div>
+    </div>
   </div>
 </main>
 
@@ -441,6 +479,9 @@ function questType(name) {
 }
 
 let DATA = null, activeTab = 'classement', activeSub = 'reel';
+let activeStatsSub = 'general';
+let oppSelection = [null, null, null];
+let oppInit = false;
 let lastLoadTime = null;
 const COOLDOWN_MS = 60000;
 const CACHE_KEY = 'wcow_cache_v1';
@@ -1106,6 +1147,139 @@ function renderStats() {
   el.innerHTML=html;
 }
 
+// ══════════════════════════════════════════════════════════════════════════
+// OPPOSITION — comparaison de 2-3 participants
+// ══════════════════════════════════════════════════════════════════════════
+function oppHeadAv(p) {
+  const c=avColor(p), url=photoUrl(p);
+  const inner = url
+    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
+    : p;
+  return '<div class="opp-head-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>';
+}
+
+function renderOpposition() {
+  const el=document.getElementById('opposition-content');
+  if(!DATA||!DATA.participants.length){ el.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
+  const S=computeStats();
+  const P=S.P;
+
+  // Initialise la sélection par défaut une seule fois : top 3 fictif
+  const podF=rankBy(P,p=>S.totFictif[p],true);
+  if(!oppInit){
+    oppSelection[0]=podF[0]?podF[0].p:P[0];
+    oppSelection[1]=podF[1]?podF[1].p:(P[1]||null);
+    oppSelection[2]=podF[2]?podF[2].p:(P[2]||null);
+    oppInit=true;
+  }
+  // sécurité : un participant sélectionné qui n'existe plus -> vidé
+  oppSelection=oppSelection.map(s=> (s&&P.indexOf(s)>=0)?s:null);
+
+  // Rangs fictif/réel
+  const rankFictif={}, rankReel={};
+  rankBy(P,p=>S.totFictif[p],true).forEach((x,i)=>rankFictif[x.p]=i+1);
+  rankBy(P,p=>S.totReel[p],true).forEach((x,i)=>rankReel[x.p]=i+1);
+
+  // Sélecteurs
+  function selOptions(slotIdx){
+    let opts='';
+    if(slotIdx===2) opts+='<option value="">— aucun —</option>';
+    P.forEach(p=>{
+      const sel=oppSelection[slotIdx]===p?' selected':'';
+      opts+='<option value="'+p+'"'+sel+'>'+displayName(p)+'</option>';
+    });
+    return opts;
+  }
+  let selectors='<div class="opp-selectors">';
+  for(let i=0;i<3;i++){
+    selectors+='<select class="opp-select" onchange="oppPick('+i+',this.value)">'+selOptions(i)+'</select>';
+  }
+  selectors+='</div>';
+
+  // Colonnes actives
+  const cols=oppSelection.filter(p=>p);
+  if(cols.length<2){
+    el.innerHTML=selectors+'<div class="stats-empty">Selectionne au moins 2 participants a comparer</div>';
+    return;
+  }
+
+  // Définition des lignes de stats. dir: 'max' => plus haut = meilleur, 'min' => plus bas = meilleur
+  const sections=[
+    { title:'Scores', rows:[
+      { label:'Total fictif',           dir:'max', fmt:v=>v+' pts', get:p=>S.totFictif[p] },
+      { label:'Total reel',             dir:'max', fmt:v=>v+' pts', get:p=>S.totReel[p] },
+      { label:'Points PronoContest',    dir:'max', fmt:v=>v+' pts', get:p=>(DATA.pronoScores[p]||0) },
+      { label:'Points side quests',     dir:'max', fmt:v=>v+' pts', get:p=>S.sqFictif[p] },
+      { label:'Rang fictif actuel',     dir:'min', fmt:v=>'#'+v,    get:p=>rankFictif[p] },
+      { label:'Rang reel actuel',       dir:'min', fmt:v=>'#'+v,    get:p=>rankReel[p] },
+      { label:'Meilleur rang atteint',  dir:'min', fmt:v=>v>=99?'—':'#'+v, get:p=>S.bestRank[p] },
+    ]},
+    { title:'Side quests', rows:[
+      { label:'Quetes validees gagnantes', dir:'max', fmt:v=>v, get:p=>S.cntValideWin[p] },
+      { label:'Quetes encore possibles',   dir:'max', fmt:v=>v, get:p=>S.cntPossible[p] },
+      { label:'Quetes perdues / impossibles', dir:'min', fmt:v=>v, get:p=>S.cntValideLose[p]+S.cntImpossible[p] },
+      { label:'Pronos dans le vrai (visions)', dir:'max', fmt:v=>v, get:p=>S.liveHits[p] },
+      { label:'Pronos uniques (originalite)',  dir:'max', fmt:v=>v, get:p=>S.uniquePicks[p] },
+    ]},
+    { title:'Comportement', rows:[
+      { label:'Taux de conformite',     dir:'max', fmt:v=>Math.round(v*100)+'%', get:p=>S.conformity[p] },
+      { label:'Reponses "Oui" en finale', dir:'neutral', fmt:v=>v, get:p=>S.yesCount[p] },
+    ]},
+    { title:'Evolution', rows:[
+      { label:'Progression derniere journee', dir:'max', fmt:v=>v==null?'—':(v>=0?'+':'')+v+' pts', get:p=>(S.lastProg[p]!=null?S.lastProg[p]:null) },
+      { label:'Journees passees en tete',     dir:'max', fmt:v=>v, get:p=>S.timesLeader[p] },
+    ]},
+  ];
+
+  // En-tête
+  let head='<thead><tr class="opp-head">';
+  head+='<th class="opp-corner"></th>';
+  cols.forEach(p=>{
+    head+='<th>'+oppHeadAv(p)+'<div class="opp-head-name">'+displayName(p)+'</div>'
+      +'<div class="opp-head-sub">'+S.totFictif[p]+' pts · #'+rankFictif[p]+'</div></th>';
+  });
+  head+='</tr></thead>';
+
+  // Corps
+  let body='<tbody>';
+  sections.forEach(sec=>{
+    body+='<tr class="opp-section-row"><td colspan="'+(cols.length+1)+'">'+sec.title+'</td></tr>';
+    sec.rows.forEach(row=>{
+      const vals=cols.map(p=>row.get(p));
+      // Détermine la/les meilleure(s) valeur(s)
+      let best=null;
+      const numeric=vals.filter(v=>v!=null && !isNaN(v));
+      if(row.dir==='max'&&numeric.length) best=Math.max.apply(null,numeric);
+      if(row.dir==='min'&&numeric.length) best=Math.min.apply(null,numeric);
+      body+='<tr class="opp-row"><td class="opp-stat-name">'+row.label+'</td>';
+      cols.forEach((p,ci)=>{
+        const v=vals[ci];
+        const isEmpty=(v==null||v===''||(typeof v==='number'&&isNaN(v)));
+        const isBest=(best!=null && v===best && row.dir!=='neutral' && numeric.length>1 &&
+                      !(numeric.every(x=>x===numeric[0])));
+        const cls='opp-val'+(isBest?' best':'')+(isEmpty?' empty':'');
+        body+='<td><span class="'+cls+'">'+(isEmpty?'—':row.fmt(v))+'</span></td>';
+      });
+      body+='</tr>';
+    });
+  });
+  body+='</tbody>';
+
+  let colgroup='<colgroup><col class="col-stat">';
+  cols.forEach(()=>colgroup+='<col>');
+  colgroup+='</colgroup>';
+
+  el.innerHTML=selectors
+    +'<table class="opp-table">'+colgroup+head+body+'</table>'
+    +'<div class="chart-hint">L\'etoile ★ indique la meilleure valeur de chaque ligne</div>';
+}
+
+function oppPick(slot, value) {
+  oppSelection[slot] = value || null;
+  renderOpposition();
+}
+
+
 
 // ── RENDER LEADERBOARD ────────────────────────────────────────────────────
 function renderLeaderboard(containerId, participants, quests, pronoScores, mode) {
@@ -1399,9 +1573,16 @@ function showTab(tab) {
 }
 function showSub(sub) {
   activeSub=sub;
-  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.toggle('active',t.dataset.sub===sub));
+  document.querySelectorAll('.sub-tab[data-sub]').forEach(t=>t.classList.toggle('active',t.dataset.sub===sub));
   document.getElementById('sub-reel').classList.toggle('hidden',   sub!=='reel');
   document.getElementById('sub-fictif').classList.toggle('hidden', sub!=='fictif');
+}
+function showStatsSub(sub) {
+  activeStatsSub=sub;
+  document.querySelectorAll('.sub-tab[data-statsub]').forEach(t=>t.classList.toggle('active',t.dataset.statsub===sub));
+  document.getElementById('statsub-general').classList.toggle('hidden',    sub!=='general');
+  document.getElementById('statsub-opposition').classList.toggle('hidden', sub!=='opposition');
+  ttHide();
 }
 function formatUpdateTime(t) {
   const now=new Date(), isToday=t.toDateString()===now.toDateString();
@@ -1423,6 +1604,7 @@ function renderAll() {
   renderQuests(DATA.participants, DATA.quests);
   renderParticipants(DATA.participants, DATA.quests, DATA.pronoScores);
   renderStats();
+  renderOpposition();
   // Réapplique le filtre de recherche si une recherche est active
   if (document.getElementById('quest-search')?.value) filterQuests();
 
