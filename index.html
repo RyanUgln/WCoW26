@@ -115,6 +115,11 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 /* ANSWERS GRID */
 .answers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:.45rem; }
 .answers-grid.wide { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
+.answers-grid.medium { grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); }
+.ans-list { list-style:none; margin:2px 0 0; padding:0; }
+.ans-list li { font-size:.8rem; font-weight:500; line-height:1.5; }
+.ans-list li.match  { color:var(--green); }
+.ans-list li.nomatch { color:var(--muted); }
 .ans-chip { background:var(--surface); border:1px solid var(--border); border-radius:7px; padding:.5rem .7rem; position:relative; }
 .ans-chip.state-validé    { background:var(--green-dim); border-color:#1c5c3d; }
 .ans-chip.state-impossible{ background:var(--red-dim); border-color:#5c1c1c; opacity:.6; }
@@ -127,6 +132,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .ans-val { font-size:.82rem; font-weight:500; margin-top:2px; overflow-wrap:break-word; word-break:break-word; }
 .ans-chip:has(.chip-pts) .ans-who { padding-right:2.2rem; }
 .ans-chip:has(.chip-pts) .ans-val { padding-right:2.2rem; }
+.ans-chip:has(.chip-pts) .ans-list { padding-right:2.2rem; }
 .ans-val.empty { color:var(--muted); font-style:italic; }
 .ans-chip.state-validé .ans-val     { color:var(--green); }
 .ans-chip.state-impossible .ans-val { color:var(--red); }
@@ -506,10 +512,23 @@ function renderQuests(participants, quests) {
         ptsBadge = `<div class="chip-pts fictif">+${ptsFictif}</div>`;
       }
 
+      // Build the answer value markup — vertical list for repeches
+      let ansValHtml;
+      if (type==='repeches' && ans) {
+        const refList = ref.split(/[,;\/\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+        const items = ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+        ansValHtml = `<ul class="ans-list">` + items.map(c => {
+          const isMatch = refList.length>0 && refList.includes(c.toLowerCase());
+          return `<li class="${isMatch?'match':'nomatch'}">${c}</li>`;
+        }).join('') + `</ul>`;
+      } else {
+        ansValHtml = `<div class="ans-val ${!ans?'empty':''}">${ans||'—'}</div>`;
+      }
+
       return `<div class="ans-chip ${chipCls}">
         ${ptsBadge}
         <div class="ans-who">${p}</div>
-        <div class="ans-val ${!ans?'empty':''}">${ans||'—'}</div>
+        ${ansValHtml}
         <div class="ans-etat">${etatLabel}</div>
       </div>`;
     }).join('');
@@ -527,7 +546,7 @@ function renderQuests(participants, quests) {
       </div>
       <div class="quest-body" id="qb-${qi}">
         ${refBlock}
-        <div class="answers-grid ${(type==='vif_or'||type==='repeches')?'wide':''}">${chips}</div>
+        <div class="answers-grid ${type==='vif_or'?'wide':type==='repeches'?'medium':''}">${chips}</div>
       </div>
     </div>`;
   }).join('');
