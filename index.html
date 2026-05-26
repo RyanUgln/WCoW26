@@ -114,6 +114,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 
 /* ANSWERS GRID */
 .answers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:.45rem; }
+.answers-grid.wide { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
 .ans-chip { background:var(--surface); border:1px solid var(--border); border-radius:7px; padding:.5rem .7rem; position:relative; }
 .ans-chip.state-validé    { background:var(--green-dim); border-color:#1c5c3d; }
 .ans-chip.state-impossible{ background:var(--red-dim); border-color:#5c1c1c; opacity:.6; }
@@ -123,7 +124,9 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .chip-pts.confirmed { color:var(--green); }
 .chip-pts.fictif    { color:var(--blue); }
 .ans-who { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-.ans-val { font-size:.82rem; font-weight:500; margin-top:2px; }
+.ans-val { font-size:.82rem; font-weight:500; margin-top:2px; overflow-wrap:break-word; word-break:break-word; }
+.ans-chip:has(.chip-pts) .ans-who { padding-right:2.2rem; }
+.ans-chip:has(.chip-pts) .ans-val { padding-right:2.2rem; }
 .ans-val.empty { color:var(--muted); font-style:italic; }
 .ans-chip.state-validé .ans-val     { color:var(--green); }
 .ans-chip.state-impossible .ans-val { color:var(--red); }
@@ -524,7 +527,7 @@ function renderQuests(participants, quests) {
       </div>
       <div class="quest-body" id="qb-${qi}">
         ${refBlock}
-        <div class="answers-grid">${chips}</div>
+        <div class="answers-grid ${(type==='vif_or'||type==='repeches')?'wide':''}">${chips}</div>
       </div>
     </div>`;
   }).join('');
