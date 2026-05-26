@@ -217,6 +217,13 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .quests-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
 .quests-toolbar .sheet-link { margin-bottom:1.5rem; }
 .quests-toolbar .btn-ghost { margin-bottom:1.5rem; }
+.search-wrap { position:relative; flex:1; min-width:180px; margin-bottom:1.5rem; }
+.quest-search { width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.5rem 2rem .5rem .9rem; border-radius:6px; font-size:.82rem; font-family:'DM Sans',sans-serif; transition:border-color .2s; }
+.quest-search:focus { outline:none; border-color:var(--gold); }
+.quest-search::placeholder { color:var(--muted); }
+.search-clear { position:absolute; right:.5rem; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--muted); cursor:pointer; font-size:.8rem; padding:.2rem .3rem; line-height:1; }
+.search-clear:hover { color:var(--gold); }
+.quests-empty { text-align:center; color:var(--muted); padding:2rem; font-size:.9rem; font-style:italic; }
 </style>
 </head>
 <body>
@@ -277,9 +284,14 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
       <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
         Remplir mes pronostics sur Google Sheets →
       </a>
+      <div class="search-wrap">
+        <input type="text" id="quest-search" class="quest-search" placeholder="Rechercher une quête, un prono..." oninput="filterQuests()" autocomplete="off">
+        <button class="search-clear hidden" id="search-clear" onclick="clearQuestSearch()" title="Effacer">✕</button>
+      </div>
       <button class="btn-ghost" id="toggle-all-btn" onclick="toggleAllQuests()">Tout dérouler</button>
     </div>
     <div id="quests-list"></div>
+    <div id="quests-empty" class="quests-empty hidden">Aucune quête trouvée</div>
   </div>
 
   <div id="tab-participants" class="hidden">
@@ -562,8 +574,14 @@ function renderQuests(participants, quests) {
       </div>`;
     }).join('');
 
+    // Texte recherchable : nom, sous-titre, réponse live, et toutes les réponses
+    const searchText = normalizeSearch([
+      shortName, subName, liveAns,
+      ...participants.map(p => q.answers[p] || '')
+    ].join(' '));
+
     return `
-    <div class="quest-card">
+    <div class="quest-card" data-search="${searchText}">
       <div class="quest-head" onclick="toggleQ(${qi})">
         <div class="quest-title-wrap">
           <div class="quest-title">${shortName}</div>
@@ -672,6 +690,31 @@ function toggleAllQuests() {
   document.getElementById('toggle-all-btn').textContent = anyClosed ? 'Tout replier' : 'Tout dérouler';
 }
 
+// ── RECHERCHE QUÊTES ──────────────────────────────────────────────────────
+function normalizeSearch(str) {
+  return (str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function filterQuests() {
+  const input = document.getElementById('quest-search');
+  const term  = normalizeSearch(input.value.trim());
+  document.getElementById('search-clear').classList.toggle('hidden', !input.value);
+
+  const cards = document.querySelectorAll('.quest-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const match = !term || (card.dataset.search || '').includes(term);
+    card.classList.toggle('hidden', !match);
+    if (match) visible++;
+  });
+  document.getElementById('quests-empty').classList.toggle('hidden', visible > 0);
+}
+function clearQuestSearch() {
+  const input = document.getElementById('quest-search');
+  input.value = '';
+  filterQuests();
+  input.focus();
+}
+
 // ── THÈME SOMBRE / CLAIR ──────────────────────────────────────────────────
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -699,6 +742,10 @@ function showTab(tab) {
   ['classement','quests','participants'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.toggle('hidden',id!==tab));
   if (tab==='participants') document.getElementById('detail-wrap').classList.remove('show');
+  if (tab!=='quests') {
+    const s = document.getElementById('quest-search');
+    if (s && s.value) { s.value=''; filterQuests(); }
+  }
 }
 function showSub(sub) {
   activeSub=sub;
@@ -725,6 +772,8 @@ function renderAll() {
   renderLeaderboard('fictif-list', DATA.participants, DATA.quests, DATA.pronoScores, 'fictif');
   renderQuests(DATA.participants, DATA.quests);
   renderParticipants(DATA.participants, DATA.quests, DATA.pronoScores);
+  // Réapplique le filtre de recherche si une recherche est active
+  if (document.getElementById('quest-search')?.value) filterQuests();
 
   document.getElementById('last-update').textContent = formatUpdateTime(new Date(lastLoadTime));
   const liveCount = DATA.quests.filter(q=>q.liveAns).length;
