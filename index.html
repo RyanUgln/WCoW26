@@ -121,7 +121,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .quest-sub { font-size:.75rem; color:var(--muted); margin-top:2px; }
 .quest-pills { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:5px; }
 .pill { display:inline-flex; align-items:center; gap:.3rem; border-radius:4px; padding:.15rem .5rem; font-size:.68rem; }
-.pill.live     { background:var(--green-dim); border:1px solid var(--green-border); color:var(--green); }
+.pill.live     { background:var(--blue-dim); border:1px solid var(--blue-border); color:var(--blue); }
 .pill.final    { background:var(--surface-2); border:1px solid var(--gold-dim); color:var(--gold); }
 .pill.prono-pill { background:var(--surface-2); border:1px solid var(--border); color:var(--muted); }
 .badge { background:var(--surface-2); border:1px solid var(--gold-dim); color:var(--gold); padding:.2rem .65rem; border-radius:4px; font-family:'Bebas Neue',sans-serif; font-size:.9rem; letter-spacing:1px; white-space:nowrap; flex-shrink:0; }
@@ -132,13 +132,13 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 
 /* REF ROW */
 .ref-row { display:flex; align-items:center; gap:.75rem; border-radius:6px; padding:.6rem 1rem; margin-bottom:.9rem; font-size:.82rem; }
-.ref-row.live    { background:var(--green-dim); border:1px solid var(--green-border); }
+.ref-row.live    { background:var(--blue-dim); border:1px solid var(--blue-border); }
 .ref-row.neutral { background:var(--surface-2); border:1px solid var(--gold-dim); }
 .ref-label { font-size:.65rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
-.ref-row.live    .ref-label { color:var(--green); }
+.ref-row.live    .ref-label { color:var(--blue); }
 .ref-row.neutral .ref-label { color:var(--gold); }
 .ref-value { font-weight:500; }
-.ref-row.live    .ref-value { color:var(--green); }
+.ref-row.live    .ref-value { color:var(--blue); }
 .ref-row.neutral .ref-value { color:var(--gold); }
 
 /* ANSWERS GRID */
@@ -341,7 +341,6 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .opp-row:last-child td { border-bottom:none; }
 .opp-val { font-weight:600; color:var(--text); }
 .opp-val.best { color:var(--gold); }
-.opp-val.best::after { content:' ★'; font-size:.7rem; }
 .opp-val.empty { color:var(--border); }
 .opp-rank-badge { display:inline-block; min-width:20px; }
 @media (max-width:560px){
@@ -763,7 +762,7 @@ function barChart(items, opts) {
       + '<div class="bar-track"><div class="bar-fill" style="width:'+Math.max(pct,3)+'%;background:'+color+'">'+(pct>18&&opts.showVal!==false?it.value:'')+'</div></div>'
       + '<div class="bar-val">'+it.value+(opts.suffix||'')+'</div></div>';
   }).join('');
-  return rows + '<div class="chart-hint">Survole pour le détail · clique pour isoler une personne</div>';
+  return rows;
 }
 function lineChart(series, labels) {
   const W=680,H=280,padL=38,padR=12,padT=16,padB=36;
@@ -805,8 +804,7 @@ function lineChart(series, labels) {
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
   return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" data-chart="'+chartId+'">'+grid+paths+dots+xlabels+'</svg>'
-    + '<div class="chart-legend" data-chart="'+chartId+'">'+legend+'</div>'
-    + '<div class="chart-hint">Survole un point pour le score · clique un nom pour isoler sa courbe</div>';
+    + '<div class="chart-legend" data-chart="'+chartId+'">'+legend+'</div>';
 }
 function donutChart(slices) {
   const total=slices.reduce((a,s)=>a+s.value,0)||1;
@@ -830,8 +828,7 @@ function donutChart(slices) {
     const pct=Math.round(s.value/total*100);
     return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.label+' · '+pct+'%</div>';
   }).join('');
-  return '<div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+paths+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>'
-    + '<div class="chart-hint">Survole une part pour le détail · clique pour la mettre en valeur</div>';
+  return '<div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+paths+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>';
 }
 function radarChart(axes, series) {
   const cx=180,cy=170,R=120,n=axes.length;
@@ -867,8 +864,7 @@ function radarChart(axes, series) {
     return '<div class="legend-item clickable" data-chart="'+chartId+'" data-si="'+si+'" onclick="toggleRadarIsolate(this)">'
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
-  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340" data-chart="'+chartId+'">'+grid+polys+rdots+'</svg><div class="chart-legend" data-chart="'+chartId+'" style="margin-top:0">'+legend+'</div></div>'
-    + '<div class="chart-hint">Survole les sommets pour les valeurs · clique un nom pour isoler son profil</div>';
+  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340" data-chart="'+chartId+'">'+grid+polys+rdots+'</svg><div class="chart-legend" data-chart="'+chartId+'" style="margin-top:0">'+legend+'</div></div>';
 }
 function chartCard(title, sub, inner) {
   return '<div class="chart-card"><div class="chart-card-title">'+title+'</div>'
@@ -1122,7 +1118,7 @@ function renderStats() {
       const cval=String(c.val).replace(/'/g,'');
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+cval+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+c.count+"</span> prono(s) · "+Math.round(pct)+"%</div><div class=&quot;tt-line&quot;>"+whoNames+"')";
       return '<div class="qstat-seg hit-zone seg-iso" style="width:'+pct+'%;background:'+color+'" '
-        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)">'+(pct>12?c.count:'')+'</div>';
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)">'+(pct>6?c.count:'')+'</div>';
     }).join('');
     const choices=qc.choices.map((c,i)=>'<div class="qstat-choice"><span class="legend-dot" style="background:'+CHART_PALETTE[i%CHART_PALETTE.length]+'"></span>'+c.val+' ('+c.count+')</div>').join('');
     qbars+='<div class="qstat"><div class="qstat-head"><div class="qstat-name">'+qc.name+'</div><div class="qstat-meta">'+total+' pronos \u00b7 '+qc.diversity+' choix</div></div><div class="qstat-bar">'+segs+'</div><div class="qstat-choices">'+choices+'</div></div>';
@@ -1270,8 +1266,7 @@ function renderOpposition() {
   colgroup+='</colgroup>';
 
   el.innerHTML=selectors
-    +'<table class="opp-table">'+colgroup+head+body+'</table>'
-    +'<div class="chart-hint">L\'etoile ★ indique la meilleure valeur de chaque ligne</div>';
+    +'<table class="opp-table">'+colgroup+head+body+'</table>';
 }
 
 function oppPick(slot, value) {
@@ -1333,7 +1328,7 @@ function renderQuests(participants, quests) {
     else if (type==='final_only') pills=`<div class="pill final">${liveAns?'Résultat : '+liveAns:'Résultat final uniquement'}</div>`;
     else if (type==='repeches')   pills=`<div class="pill final">${liveAns?'Résultat : '+liveAns:'Résultat phase de groupes'}</div>`;
     else if (type==='vif_or')     pills=`<div class="pill final">Statut individuel par admin</div>`;
-    else if (liveAns) pills=`<div class="pill live"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;flex-shrink:0"></div>${liveAns}</div>`;
+    else if (liveAns) pills=`<div class="pill live"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);animation:pulse 1.5s ease infinite;flex-shrink:0"></div>${liveAns}</div>`;
 
     // Ref block
     let refBlock = '';
@@ -1592,6 +1587,9 @@ function formatUpdateTime(t) {
   return `Mis à jour le ${d}/${m}/${y} à ${time}`;
 }
 function setStatus(type,msg) {
+  const bar = document.getElementById('status-bar');
+  // La barre n'est visible que pendant le chargement ou en cas d'erreur
+  bar.classList.toggle('hidden', type==='ok');
   document.getElementById('status-dot').className='dot'+(type==='loading'?' loading':type==='error'?' error':'');
   document.getElementById('status-text').textContent=msg;
   ['classement','quests','participants','stats'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
