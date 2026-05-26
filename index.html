@@ -318,6 +318,9 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .bar-row.dimmed { opacity:.3; }
 .series-dimmed { opacity:.12; transition:opacity .2s; }
 .series-focus { opacity:1; transition:opacity .2s; }
+.seg-iso { cursor:pointer; transition:opacity .2s; }
+.seg-iso.dimmed { opacity:.2; }
+.seg-iso.focused { opacity:1; }
 .chart-hint { font-size:.68rem; color:var(--muted); margin-top:.5rem; font-style:italic; }
 </style>
 </head>
@@ -641,6 +644,42 @@ function toggleBarIsolate(rowEl) {
   rowEl.classList.add('focused');
 }
 
+// Radar : clic sur un nom de la légende -> isole son polygone
+function toggleRadarIsolate(legendEl) {
+  const chartId = legendEl.dataset.chart;
+  const si      = legendEl.dataset.si;
+  const svg       = document.querySelector('svg[data-chart="'+chartId+'"]');
+  const legendBox = document.querySelector('.chart-legend[data-chart="'+chartId+'"]');
+  if (!svg || !legendBox) return;
+  const already = legendEl.classList.contains('focused');
+
+  legendBox.querySelectorAll('.legend-item').forEach(li => li.classList.remove('dimmed','focused'));
+  svg.querySelectorAll('polygon,circle').forEach(el => el.classList.remove('series-dimmed','series-focus'));
+  if (already) return;
+
+  legendBox.querySelectorAll('.legend-item').forEach(li => {
+    if (li.dataset.si !== si) li.classList.add('dimmed');
+  });
+  legendEl.classList.add('focused');
+  svg.querySelectorAll('polygon.'+chartId+'-grid, circle.'+chartId+'-grid').forEach(el => {});
+  svg.querySelectorAll('polygon,circle').forEach(el => {
+    if (el.classList.contains(chartId+'-r'+si)) el.classList.add('series-focus');
+    else if (!el.classList.contains(chartId+'-grid')) el.classList.add('series-dimmed');
+  });
+}
+
+// Camembert / stacked : clic sur une part -> la met en valeur
+function toggleSegIsolate(segEl) {
+  const group = segEl.parentElement;
+  const already = segEl.classList.contains('focused');
+  group.querySelectorAll('.seg-iso').forEach(s => s.classList.remove('dimmed','focused'));
+  if (already) return;
+  group.querySelectorAll('.seg-iso').forEach(s => {
+    if (s !== segEl) s.classList.add('dimmed');
+  });
+  segEl.classList.add('focused');
+}
+
 
 function avMini(p, size) {
   const c = avColor(p), url = photoUrl(p);
@@ -741,8 +780,8 @@ function donutChart(slices) {
     const color=s.color||CHART_PALETTE[i%CHART_PALETTE.length];
     const pct=Math.round(frac*100);
     const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+String(s.label).replace(/'/g,'')+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+s.value+"</span> prono(s) · "+pct+"%')";
-    paths+='<path class="hit-zone" d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'" '
-      + 'onmousemove="'+tip+'" onmouseleave="ttHide()"/>';
+    paths+='<path class="hit-zone seg-iso" d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'" '
+      + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)"/>';
     angle=a2;
   });
   const legend=slices.map((s,i)=>{
@@ -750,19 +789,20 @@ function donutChart(slices) {
     const pct=Math.round(s.value/total*100);
     return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.label+' · '+pct+'%</div>';
   }).join('');
-  return '<div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+paths+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>';
+  return '<div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+paths+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>'
+    + '<div class="chart-hint">Survole une part pour le détail · clique pour la mettre en valeur</div>';
 }
 function radarChart(axes, series) {
   const cx=180,cy=170,R=120,n=axes.length;
   const angAt=i=>-Math.PI/2+i/n*2*Math.PI;
+  const chartId='rd'+(Math.random().toString(36).slice(2,8));
   let grid='';
   for(let ring=1;ring<=4;ring++){
     const rr=R*ring/4; let pts='';
     for(let i=0;i<n;i++){ pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; }
-    grid+='<polygon points="'+pts+'" fill="none" stroke="var(--border)" stroke-width="1"/>';
+    grid+='<polygon class="'+chartId+'-grid" points="'+pts+'" fill="none" stroke="var(--border)" stroke-width="1"/>';
   }
   for(let i=0;i<n;i++){
-    grid+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(angAt(i)))+'" y2="'+(cy+R*Math.sin(angAt(i)))+'" stroke="var(--border)" stroke-width="1"/>';
     const lx=cx+(R+18)*Math.cos(angAt(i)),ly=cy+(R+18)*Math.sin(angAt(i));
     grid+='<text x="'+lx+'" y="'+(ly+3)+'" text-anchor="middle" font-size="8" fill="var(--muted)">'+axes[i]+'</text>';
   }
@@ -771,23 +811,23 @@ function radarChart(axes, series) {
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     let pts='';
     s.values.forEach((v,i)=>{ const rr=R*Math.max(0,Math.min(1,v)); pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; });
-    polys+='<polygon points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
-    // points de survol sur chaque sommet
+    polys+='<polygon class="'+chartId+'-r'+si+'" points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
     s.values.forEach((v,i)=>{
       const rr=R*Math.max(0,Math.min(1,v));
       const px=(cx+rr*Math.cos(angAt(i))).toFixed(1), py=(cy+rr*Math.sin(angAt(i))).toFixed(1);
       const rawVal=(s.raw&&s.raw[i]!=null)?s.raw[i]:Math.round(v*100)+'%';
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
-      rdots+='<circle class="hit-zone" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()"></circle>';
-      rdots+='<circle cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
+      rdots+='<circle class="hit-zone '+chartId+'-r'+si+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()"></circle>';
+      rdots+='<circle class="'+chartId+'-r'+si+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
     });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
-    return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
+    return '<div class="legend-item clickable" data-chart="'+chartId+'" data-si="'+si+'" onclick="toggleRadarIsolate(this)">'
+      + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
-  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340">'+grid+polys+rdots+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>'
-    + '<div class="chart-hint">Survole les sommets pour les valeurs détaillées</div>';
+  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340" data-chart="'+chartId+'">'+grid+polys+rdots+'</svg><div class="chart-legend" data-chart="'+chartId+'" style="margin-top:0">'+legend+'</div></div>'
+    + '<div class="chart-hint">Survole les sommets pour les valeurs · clique un nom pour isoler son profil</div>';
 }
 function chartCard(title, sub, inner) {
   return '<div class="chart-card"><div class="chart-card-title">'+title+'</div>'
@@ -1040,8 +1080,8 @@ function renderStats() {
       const whoNames=c.who.map(p=>displayName(p)).join(', ').replace(/'/g,'');
       const cval=String(c.val).replace(/'/g,'');
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+cval+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+c.count+"</span> prono(s) · "+Math.round(pct)+"%</div><div class=&quot;tt-line&quot;>"+whoNames+"')";
-      return '<div class="qstat-seg hit-zone" style="width:'+pct+'%;background:'+color+'" '
-        + 'onmousemove="'+tip+'" onmouseleave="ttHide()">'+(pct>12?c.count:'')+'</div>';
+      return '<div class="qstat-seg hit-zone seg-iso" style="width:'+pct+'%;background:'+color+'" '
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)">'+(pct>12?c.count:'')+'</div>';
     }).join('');
     const choices=qc.choices.map((c,i)=>'<div class="qstat-choice"><span class="legend-dot" style="background:'+CHART_PALETTE[i%CHART_PALETTE.length]+'"></span>'+c.val+' ('+c.count+')</div>').join('');
     qbars+='<div class="qstat"><div class="qstat-head"><div class="qstat-name">'+qc.name+'</div><div class="qstat-meta">'+total+' pronos \u00b7 '+qc.diversity+' choix</div></div><div class="qstat-bar">'+segs+'</div><div class="qstat-choices">'+choices+'</div></div>';
