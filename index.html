@@ -303,6 +303,22 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .mini-table .mt-val { text-align:right; font-weight:600; }
 
 .stats-empty { text-align:center; color:var(--muted); padding:3rem 1rem; font-style:italic; }
+
+/* Interactivité graphes */
+#chart-tooltip { position:fixed; pointer-events:none; z-index:9999; background:var(--surface-2); border:1px solid var(--gold-dim); border-radius:7px; padding:.5rem .7rem; font-size:.74rem; color:var(--text); box-shadow:0 4px 16px rgba(0,0,0,.4); opacity:0; transition:opacity .12s; max-width:220px; }
+#chart-tooltip.show { opacity:1; }
+#chart-tooltip .tt-title { font-weight:600; color:var(--gold); margin-bottom:2px; }
+#chart-tooltip .tt-line { color:var(--muted); }
+#chart-tooltip .tt-val { color:var(--text); font-weight:600; }
+.hit-zone { cursor:pointer; }
+.legend-item.clickable { cursor:pointer; user-select:none; transition:opacity .15s; padding:.1rem .3rem; border-radius:4px; }
+.legend-item.clickable:hover { background:var(--surface-2); }
+.legend-item.dimmed { opacity:.35; }
+.bar-row.clickable { cursor:pointer; }
+.bar-row.dimmed { opacity:.3; }
+.series-dimmed { opacity:.12; transition:opacity .2s; }
+.series-focus { opacity:1; transition:opacity .2s; }
+.chart-hint { font-size:.68rem; color:var(--muted); margin-top:.5rem; font-style:italic; }
 </style>
 </head>
 <body>
@@ -381,6 +397,8 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
     <div id="stats-content"></div>
   </div>
 </main>
+
+<div id="chart-tooltip"></div>
 
 <script>
 const API_KEY     = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
@@ -560,6 +578,70 @@ function calcTotal(quests, pronoScores, p, mode) {
 // ══════════════════════════════════════════════════════════════════════════
 const CHART_PALETTE = ['#C9A83C','#3ecf8e','#60a0f0','#f87cb0','#f0a050','#b090f8','#40d0c0','#f08080','#9bd35a','#6b9ef8','#e0c060','#5ad0b0'];
 
+// ── TOOLTIP GRAPHES ───────────────────────────────────────────────────────
+function ttShow(evt, html) {
+  const tt = document.getElementById('chart-tooltip');
+  if (!tt) return;
+  tt.innerHTML = html;
+  tt.classList.add('show');
+  ttMove(evt);
+}
+function ttMove(evt) {
+  const tt = document.getElementById('chart-tooltip');
+  if (!tt || !tt.classList.contains('show')) return;
+  const pad = 14;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  const w = tt.offsetWidth, h = tt.offsetHeight;
+  if (x + w > window.innerWidth - 8)  x = evt.clientX - w - pad;
+  if (y + h > window.innerHeight - 8) y = evt.clientY - h - pad;
+  tt.style.left = x + 'px';
+  tt.style.top  = y + 'px';
+}
+function ttHide() {
+  const tt = document.getElementById('chart-tooltip');
+  if (tt) tt.classList.remove('show');
+}
+
+// ── ISOLATION AU CLIC ─────────────────────────────────────────────────────
+// Courbe : clic sur un nom de la légende -> isole sa courbe
+function toggleLineIsolate(legendEl) {
+  const chartId = legendEl.dataset.chart;
+  const si      = legendEl.dataset.si;
+  const svg     = document.querySelector('svg[data-chart="'+chartId+'"]');
+  const legendBox = document.querySelector('.chart-legend[data-chart="'+chartId+'"]');
+  if (!svg || !legendBox) return;
+  const alreadyFocused = legendEl.classList.contains('focused');
+
+  // reset
+  legendBox.querySelectorAll('.legend-item').forEach(li => li.classList.remove('dimmed','focused'));
+  svg.querySelectorAll('path,circle').forEach(el => el.classList.remove('series-dimmed','series-focus'));
+
+  if (alreadyFocused) return; // re-clic => tout réafficher
+
+  // isole la série si
+  legendBox.querySelectorAll('.legend-item').forEach(li => {
+    if (li.dataset.si !== si) li.classList.add('dimmed');
+  });
+  legendEl.classList.add('focused');
+  svg.querySelectorAll('path,circle').forEach(el => {
+    if (el.classList.contains(chartId+'-s'+si)) el.classList.add('series-focus');
+    else el.classList.add('series-dimmed');
+  });
+}
+
+// Barres : clic sur une barre -> isole cette personne
+function toggleBarIsolate(rowEl) {
+  const container = rowEl.parentElement;
+  const already = rowEl.classList.contains('focused');
+  container.querySelectorAll('.bar-row').forEach(r => r.classList.remove('dimmed','focused'));
+  if (already) return;
+  container.querySelectorAll('.bar-row').forEach(r => {
+    if (r !== rowEl) r.classList.add('dimmed');
+  });
+  rowEl.classList.add('focused');
+}
+
+
 function avMini(p, size) {
   const c = avColor(p), url = photoUrl(p);
   if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'"></div>';
@@ -589,13 +671,19 @@ function factCard(num, label, colorCls) {
 function barChart(items, opts) {
   opts = opts || {};
   const max = Math.max.apply(null, items.map(i=>i.value).concat([1]));
-  return items.map((it,idx) => {
+  const rows = items.map((it,idx) => {
     const pct = Math.round(it.value/max*100);
     const color = it.color || CHART_PALETTE[idx % CHART_PALETTE.length];
-    return '<div class="bar-row"><div class="bar-name">'+it.label+'</div>'
+    const pkey = it.key || it.label;
+    const tip = "ttShow(event,'<div class=&quot;tt-title&quot;>"+it.label+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+it.value+(opts.suffix||'')+"</span> "+(opts.metric||'points')+"')";
+    return '<div class="bar-row clickable" data-pkey="'+pkey+'" '
+      + 'onmousemove="'+tip+'" onmouseleave="ttHide()" '
+      + 'onclick="toggleBarIsolate(this)">'
+      + '<div class="bar-name">'+it.label+'</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+Math.max(pct,3)+'%;background:'+color+'">'+(pct>18&&opts.showVal!==false?it.value:'')+'</div></div>'
       + '<div class="bar-val">'+it.value+(opts.suffix||'')+'</div></div>';
   }).join('');
+  return rows + '<div class="chart-hint">Survole pour le détail · clique pour isoler une personne</div>';
 }
 function lineChart(series, labels) {
   const W=680,H=280,padL=38,padR=12,padT=16,padB=36;
@@ -605,6 +693,7 @@ function lineChart(series, labels) {
   const n=labels.length;
   const xAt=i=>padL+(n<=1?0:(i/(n-1))*(W-padL-padR));
   const yAt=v=>padT+(1-(v-minV)/((maxV-minV)||1))*(H-padT-padB);
+  const chartId = 'lc'+(Math.random().toString(36).slice(2,8));
   let grid='';
   for(let s=0;s<=4;s++){
     const val=minV+(maxV-minV)*s/4, y=yAt(val);
@@ -614,20 +703,30 @@ function lineChart(series, labels) {
   let xlabels='';
   const skip=Math.ceil(n/8);
   labels.forEach((lb,i)=>{ if(i%skip===0||i===n-1) xlabels+='<text x="'+xAt(i)+'" y="'+(H-padB+14)+'" text-anchor="middle" font-size="8" fill="var(--muted)">'+lb+'</text>'; });
-  let paths='';
+  let paths='', dots='';
   series.forEach((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     let d='',started=false;
     s.points.forEach((v,i)=>{ if(v==null)return; d+=(started?'L':'M')+xAt(i).toFixed(1)+','+yAt(v).toFixed(1)+' '; started=true; });
-    paths+='<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
-    let lastI=-1; s.points.forEach((v,i)=>{ if(v!=null)lastI=i; });
-    if(lastI>=0) paths+='<circle cx="'+xAt(lastI)+'" cy="'+yAt(s.points[lastI])+'" r="3" fill="'+color+'"/>';
+    paths+='<path class="'+chartId+'-s'+si+'" d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
+    // points interactifs : un cercle invisible large + un point visible
+    s.points.forEach((v,i)=>{
+      if(v==null) return;
+      const cx=xAt(i).toFixed(1), cy=yAt(v).toFixed(1);
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+labels[i]+" : <span class=&quot;tt-val&quot;>"+v+"</span> pts')";
+      dots+='<circle class="'+chartId+'-s'+si+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
+      dots+='<circle class="hit-zone '+chartId+'-s'+si+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()"></circle>';
+    });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
-    return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
+    return '<div class="legend-item clickable" data-chart="'+chartId+'" data-si="'+si+'" onclick="toggleLineIsolate(this)">'
+      + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
-  return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'">'+grid+paths+xlabels+'</svg><div class="chart-legend">'+legend+'</div>';
+  return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" data-chart="'+chartId+'">'+grid+paths+dots+xlabels+'</svg>'
+    + '<div class="chart-legend" data-chart="'+chartId+'">'+legend+'</div>'
+    + '<div class="chart-hint">Survole un point pour le score · clique un nom pour isoler sa courbe</div>';
 }
 function donutChart(slices) {
   const total=slices.reduce((a,s)=>a+s.value,0)||1;
@@ -640,7 +739,10 @@ function donutChart(slices) {
     const xi2=cx+r*Math.cos(a2),yi2=cy+r*Math.sin(a2);
     const xi1=cx+r*Math.cos(angle),yi1=cy+r*Math.sin(angle);
     const color=s.color||CHART_PALETTE[i%CHART_PALETTE.length];
-    paths+='<path d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'"/>';
+    const pct=Math.round(frac*100);
+    const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+String(s.label).replace(/'/g,'')+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+s.value+"</span> prono(s) · "+pct+"%')";
+    paths+='<path class="hit-zone" d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'" '
+      + 'onmousemove="'+tip+'" onmouseleave="ttHide()"/>';
     angle=a2;
   });
   const legend=slices.map((s,i)=>{
@@ -664,18 +766,28 @@ function radarChart(axes, series) {
     const lx=cx+(R+18)*Math.cos(angAt(i)),ly=cy+(R+18)*Math.sin(angAt(i));
     grid+='<text x="'+lx+'" y="'+(ly+3)+'" text-anchor="middle" font-size="8" fill="var(--muted)">'+axes[i]+'</text>';
   }
-  let polys='';
+  let polys='', rdots='';
   series.forEach((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     let pts='';
     s.values.forEach((v,i)=>{ const rr=R*Math.max(0,Math.min(1,v)); pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; });
     polys+='<polygon points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
+    // points de survol sur chaque sommet
+    s.values.forEach((v,i)=>{
+      const rr=R*Math.max(0,Math.min(1,v));
+      const px=(cx+rr*Math.cos(angAt(i))).toFixed(1), py=(cy+rr*Math.sin(angAt(i))).toFixed(1);
+      const rawVal=(s.raw&&s.raw[i]!=null)?s.raw[i]:Math.round(v*100)+'%';
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
+      rdots+='<circle class="hit-zone" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()"></circle>';
+      rdots+='<circle cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
+    });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
-  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340">'+grid+polys+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>';
+  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340">'+grid+polys+rdots+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>'
+    + '<div class="chart-hint">Survole les sommets pour les valeurs détaillées</div>';
 }
 function chartCard(title, sub, inner) {
   return '<div class="chart-card"><div class="chart-card-title">'+title+'</div>'
@@ -910,7 +1022,7 @@ function renderStats() {
   if(podF.length===3){
     const axes=['Total','Side Q.','Validees','Visions','Original.'];
     const mx={tot:Math.max.apply(null,P.map(p=>S.totFictif[p]).concat([1])),sq:Math.max.apply(null,P.map(p=>S.sqFictif[p]).concat([1])),val:Math.max.apply(null,P.map(p=>S.cntValideWin[p]).concat([1])),vis:Math.max.apply(null,P.map(p=>S.liveHits[p]).concat([1])),uni:Math.max.apply(null,P.map(p=>S.uniquePicks[p]).concat([1]))};
-    const series=podF.map((x,i)=>({name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    const series=podF.map((x,i)=>({name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],raw:[S.totFictif[x.p]+' pts',S.sqFictif[x.p]+' pts',S.cntValideWin[x.p],S.liveHits[x.p],S.uniquePicks[x.p]],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
     html+='<div class="stats-section"><div class="stats-section-title">Profil du Top 3</div><div class="stats-section-sub">Forces et faiblesses comparees des 3 leaders</div>'+chartCard('Radar comparatif','',radarChart(axes,series))+'</div>';
   }
 
@@ -925,7 +1037,11 @@ function renderStats() {
     if(!total) return;
     const segs=qc.choices.map((c,i)=>{
       const pct=c.count/total*100, color=CHART_PALETTE[i%CHART_PALETTE.length];
-      return '<div class="qstat-seg" style="width:'+pct+'%;background:'+color+'" title="'+c.val+': '+c.count+'">'+(pct>12?c.count:'')+'</div>';
+      const whoNames=c.who.map(p=>displayName(p)).join(', ').replace(/'/g,'');
+      const cval=String(c.val).replace(/'/g,'');
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+cval+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+c.count+"</span> prono(s) · "+Math.round(pct)+"%</div><div class=&quot;tt-line&quot;>"+whoNames+"')";
+      return '<div class="qstat-seg hit-zone" style="width:'+pct+'%;background:'+color+'" '
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()">'+(pct>12?c.count:'')+'</div>';
     }).join('');
     const choices=qc.choices.map((c,i)=>'<div class="qstat-choice"><span class="legend-dot" style="background:'+CHART_PALETTE[i%CHART_PALETTE.length]+'"></span>'+c.val+' ('+c.count+')</div>').join('');
     qbars+='<div class="qstat"><div class="qstat-head"><div class="qstat-name">'+qc.name+'</div><div class="qstat-meta">'+total+' pronos \u00b7 '+qc.diversity+' choix</div></div><div class="qstat-bar">'+segs+'</div><div class="qstat-choices">'+choices+'</div></div>';
@@ -1239,6 +1355,7 @@ function showTab(tab) {
     const s = document.getElementById('quest-search');
     if (s && s.value) { s.value=''; filterQuests(); }
   }
+  ttHide();
 }
 function showSub(sub) {
   activeSub=sub;
