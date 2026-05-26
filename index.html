@@ -60,6 +60,7 @@ body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif
 .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--muted); padding:.45rem .9rem; border-radius:6px; cursor:pointer; font-size:.72rem; font-family:'DM Sans',sans-serif; text-transform:uppercase; letter-spacing:1px; transition:all .2s; }
 .btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
 .btn-icon { padding:.45rem .6rem; font-size:.95rem; line-height:1; }
+.btn-prono { text-decoration:none; display:inline-flex; align-items:center; white-space:nowrap; }
 
 /* NAV */
 nav { background:var(--surface); border-bottom:1px solid var(--border); padding:0 2rem; display:flex; overflow-x:auto; }
@@ -217,6 +218,91 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .quests-toolbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
 .quests-toolbar .sheet-link { margin-bottom:1.5rem; }
 .quests-toolbar .btn-ghost { margin-bottom:1.5rem; }
+.search-wrap { position:relative; flex:1; min-width:180px; margin-bottom:1.5rem; }
+.quest-search { width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.5rem 2rem .5rem .9rem; border-radius:6px; font-size:.82rem; font-family:'DM Sans',sans-serif; transition:border-color .2s; }
+.quest-search:focus { outline:none; border-color:var(--gold); }
+.quest-search::placeholder { color:var(--muted); }
+.search-clear { position:absolute; right:.5rem; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--muted); cursor:pointer; font-size:.8rem; padding:.2rem .3rem; line-height:1; }
+.search-clear:hover { color:var(--gold); }
+.quests-empty { text-align:center; color:var(--muted); padding:2rem; font-size:.9rem; font-style:italic; }
+/* ── STATS ── */
+.stats-section { margin-bottom:2.5rem; }
+.stats-section-title { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; color:var(--gold); letter-spacing:2px; margin-bottom:.25rem; }
+.stats-section-sub { font-size:.75rem; color:var(--muted); margin-bottom:1rem; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.7rem; }
+.stats-grid.wide { grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); }
+
+/* Carte trophée */
+.trophy-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.1rem; display:flex; align-items:center; gap:1rem; position:relative; overflow:hidden; }
+.trophy-card.gold   { border-color:var(--gold); }
+.trophy-card.spicy  { border-color:var(--red-border); }
+.trophy-card .t-emoji { font-size:1.6rem; flex-shrink:0; width:46px; height:46px; display:flex; align-items:center; justify-content:center; background:var(--surface-2); border-radius:10px; }
+.trophy-info { flex:1; min-width:0; }
+.trophy-label { font-size:.68rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+.trophy-winner { font-family:'Bebas Neue',sans-serif; font-size:1.35rem; color:var(--text); line-height:1.1; margin-top:2px; }
+.trophy-card.gold .trophy-winner { color:var(--gold); }
+.trophy-detail { font-size:.72rem; color:var(--muted); margin-top:2px; }
+.trophy-av { width:42px; height:42px; border-radius:50%; overflow:hidden; flex-shrink:0; border:2px solid var(--gold-dim); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.8rem; }
+.trophy-av img { width:100%; height:100%; object-fit:cover; }
+
+/* Encart chiffre */
+.fact-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem 1.2rem; text-align:center; }
+.fact-num { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:var(--gold); line-height:1; }
+.fact-num.blue { color:var(--blue); }
+.fact-num.green { color:var(--green); }
+.fact-num.red { color:var(--red); }
+.fact-label { font-size:.72rem; color:var(--muted); margin-top:.3rem; }
+
+/* Barres horizontales */
+.bar-row { display:flex; align-items:center; gap:.6rem; margin-bottom:.4rem; }
+.bar-name { font-size:.76rem; width:130px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text); }
+.bar-track { flex:1; background:var(--surface-2); border-radius:4px; height:18px; overflow:hidden; }
+.bar-fill { height:100%; border-radius:4px; display:flex; align-items:center; justify-content:flex-end; padding-right:6px; font-size:.65rem; color:#fff; font-weight:600; transition:width .4s; }
+.bar-val { font-size:.72rem; color:var(--muted); width:48px; text-align:right; flex-shrink:0; }
+
+/* Conteneur graphe générique */
+.chart-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.2rem; margin-bottom:.7rem; }
+.chart-card-title { font-size:.85rem; font-weight:600; color:var(--text); margin-bottom:.2rem; }
+.chart-card-sub { font-size:.72rem; color:var(--muted); margin-bottom:1rem; }
+.chart-svg { width:100%; display:block; overflow:visible; }
+
+/* Légende */
+.chart-legend { display:flex; flex-wrap:wrap; gap:.5rem 1rem; margin-top:.8rem; }
+.legend-item { display:flex; align-items:center; gap:.35rem; font-size:.7rem; color:var(--muted); }
+.legend-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+
+/* Quête répartition */
+.qstat { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:.9rem 1.1rem; margin-bottom:.5rem; }
+.qstat-head { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; margin-bottom:.6rem; }
+.qstat-name { font-size:.82rem; font-weight:600; color:var(--text); }
+.qstat-meta { font-size:.68rem; color:var(--muted); white-space:nowrap; }
+.qstat-bar { display:flex; height:22px; border-radius:5px; overflow:hidden; background:var(--surface-2); }
+.qstat-seg { height:100%; display:flex; align-items:center; justify-content:center; font-size:.62rem; color:#fff; font-weight:600; min-width:0; overflow:hidden; white-space:nowrap; }
+.qstat-choices { display:flex; flex-wrap:wrap; gap:.4rem .8rem; margin-top:.55rem; }
+.qstat-choice { font-size:.68rem; color:var(--muted); display:flex; align-items:center; gap:.3rem; }
+.qstat-choice .legend-dot { width:8px; height:8px; }
+
+/* Podium */
+.podium { display:flex; align-items:flex-end; justify-content:center; gap:.6rem; padding:1rem 0; }
+.podium-col { display:flex; flex-direction:column; align-items:center; gap:.4rem; }
+.podium-av { border-radius:50%; overflow:hidden; border:2px solid var(--gold-dim); display:flex; align-items:center; justify-content:center; font-weight:600; }
+.podium-av img { width:100%; height:100%; object-fit:cover; }
+.podium-name { font-size:.74rem; font-weight:600; color:var(--text); }
+.podium-pts { font-family:'Bebas Neue',sans-serif; color:var(--gold); line-height:1; }
+.podium-stand { border-radius:6px 6px 0 0; display:flex; align-items:flex-start; justify-content:center; padding-top:.4rem; font-family:'Bebas Neue',sans-serif; font-size:1.3rem; }
+.podium-1 .podium-stand { background:linear-gradient(180deg,var(--gold),var(--gold-dim)); color:#1a1505; }
+.podium-2 .podium-stand { background:linear-gradient(180deg,#b0bac9,#7a828f); color:#15171a; }
+.podium-3 .podium-stand { background:linear-gradient(180deg,#c07a41,#7a4e29); color:#1a1005; }
+
+/* Mini table */
+.mini-table { width:100%; border-collapse:collapse; }
+.mini-table th { font-size:.65rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted); text-align:left; padding:.4rem .6rem; border-bottom:1px solid var(--border); }
+.mini-table td { font-size:.78rem; padding:.45rem .6rem; border-bottom:1px solid var(--border); color:var(--text); }
+.mini-table tr:last-child td { border-bottom:none; }
+.mini-table .mt-rank { font-family:'Bebas Neue',sans-serif; color:var(--gold); width:30px; }
+.mini-table .mt-val { text-align:right; font-weight:600; }
+
+.stats-empty { text-align:center; color:var(--muted); padding:3rem 1rem; font-style:italic; }
 </style>
 </head>
 <body>
@@ -234,6 +320,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   </a>
   <div class="header-right">
     <span class="last-update" id="last-update"></span>
+    <a class="btn-ghost btn-prono" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank" rel="noopener">Mes pronostics ↗</a>
     <button class="btn-ghost btn-icon" id="theme-btn" onclick="toggleTheme()" title="Changer de thème">☾</button>
     <button class="btn-ghost" onclick="loadData(true)">↻ Actualiser</button>
   </div>
@@ -243,6 +330,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   <div class="tab active" data-tab="classement"   onclick="showTab('classement')">Classement</div>
   <div class="tab"        data-tab="quests"       onclick="showTab('quests')">Side Quests</div>
   <div class="tab"        data-tab="participants" onclick="showTab('participants')">Participants</div>
+  <div class="tab"        data-tab="stats"        onclick="showTab('stats')">Stats</div>
 </nav>
 
 <main>
@@ -274,20 +362,23 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 
   <div id="tab-quests" class="hidden">
     <div class="quests-toolbar">
-      <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
-        Remplir mes pronostics sur Google Sheets →
-      </a>
+      <div class="search-wrap">
+        <input type="text" id="quest-search" class="quest-search" placeholder="Rechercher une quête, un prono..." oninput="filterQuests()" autocomplete="off">
+        <button class="search-clear hidden" id="search-clear" onclick="clearQuestSearch()" title="Effacer">✕</button>
+      </div>
       <button class="btn-ghost" id="toggle-all-btn" onclick="toggleAllQuests()">Tout dérouler</button>
     </div>
     <div id="quests-list"></div>
+    <div id="quests-empty" class="quests-empty hidden">Aucune quête trouvée</div>
   </div>
 
   <div id="tab-participants" class="hidden">
-    <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg/edit" target="_blank">
-      Remplir mes pronostics sur Google Sheets →
-    </a>
     <div class="p-grid" id="p-grid"></div>
     <div class="detail-wrap" id="detail-wrap"></div>
+  </div>
+
+  <div id="tab-stats" class="hidden">
+    <div id="stats-content"></div>
   </div>
 </main>
 
@@ -390,19 +481,37 @@ function parseFeuille6(rows) {
   return { participants, quests };
 }
 
-// ── FETCH PRONO (tries multiple sheet names) ──────────────────────────────
-async function fetchProno() {
-  for (const name of ['PronoContest','PronoContests Classement Live','Prono Contest']) {
-    try {
-      const rows = await fetchRange(`'${name}'!A1:B20`);
-      if (rows.length > 1) {
-        const scores={};
-        rows.slice(1).forEach(r => { const p=(r[0]||'').trim(); if(p) scores[p]=parseInt(r[1]||'0')||0; });
-        if (Object.keys(scores).length) return scores;
-      }
-    } catch(e) {}
+// ── FETCH SÉRIES TEMPORELLES (PronoContest + Historique) ──────────────────
+// Les deux onglets ont la même structure : ligne d'en-tête avec dates en
+// colonnes B..., puis une ligne par participant.
+function parseTimeSeries(rows) {
+  if (!rows || rows.length < 2) return { dates:[], series:{}, latest:{} };
+  const header = rows[0];
+  const dates  = header.slice(1).map(d=>(d||'').trim());
+  const series = {};   // { participant: [v0, v1, ... ] (null si vide) }
+  const latest = {};    // { participant: dernière valeur remplie }
+  for (const row of rows.slice(1)) {
+    const p = (row[0]||'').trim();
+    if (!p) continue;
+    const vals = dates.map((_,i) => {
+      const raw = (row[i+1]||'').toString().trim();
+      return raw === '' ? null : (parseInt(raw)||0);
+    });
+    series[p] = vals;
+    let last = 0;
+    for (const v of vals) { if (v !== null) last = v; }
+    latest[p] = last;
   }
-  return {};
+  return { dates, series, latest };
+}
+
+async function fetchSeries(sheetName) {
+  try {
+    const rows = await fetchRange(`'${sheetName}'!A1:AZ40`);
+    return parseTimeSeries(rows);
+  } catch(e) {
+    return { dates:[], series:{}, latest:{} };
+  }
 }
 
 // ── SCORE CALC ────────────────────────────────────────────────────────────
@@ -445,6 +554,402 @@ function calcTotal(quests, pronoScores, p, mode) {
   const sq    = quests.reduce((acc,q) => acc+calcQuestPts(q,p,mode), 0);
   return { total:prono+sq, prono, sq };
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════════════════════
+const CHART_PALETTE = ['#C9A83C','#3ecf8e','#60a0f0','#f87cb0','#f0a050','#b090f8','#40d0c0','#f08080','#9bd35a','#6b9ef8','#e0c060','#5ad0b0'];
+
+function avMini(p, size) {
+  const c = avColor(p), url = photoUrl(p);
+  if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'"></div>';
+  return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px;background:'+c.bg+';color:'+c.fg+'">'+p+'</div>';
+}
+// Contenu intérieur d'un avatar (img ou initiales), sans wrapper div
+function avInner(p) {
+  const c = avColor(p), url = photoUrl(p);
+  if (url) return '<img src="'+url+'" alt="'+p+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">';
+  return p;
+}
+function avBg(p) { return avColor(p).bg; }
+function avFg(p) { return avColor(p).fg; }
+function trophyCard(emoji, label, winnerKey, detail, cls) {
+  const av = winnerKey ? avMini(winnerKey, 42) : '';
+  const name = winnerKey ? displayName(winnerKey) : '—';
+  return '<div class="trophy-card '+(cls||'')+'">'
+    + '<div class="t-emoji">'+emoji+'</div>'
+    + '<div class="trophy-info"><div class="trophy-label">'+label+'</div>'
+    + '<div class="trophy-winner">'+name+'</div>'
+    + (detail?'<div class="trophy-detail">'+detail+'</div>':'')
+    + '</div>'+av+'</div>';
+}
+function factCard(num, label, colorCls) {
+  return '<div class="fact-card"><div class="fact-num '+(colorCls||'')+'">'+num+'</div><div class="fact-label">'+label+'</div></div>';
+}
+function barChart(items, opts) {
+  opts = opts || {};
+  const max = Math.max.apply(null, items.map(i=>i.value).concat([1]));
+  return items.map((it,idx) => {
+    const pct = Math.round(it.value/max*100);
+    const color = it.color || CHART_PALETTE[idx % CHART_PALETTE.length];
+    return '<div class="bar-row"><div class="bar-name">'+it.label+'</div>'
+      + '<div class="bar-track"><div class="bar-fill" style="width:'+Math.max(pct,3)+'%;background:'+color+'">'+(pct>18&&opts.showVal!==false?it.value:'')+'</div></div>'
+      + '<div class="bar-val">'+it.value+(opts.suffix||'')+'</div></div>';
+  }).join('');
+}
+function lineChart(series, labels) {
+  const W=680,H=280,padL=38,padR=12,padT=16,padB=36;
+  const allVals = series.flatMap(s=>s.points.filter(v=>v!=null));
+  if (!allVals.length) return '<div class="stats-empty">Pas encore de donnees d historique</div>';
+  const maxV=Math.max.apply(null,allVals), minV=Math.min.apply(null,allVals.concat([0]));
+  const n=labels.length;
+  const xAt=i=>padL+(n<=1?0:(i/(n-1))*(W-padL-padR));
+  const yAt=v=>padT+(1-(v-minV)/((maxV-minV)||1))*(H-padT-padB);
+  let grid='';
+  for(let s=0;s<=4;s++){
+    const val=minV+(maxV-minV)*s/4, y=yAt(val);
+    grid+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'" stroke="var(--border)" stroke-width="1"/>';
+    grid+='<text x="'+(padL-6)+'" y="'+(y+3)+'" text-anchor="end" font-size="9" fill="var(--muted)">'+Math.round(val)+'</text>';
+  }
+  let xlabels='';
+  const skip=Math.ceil(n/8);
+  labels.forEach((lb,i)=>{ if(i%skip===0||i===n-1) xlabels+='<text x="'+xAt(i)+'" y="'+(H-padB+14)+'" text-anchor="middle" font-size="8" fill="var(--muted)">'+lb+'</text>'; });
+  let paths='';
+  series.forEach((s,si)=>{
+    const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    let d='',started=false;
+    s.points.forEach((v,i)=>{ if(v==null)return; d+=(started?'L':'M')+xAt(i).toFixed(1)+','+yAt(v).toFixed(1)+' '; started=true; });
+    paths+='<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
+    let lastI=-1; s.points.forEach((v,i)=>{ if(v!=null)lastI=i; });
+    if(lastI>=0) paths+='<circle cx="'+xAt(lastI)+'" cy="'+yAt(s.points[lastI])+'" r="3" fill="'+color+'"/>';
+  });
+  const legend=series.map((s,si)=>{
+    const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
+  }).join('');
+  return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'">'+grid+paths+xlabels+'</svg><div class="chart-legend">'+legend+'</div>';
+}
+function donutChart(slices) {
+  const total=slices.reduce((a,s)=>a+s.value,0)||1;
+  const R=70,r=40,cx=90,cy=90;
+  let angle=-Math.PI/2,paths='';
+  slices.forEach((s,i)=>{
+    const frac=s.value/total, a2=angle+frac*2*Math.PI, large=frac>0.5?1:0;
+    const x1=cx+R*Math.cos(angle),y1=cy+R*Math.sin(angle);
+    const x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
+    const xi2=cx+r*Math.cos(a2),yi2=cy+r*Math.sin(a2);
+    const xi1=cx+r*Math.cos(angle),yi1=cy+r*Math.sin(angle);
+    const color=s.color||CHART_PALETTE[i%CHART_PALETTE.length];
+    paths+='<path d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'"/>';
+    angle=a2;
+  });
+  const legend=slices.map((s,i)=>{
+    const color=s.color||CHART_PALETTE[i%CHART_PALETTE.length];
+    const pct=Math.round(s.value/total*100);
+    return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.label+' · '+pct+'%</div>';
+  }).join('');
+  return '<div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap"><svg width="180" height="180" viewBox="0 0 180 180">'+paths+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>';
+}
+function radarChart(axes, series) {
+  const cx=180,cy=170,R=120,n=axes.length;
+  const angAt=i=>-Math.PI/2+i/n*2*Math.PI;
+  let grid='';
+  for(let ring=1;ring<=4;ring++){
+    const rr=R*ring/4; let pts='';
+    for(let i=0;i<n;i++){ pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; }
+    grid+='<polygon points="'+pts+'" fill="none" stroke="var(--border)" stroke-width="1"/>';
+  }
+  for(let i=0;i<n;i++){
+    grid+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(angAt(i)))+'" y2="'+(cy+R*Math.sin(angAt(i)))+'" stroke="var(--border)" stroke-width="1"/>';
+    const lx=cx+(R+18)*Math.cos(angAt(i)),ly=cy+(R+18)*Math.sin(angAt(i));
+    grid+='<text x="'+lx+'" y="'+(ly+3)+'" text-anchor="middle" font-size="8" fill="var(--muted)">'+axes[i]+'</text>';
+  }
+  let polys='';
+  series.forEach((s,si)=>{
+    const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    let pts='';
+    s.values.forEach((v,i)=>{ const rr=R*Math.max(0,Math.min(1,v)); pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; });
+    polys+='<polygon points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
+  });
+  const legend=series.map((s,si)=>{
+    const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
+  }).join('');
+  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340">'+grid+polys+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>';
+}
+function chartCard(title, sub, inner) {
+  return '<div class="chart-card"><div class="chart-card-title">'+title+'</div>'
+    + (sub?'<div class="chart-card-sub">'+sub+'</div>':'')+inner+'</div>';
+}
+function argMax(P,fn){ let best=null,bv=-Infinity; P.forEach(p=>{const v=fn(p); if(v>bv){bv=v;best=p;}}); return {p:best,v:bv}; }
+function argMin(P,fn){ let best=null,bv=Infinity; P.forEach(p=>{const v=fn(p); if(v<bv){bv=v;best=p;}}); return {p:best,v:bv}; }
+function rankBy(P,fn,desc){ return P.map(p=>({p,v:fn(p)})).sort((a,b)=>desc?b.v-a.v:a.v-b.v); }
+
+function computeStats() {
+  const { participants, quests, pronoScores, pronoTS, histoTS } = DATA;
+  const P = participants;
+  const sideQuests = quests.filter(q=>q.type!=='prono');
+  const totFictif={},totReel={},sqFictif={},sqReel={};
+  P.forEach(p=>{
+    const f=calcTotal(quests,pronoScores,p,'fictif');
+    const r=calcTotal(quests,pronoScores,p,'reel');
+    totFictif[p]=f.total; totReel[p]=r.total; sqFictif[p]=f.sq; sqReel[p]=r.sq;
+  });
+  const cntValide={},cntImpossible={},cntPossible={},cntValideWin={},cntValideLose={};
+  P.forEach(p=>{
+    cntValide[p]=cntImpossible[p]=cntPossible[p]=cntValideWin[p]=cntValideLose[p]=0;
+    sideQuests.forEach(q=>{
+      const e=(q.etats[p]||'possible').toLowerCase();
+      if(e==='impossible') cntImpossible[p]++;
+      else if(e==='valide'||e==='validé'){ cntValide[p]++; if(calcQuestPts(q,p,'reel')>0) cntValideWin[p]++; else cntValideLose[p]++; }
+      else cntPossible[p]++;
+    });
+  });
+  const liveHits={};
+  P.forEach(p=>{
+    liveHits[p]=0;
+    sideQuests.forEach(q=>{
+      if(!q.liveAns) return;
+      const e=(q.etats[p]||'possible').toLowerCase();
+      if(e==='impossible') return;
+      const ans=(q.answers[p]||'').trim().toLowerCase();
+      const ref=q.liveAns.trim().toLowerCase();
+      if(q.type==='repeches'){
+        const rl=ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+        const al=ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+        if(al.some(x=>rl.indexOf(x)>=0)) liveHits[p]++;
+      } else if(ans&&ans===ref) liveHits[p]++;
+    });
+  });
+  const uniquePicks={};
+  P.forEach(p=>uniquePicks[p]=0);
+  const questChoices=[];
+  sideQuests.forEach(q=>{
+    if(q.type==='vif_or') return;
+    const map={};
+    P.forEach(p=>{
+      const a=(q.answers[p]||'').trim();
+      if(!a) return;
+      const key=a.toLowerCase();
+      if(!map[key]) map[key]={val:a,count:0,who:[]};
+      map[key].count++; map[key].who.push(p);
+    });
+    const choices=Object.keys(map).map(k=>map[k]).sort((a,b)=>b.count-a.count);
+    choices.forEach(c=>{ if(c.count===1) uniquePicks[c.who[0]]++; });
+    questChoices.push({name:q.name.split('\n')[0],choices:choices,diversity:choices.length,type:q.type});
+  });
+  const conformity={};
+  P.forEach(p=>{
+    let follow=0,tot=0;
+    questChoices.forEach(qc=>{
+      if(!qc.choices.length) return;
+      const mine=qc.choices.filter(c=>c.who.indexOf(p)>=0)[0];
+      if(!mine) return;
+      tot++;
+      if(qc.choices[0].count>1&&qc.choices[0].who.indexOf(p)>=0) follow++;
+    });
+    conformity[p]=tot?follow/tot:0;
+  });
+  let twinPair=null,twinScore=-1,lonePair=null,loneScore=999;
+  for(let i=0;i<P.length;i++) for(let j=i+1;j<P.length;j++){
+    let same=0,tot=0;
+    sideQuests.forEach(q=>{
+      if(q.type==='vif_or') return;
+      const a=(q.answers[P[i]]||'').trim().toLowerCase();
+      const b=(q.answers[P[j]]||'').trim().toLowerCase();
+      if(!a||!b) return;
+      tot++; if(a===b) same++;
+    });
+    if(tot>=5){
+      const sim=same/tot;
+      if(sim>twinScore){twinScore=sim;twinPair=[P[i],P[j]];}
+      if(sim<loneScore){loneScore=sim;lonePair=[P[i],P[j]];}
+    }
+  }
+  const yesCount={};
+  P.forEach(p=>{
+    yesCount[p]=0;
+    sideQuests.forEach(q=>{
+      if(['ON PROLONGE','LA FORCE'].every(k=>q.name.toUpperCase().indexOf(k)<0)) return;
+      if((q.answers[p]||'').trim().toLowerCase()==='oui') yesCount[p]++;
+    });
+  });
+  const histoDates=histoTS.dates||[];
+  const filledIdx=[];
+  histoDates.forEach((d,i)=>{ if(P.some(p=>(histoTS.series[p]||[])[i]!=null)) filledIdx.push(i); });
+  let lastProg={},biggestRise=null,biggestFall=null;
+  if(filledIdx.length>=2){
+    const a=filledIdx[filledIdx.length-2],b=filledIdx[filledIdx.length-1];
+    P.forEach(p=>{
+      const va=(histoTS.series[p]||[])[a],vb=(histoTS.series[p]||[])[b];
+      if(va!=null&&vb!=null){
+        const d=vb-va; lastProg[p]=d;
+        if(!biggestRise||d>biggestRise.d) biggestRise={p:p,d:d};
+        if(!biggestFall||d<biggestFall.d) biggestFall={p:p,d:d};
+      }
+    });
+  }
+  const regularity={};
+  P.forEach(p=>{
+    const s=(histoTS.series[p]||[]).filter(v=>v!=null);
+    if(s.length<3){ regularity[p]=null; return; }
+    const deltas=[]; for(let i=1;i<s.length;i++) deltas.push(s[i]-s[i-1]);
+    const mean=deltas.reduce((a,b)=>a+b,0)/deltas.length;
+    const variance=deltas.reduce((a,b)=>a+(b-mean)*(b-mean),0)/deltas.length;
+    regularity[p]=Math.sqrt(variance);
+  });
+  const timesLeader={};
+  P.forEach(p=>timesLeader[p]=0);
+  filledIdx.forEach(i=>{
+    let best=null,bestV=-1;
+    P.forEach(p=>{ const v=(histoTS.series[p]||[])[i]; if(v!=null&&v>bestV){bestV=v;best=p;} });
+    if(best) timesLeader[best]++;
+  });
+  const bestRank={};
+  P.forEach(p=>bestRank[p]=99);
+  filledIdx.forEach(i=>{
+    const ranked=P.map(p=>({p:p,v:(histoTS.series[p]||[])[i]})).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v);
+    ranked.forEach((x,idx)=>{ if(idx+1<bestRank[x.p]) bestRank[x.p]=idx+1; });
+  });
+  return {P:P,sideQuests:sideQuests,totFictif:totFictif,totReel:totReel,sqFictif:sqFictif,sqReel:sqReel,
+    cntValide:cntValide,cntImpossible:cntImpossible,cntPossible:cntPossible,cntValideWin:cntValideWin,cntValideLose:cntValideLose,
+    liveHits:liveHits,uniquePicks:uniquePicks,questChoices:questChoices,conformity:conformity,
+    twinPair:twinPair,twinScore:twinScore,lonePair:lonePair,loneScore:loneScore,yesCount:yesCount,
+    histoTS:histoTS,histoDates:histoDates,filledIdx:filledIdx,lastProg:lastProg,biggestRise:biggestRise,biggestFall:biggestFall,
+    regularity:regularity,timesLeader:timesLeader,bestRank:bestRank};
+}
+
+function renderStats() {
+  const el=document.getElementById('stats-content');
+  if(!DATA||!DATA.participants.length){ el.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
+  const S=computeStats();
+  const P=S.P;
+  let html='';
+
+  html+='<div class="stats-section"><div class="stats-section-title">Podiums & recompenses</div><div class="stats-section-sub">Le gratin du concours, a l instant T</div>';
+  const podF=rankBy(P,p=>S.totFictif[p],true).slice(0,3);
+  if(podF.length===3){
+    const order=[podF[1],podF[0],podF[2]];
+    const heights=[70,100,52],cls=['podium-2','podium-1','podium-3'],avS=[46,58,42];
+    let pod='<div class="podium">';
+    order.forEach((x,i)=>{
+      const realIdx=x===podF[0]?1:(x===podF[1]?2:3);
+      pod+='<div class="podium-col '+cls[i]+'">'
+        +'<div class="podium-av" style="width:'+avS[i]+'px;height:'+avS[i]+'px;background:'+avBg(x.p)+';color:'+avFg(x.p)+'">'+avInner(x.p)+'</div>'
+        +'<div class="podium-name">'+displayName(x.p)+'</div>'
+        +'<div class="podium-pts" style="font-size:'+(i===1?'1.5rem':'1.2rem')+'">'+x.v+'</div>'
+        +'<div class="podium-stand" style="height:'+heights[i]+'px;width:78px">'+realIdx+'</div></div>';
+    });
+    pod+='</div>';
+    html+=chartCard('Podium provisoire (classement fictif)','PronoContest + side quests en cours',pod);
+  }
+  const cards=[];
+  const leadF=argMax(P,p=>S.totFictif[p]);
+  const leadR=argMax(P,p=>S.totReel[p]);
+  cards.push(trophyCard('\u{1F451}','Leader fictif',leadF.p,leadF.v+' pts au total','gold'));
+  cards.push(trophyCard('\u{1F3C6}','Leader reel',leadR.p,leadR.v+' pts officiels','gold'));
+  const bestSQ=argMax(P,p=>S.sqFictif[p]);
+  cards.push(trophyCard('\u{1F3AF}','Roi des side quests',bestSQ.p,bestSQ.v+' pts de side quests'));
+  const visio=argMax(P,p=>S.liveHits[p]);
+  cards.push(trophyCard('\u{1F52E}','Le visionnaire',visio.p,visio.v+' pronos actuellement dans le vrai'));
+  const flamb=argMax(P,p=>S.cntValideWin[p]);
+  cards.push(trophyCard('\u{1F525}','Le flambeur',flamb.p,flamb.v+' side quests validees gagnantes'));
+  const rebelle=argMax(P,p=>S.uniquePicks[p]);
+  cards.push(trophyCard('\u{1F984}','Le rebelle',rebelle.p,rebelle.v+' pronos que personne d autre n a oses'));
+  const mouton=argMax(P,p=>S.conformity[p]);
+  cards.push(trophyCard('\u{1F411}','Le mouton',mouton.p,Math.round(mouton.v*100)+'% de pronos dans la majorite'));
+  if(S.biggestRise) cards.push(trophyCard('\u{1F680}','Plus grosse remontee',S.biggestRise.p,'+'+S.biggestRise.d+' pts sur la derniere journee'));
+  const reg=argMin(P,p=>S.regularity[p]==null?Infinity:S.regularity[p]);
+  if(reg.v!==Infinity) cards.push(trophyCard('\u{1F4D0}','Le metronome',reg.p,'Progression la plus reguliere'));
+  const nbLead=argMax(P,p=>S.timesLeader[p]);
+  if(nbLead.v>0) cards.push(trophyCard('\u{1F3C5}','Le plus souvent en tete',nbLead.p,nbLead.v+' journee(s) en position de leader'));
+  html+='<div class="stats-grid">'+cards.join('')+'</div></div>';
+
+  const spicy=[];
+  const lastF=argMin(P,p=>S.totFictif[p]);
+  spicy.push(trophyCard('\u{1F944}','La lanterne rouge',lastF.p,'Dernier du classement fictif ('+lastF.v+' pts)','spicy'));
+  const poisse=argMax(P,p=>S.cntValideLose[p]+S.cntImpossible[p]);
+  spicy.push(trophyCard('\u{1F480}','La poisse',poisse.p,poisse.v+' side quests perdues ou impossibles','spicy'));
+  const illus=argMax(P,p=>S.sqFictif[p]-S.sqReel[p]);
+  spicy.push(trophyCard('\u{1F3AD}','L illusionniste',illus.p,illus.v+' pts de side quests encore pour de faux','spicy'));
+  if(S.biggestFall&&S.biggestFall.d<0) spicy.push(trophyCard('\u{1F4C9}','Le crash du jour',S.biggestFall.p,S.biggestFall.d+' pts sur la derniere journee','spicy'));
+  const ghost=argMin(P,p=>S.liveHits[p]);
+  spicy.push(trophyCard('\u{1F47B}','A cote de la plaque',ghost.p,'Seulement '+ghost.v+' pronos dans le vrai','spicy'));
+  if(S.twinPair) spicy.push(trophyCard('\u{1F46F}','Les jumeaux',null,displayName(S.twinPair[0])+' & '+displayName(S.twinPair[1])+' \u2014 '+Math.round(S.twinScore*100)+'% de pronos identiques','spicy'));
+  const optimiste=argMax(P,p=>S.yesCount[p]);
+  spicy.push(trophyCard('\u2600\uFE0F','L eternel optimiste',optimiste.p,'Dit Oui a tout en finale','spicy'));
+  const impossibleKing=argMax(P,p=>S.cntImpossible[p]);
+  spicy.push(trophyCard('\u{1F6AB}','Le maudit',impossibleKing.p,impossibleKing.v+' quetes devenues impossibles','spicy'));
+  html+='<div class="stats-section"><div class="stats-section-title">Superlatifs qui piquent</div><div class="stats-section-sub">A prendre avec humour</div><div class="stats-grid">'+spicy.join('')+'</div></div>';
+
+  const moyF=Math.round(P.reduce((a,p)=>a+S.totFictif[p],0)/P.length);
+  const ecart=leadF.v-lastF.v;
+  const totalLive=S.sideQuests.filter(q=>q.liveAns).length;
+  const facts=[
+    factCard(moyF,'Score fictif moyen'),
+    factCard(ecart,'Ecart leader / dernier','blue'),
+    factCard(totalLive+'/'+S.sideQuests.length,'Side quests deja actives','green'),
+    factCard(leadF.v,'Score du leader','green')
+  ];
+  html+='<div class="stats-section"><div class="stats-section-title">Chiffres cles</div><div class="stats-grid">'+facts.join('')+'</div></div>';
+
+  html+='<div class="stats-section"><div class="stats-section-title">Le classement en images</div>';
+  const barItems=rankBy(P,p=>S.totFictif[p],true).map(x=>({label:displayName(x.p),value:x.v}));
+  html+=chartCard('Classement fictif','Total PronoContest + side quests en cours',barChart(barItems));
+  const sqItems=rankBy(P,p=>S.sqFictif[p],true).map(x=>({label:displayName(x.p),value:x.v,color:'#60a0f0'}));
+  html+=chartCard('Points de side quests uniquement','Hors PronoContest \u2014 qui maitrise les quetes',barChart(sqItems));
+  if(S.filledIdx.length>=2){
+    const labels=S.filledIdx.map(i=>S.histoDates[i]);
+    const series=P.map((p,i)=>({name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    html+=chartCard('Evolution du classement','Total de points journee par journee (onglet Historique)',lineChart(series,labels));
+  } else {
+    html+=chartCard('Evolution du classement','','<div class="stats-empty">Pas assez de journees d historique remplies pour tracer une courbe</div>');
+  }
+  html+='</div>';
+
+  if(podF.length===3){
+    const axes=['Total','Side Q.','Validees','Visions','Original.'];
+    const mx={tot:Math.max.apply(null,P.map(p=>S.totFictif[p]).concat([1])),sq:Math.max.apply(null,P.map(p=>S.sqFictif[p]).concat([1])),val:Math.max.apply(null,P.map(p=>S.cntValideWin[p]).concat([1])),vis:Math.max.apply(null,P.map(p=>S.liveHits[p]).concat([1])),uni:Math.max.apply(null,P.map(p=>S.uniquePicks[p]).concat([1]))};
+    const series=podF.map((x,i)=>({name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    html+='<div class="stats-section"><div class="stats-section-title">Profil du Top 3</div><div class="stats-section-sub">Forces et faiblesses comparees des 3 leaders</div>'+chartCard('Radar comparatif','',radarChart(axes,series))+'</div>';
+  }
+
+  html+='<div class="stats-section"><div class="stats-section-title">Anatomie des pronostics</div><div class="stats-section-sub">Comment le groupe se repartit sur chaque quete</div>';
+  const sortedDiv=S.questChoices.slice().sort((a,b)=>b.diversity-a.diversity);
+  const mostDiverse=sortedDiv[0], leastDiverse=sortedDiv[sortedDiv.length-1];
+  if(mostDiverse) html+=chartCard('Quete la plus disputee : '+mostDiverse.name,mostDiverse.diversity+' reponses differentes',donutChart(mostDiverse.choices.map(c=>({label:c.val,value:c.count}))));
+  if(leastDiverse) html+=chartCard('Quete la plus consensuelle : '+leastDiverse.name,'Seulement '+leastDiverse.diversity+' reponse(s) differente(s)',donutChart(leastDiverse.choices.map(c=>({label:c.val,value:c.count}))));
+  let qbars='';
+  S.questChoices.forEach(qc=>{
+    const total=qc.choices.reduce((a,c)=>a+c.count,0);
+    if(!total) return;
+    const segs=qc.choices.map((c,i)=>{
+      const pct=c.count/total*100, color=CHART_PALETTE[i%CHART_PALETTE.length];
+      return '<div class="qstat-seg" style="width:'+pct+'%;background:'+color+'" title="'+c.val+': '+c.count+'">'+(pct>12?c.count:'')+'</div>';
+    }).join('');
+    const choices=qc.choices.map((c,i)=>'<div class="qstat-choice"><span class="legend-dot" style="background:'+CHART_PALETTE[i%CHART_PALETTE.length]+'"></span>'+c.val+' ('+c.count+')</div>').join('');
+    qbars+='<div class="qstat"><div class="qstat-head"><div class="qstat-name">'+qc.name+'</div><div class="qstat-meta">'+total+' pronos \u00b7 '+qc.diversity+' choix</div></div><div class="qstat-bar">'+segs+'</div><div class="qstat-choices">'+choices+'</div></div>';
+  });
+  html+=chartCard('Repartition quete par quete','Le detail de qui a mise sur quoi',qbars);
+  html+='</div>';
+
+  html+='<div class="stats-section"><div class="stats-section-title">Les classements annexes</div>';
+  function miniTable(title,ranked,fmt){
+    const rows=ranked.slice(0,5).map((x,i)=>'<tr><td class="mt-rank">'+(i+1)+'</td><td>'+displayName(x.p)+'</td><td class="mt-val">'+fmt(x.v)+'</td></tr>').join('');
+    return '<div class="chart-card"><div class="chart-card-title">'+title+'</div><table class="mini-table"><tr><th></th><th>Participant</th><th style="text-align:right">Valeur</th></tr>'+rows+'</table></div>';
+  }
+  html+='<div class="stats-grid wide">';
+  html+=miniTable('Top side quests',rankBy(P,p=>S.sqFictif[p],true),v=>v+' pts');
+  html+=miniTable('Plus de quetes validees',rankBy(P,p=>S.cntValideWin[p],true),v=>v);
+  html+=miniTable('Les plus originaux',rankBy(P,p=>S.uniquePicks[p],true),v=>v+' pronos uniques');
+  html+=miniTable('Plus de visions correctes',rankBy(P,p=>S.liveHits[p],true),v=>v);
+  if(S.filledIdx.length>=2) html+=miniTable('Progression derniere journee',rankBy(P,p=>S.lastProg[p]||0,true),v=>(v>=0?'+':'')+v+' pts');
+  html+=miniTable('Le plus de poisse',rankBy(P,p=>S.cntValideLose[p]+S.cntImpossible[p],true),v=>v+' rates');
+  html+='</div></div>';
+
+  el.innerHTML=html;
+}
+
 
 // ── RENDER LEADERBOARD ────────────────────────────────────────────────────
 function renderLeaderboard(containerId, participants, quests, pronoScores, mode) {
@@ -562,8 +1067,14 @@ function renderQuests(participants, quests) {
       </div>`;
     }).join('');
 
+    // Texte recherchable : nom, sous-titre, réponse live, et toutes les réponses
+    const searchText = normalizeSearch([
+      shortName, subName, liveAns,
+      ...participants.map(p => q.answers[p] || '')
+    ].join(' '));
+
     return `
-    <div class="quest-card">
+    <div class="quest-card" data-search="${searchText}">
       <div class="quest-head" onclick="toggleQ(${qi})">
         <div class="quest-title-wrap">
           <div class="quest-title">${shortName}</div>
@@ -672,6 +1183,31 @@ function toggleAllQuests() {
   document.getElementById('toggle-all-btn').textContent = anyClosed ? 'Tout replier' : 'Tout dérouler';
 }
 
+// ── RECHERCHE QUÊTES ──────────────────────────────────────────────────────
+function normalizeSearch(str) {
+  return (str||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+function filterQuests() {
+  const input = document.getElementById('quest-search');
+  const term  = normalizeSearch(input.value.trim());
+  document.getElementById('search-clear').classList.toggle('hidden', !input.value);
+
+  const cards = document.querySelectorAll('.quest-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const match = !term || (card.dataset.search || '').includes(term);
+    card.classList.toggle('hidden', !match);
+    if (match) visible++;
+  });
+  document.getElementById('quests-empty').classList.toggle('hidden', visible > 0);
+}
+function clearQuestSearch() {
+  const input = document.getElementById('quest-search');
+  input.value = '';
+  filterQuests();
+  input.focus();
+}
+
 // ── THÈME SOMBRE / CLAIR ──────────────────────────────────────────────────
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -696,9 +1232,13 @@ initTheme();
 function showTab(tab) {
   activeTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  ['classement','quests','participants'].forEach(id=>
+  ['classement','quests','participants','stats'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.toggle('hidden',id!==tab));
   if (tab==='participants') document.getElementById('detail-wrap').classList.remove('show');
+  if (tab!=='quests') {
+    const s = document.getElementById('quest-search');
+    if (s && s.value) { s.value=''; filterQuests(); }
+  }
 }
 function showSub(sub) {
   activeSub=sub;
@@ -716,7 +1256,7 @@ function formatUpdateTime(t) {
 function setStatus(type,msg) {
   document.getElementById('status-dot').className='dot'+(type==='loading'?' loading':type==='error'?' error':'');
   document.getElementById('status-text').textContent=msg;
-  ['classement','quests','participants'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','participants','stats'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
 }
 
 // ── LOAD ──────────────────────────────────────────────────────────────────
@@ -725,12 +1265,15 @@ function renderAll() {
   renderLeaderboard('fictif-list', DATA.participants, DATA.quests, DATA.pronoScores, 'fictif');
   renderQuests(DATA.participants, DATA.quests);
   renderParticipants(DATA.participants, DATA.quests, DATA.pronoScores);
+  renderStats();
+  // Réapplique le filtre de recherche si une recherche est active
+  if (document.getElementById('quest-search')?.value) filterQuests();
 
   document.getElementById('last-update').textContent = formatUpdateTime(new Date(lastLoadTime));
   const liveCount = DATA.quests.filter(q=>q.liveAns).length;
   const pronOk    = Object.values(DATA.pronoScores).some(v=>v>0);
   setStatus('ok',`${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveCount} live · PronoContest ${pronOk?'✓':'non configuré'}`);
-  ['classement','quests','participants'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','participants','stats'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
   document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
   showSub(activeSub);
 }
@@ -758,12 +1301,14 @@ async function loadData(forceFromButton) {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoScores] = await Promise.all([
+    const [f6rows, pronoTS, histoTS] = await Promise.all([
       fetchRange("'Feuille 6'!A1:AG200"),
-      fetchProno(),
+      fetchSeries('PronoContest'),
+      fetchSeries('Historique'),
     ]);
     const parsed = parseFeuille6(f6rows);
-    DATA = { ...parsed, pronoScores };
+    const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
+    DATA = { ...parsed, pronoScores, pronoTS, histoTS };
     lastLoadTime = Date.now();
 
     try {
