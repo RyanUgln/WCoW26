@@ -323,6 +323,15 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .seg-iso.focused { opacity:1; }
 .chart-hint { font-size:.68rem; color:var(--muted); margin-top:.5rem; font-style:italic; }
 
+/* Bandeau highlight Stats */
+.hl-banner { display:flex; align-items:center; gap:.7rem; background:var(--surface-2); border:1px solid var(--gold-dim); border-radius:8px; padding:.55rem .9rem; margin-bottom:1.2rem; font-size:.8rem; }
+.hl-banner .hl-av { width:30px; height:30px; border-radius:50%; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.72rem; }
+.hl-banner .hl-av img { width:100%; height:100%; object-fit:cover; }
+.hl-banner .hl-label { color:var(--muted); }
+.hl-banner .hl-name { color:var(--gold); font-weight:600; }
+.hl-banner .hl-clear { margin-left:auto; background:transparent; border:1px solid var(--border); color:var(--muted); cursor:pointer; font-size:.7rem; padding:.3rem .7rem; border-radius:5px; text-transform:uppercase; letter-spacing:1px; }
+.hl-banner .hl-clear:hover { border-color:var(--gold); color:var(--gold); }
+
 /* ── OPPOSITION ── */
 .opp-selectors { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-bottom:1.2rem; }
 .opp-select { width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.55rem .7rem; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; cursor:pointer; }
@@ -481,6 +490,7 @@ let DATA = null, activeTab = 'classement', activeSub = 'reel';
 let activeStatsSub = 'general';
 let oppSelection = [null, null, null];
 let oppInit = false;
+let statsHighlight = null;
 let lastLoadTime = null;
 const COOLDOWN_MS = 60000;
 const CACHE_KEY = 'wcow_cache_v1';
@@ -645,70 +655,59 @@ function ttHide() {
   if (tt) tt.classList.remove('show');
 }
 
-// ── ISOLATION AU CLIC ─────────────────────────────────────────────────────
-// Courbe : clic sur un nom de la légende -> isole sa courbe
-function toggleLineIsolate(legendEl) {
-  const chartId = legendEl.dataset.chart;
-  const si      = legendEl.dataset.si;
-  const svg     = document.querySelector('svg[data-chart="'+chartId+'"]');
-  const legendBox = document.querySelector('.chart-legend[data-chart="'+chartId+'"]');
-  if (!svg || !legendBox) return;
-  const alreadyFocused = legendEl.classList.contains('focused');
+// ── HIGHLIGHT CROISÉ STATS ────────────────────────────────────────────────
+// Un seul participant peut être mis en avant ; tous les graphes "participants"
+// de la page Stats réagissent ensemble. Les éléments concernés portent
+// l'attribut data-pkey (barres, points/courbes, polygones radar, légendes).
+function setStatsHighlight(pkey) {
+  // clic sur le même -> on annule
+  statsHighlight = (statsHighlight === pkey) ? null : pkey;
+  applyStatsHighlight();
+}
+function clearStatsHighlight() {
+  statsHighlight = null;
+  applyStatsHighlight();
+}
+function applyStatsHighlight() {
+  const scope = document.getElementById('statsub-general');
+  if (!scope) return;
+  const hl = statsHighlight;
 
-  // reset
-  legendBox.querySelectorAll('.legend-item').forEach(li => li.classList.remove('dimmed','focused'));
-  svg.querySelectorAll('path,circle').forEach(el => el.classList.remove('series-dimmed','series-focus'));
-
-  if (alreadyFocused) return; // re-clic => tout réafficher
-
-  // isole la série si
-  legendBox.querySelectorAll('.legend-item').forEach(li => {
-    if (li.dataset.si !== si) li.classList.add('dimmed');
+  // Éléments SVG (courbe, radar) et barres : marqués par data-pkey
+  scope.querySelectorAll('[data-pkey]').forEach(el => {
+    el.classList.remove('series-dimmed','series-focus','dimmed','focused');
+    if (!hl) return;
+    const isMatch = el.dataset.pkey === hl;
+    if (el.classList.contains('bar-row') || el.classList.contains('legend-item')) {
+      el.classList.toggle('dimmed', !isMatch);
+      el.classList.toggle('focused', isMatch);
+    } else {
+      el.classList.toggle('series-dimmed', !isMatch);
+      el.classList.toggle('series-focus', isMatch);
+    }
   });
-  legendEl.classList.add('focused');
-  svg.querySelectorAll('path,circle').forEach(el => {
-    if (el.classList.contains(chartId+'-s'+si)) el.classList.add('series-focus');
-    else el.classList.add('series-dimmed');
-  });
+
+  // Bandeau
+  renderHighlightBanner();
+}
+function renderHighlightBanner() {
+  const holder = document.getElementById('hl-banner-holder');
+  if (!holder) return;
+  if (!statsHighlight) { holder.innerHTML = ''; return; }
+  const p = statsHighlight;
+  const c = avColor(p), url = photoUrl(p);
+  const inner = url
+    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
+    : p;
+  holder.innerHTML = '<div class="hl-banner">'
+    + '<div class="hl-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>'
+    + '<span class="hl-label">Joueur mis en avant :</span>'
+    + '<span class="hl-name">'+displayName(p)+'</span>'
+    + '<button class="hl-clear" onclick="clearStatsHighlight()">Tout afficher</button>'
+    + '</div>';
 }
 
-// Barres : clic sur une barre -> isole cette personne
-function toggleBarIsolate(rowEl) {
-  const container = rowEl.parentElement;
-  const already = rowEl.classList.contains('focused');
-  container.querySelectorAll('.bar-row').forEach(r => r.classList.remove('dimmed','focused'));
-  if (already) return;
-  container.querySelectorAll('.bar-row').forEach(r => {
-    if (r !== rowEl) r.classList.add('dimmed');
-  });
-  rowEl.classList.add('focused');
-}
-
-// Radar : clic sur un nom de la légende -> isole son polygone
-function toggleRadarIsolate(legendEl) {
-  const chartId = legendEl.dataset.chart;
-  const si      = legendEl.dataset.si;
-  const svg       = document.querySelector('svg[data-chart="'+chartId+'"]');
-  const legendBox = document.querySelector('.chart-legend[data-chart="'+chartId+'"]');
-  if (!svg || !legendBox) return;
-  const already = legendEl.classList.contains('focused');
-
-  legendBox.querySelectorAll('.legend-item').forEach(li => li.classList.remove('dimmed','focused'));
-  svg.querySelectorAll('polygon,circle').forEach(el => el.classList.remove('series-dimmed','series-focus'));
-  if (already) return;
-
-  legendBox.querySelectorAll('.legend-item').forEach(li => {
-    if (li.dataset.si !== si) li.classList.add('dimmed');
-  });
-  legendEl.classList.add('focused');
-  svg.querySelectorAll('polygon.'+chartId+'-grid, circle.'+chartId+'-grid').forEach(el => {});
-  svg.querySelectorAll('polygon,circle').forEach(el => {
-    if (el.classList.contains(chartId+'-r'+si)) el.classList.add('series-focus');
-    else if (!el.classList.contains(chartId+'-grid')) el.classList.add('series-dimmed');
-  });
-}
-
-// Camembert / stacked : clic sur une part -> la met en valeur
+// Camembert / stacked : isolation locale indépendante (parts, pas participants)
 function toggleSegIsolate(segEl) {
   const group = segEl.parentElement;
   const already = segEl.classList.contains('focused');
@@ -757,7 +756,7 @@ function barChart(items, opts) {
     const tip = "ttShow(event,'<div class=&quot;tt-title&quot;>"+it.label+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+it.value+(opts.suffix||'')+"</span> "+(opts.metric||'points')+"')";
     return '<div class="bar-row clickable" data-pkey="'+pkey+'" '
       + 'onmousemove="'+tip+'" onmouseleave="ttHide()" '
-      + 'onclick="toggleBarIsolate(this)">'
+      + 'onclick="setStatsHighlight(\''+pkey+'\')">'
       + '<div class="bar-name">'+it.label+'</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+Math.max(pct,3)+'%;background:'+color+'">'+(pct>18&&opts.showVal!==false?it.value:'')+'</div></div>'
       + '<div class="bar-val">'+it.value+(opts.suffix||'')+'</div></div>';
@@ -785,22 +784,23 @@ function lineChart(series, labels) {
   let paths='', dots='';
   series.forEach((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    const pkey=s.key||s.name;
     let d='',started=false;
     s.points.forEach((v,i)=>{ if(v==null)return; d+=(started?'L':'M')+xAt(i).toFixed(1)+','+yAt(v).toFixed(1)+' '; started=true; });
-    paths+='<path class="'+chartId+'-s'+si+'" d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
-    // points interactifs : un cercle invisible large + un point visible
+    paths+='<path data-pkey="'+pkey+'" d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
     s.points.forEach((v,i)=>{
       if(v==null) return;
       const cx=xAt(i).toFixed(1), cy=yAt(v).toFixed(1);
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+labels[i]+" : <span class=&quot;tt-val&quot;>"+v+"</span> pts')";
-      dots+='<circle class="'+chartId+'-s'+si+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
-      dots+='<circle class="hit-zone '+chartId+'-s'+si+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
-        + 'onmousemove="'+tip+'" onmouseleave="ttHide()"></circle>';
+      dots+='<circle data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
+      dots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+pkey+'\')"></circle>';
     });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
-    return '<div class="legend-item clickable" data-chart="'+chartId+'" data-si="'+si+'" onclick="toggleLineIsolate(this)">'
+    const pkey=s.key||s.name;
+    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+pkey+'\')">'
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
   return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" data-chart="'+chartId+'">'+grid+paths+dots+xlabels+'</svg>'
@@ -847,21 +847,23 @@ function radarChart(axes, series) {
   let polys='', rdots='';
   series.forEach((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    const pkey=s.key||s.name;
     let pts='';
     s.values.forEach((v,i)=>{ const rr=R*Math.max(0,Math.min(1,v)); pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; });
-    polys+='<polygon class="'+chartId+'-r'+si+'" points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
+    polys+='<polygon data-pkey="'+pkey+'" points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
     s.values.forEach((v,i)=>{
       const rr=R*Math.max(0,Math.min(1,v));
       const px=(cx+rr*Math.cos(angAt(i))).toFixed(1), py=(cy+rr*Math.sin(angAt(i))).toFixed(1);
       const rawVal=(s.raw&&s.raw[i]!=null)?s.raw[i]:Math.round(v*100)+'%';
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
-      rdots+='<circle class="hit-zone '+chartId+'-r'+si+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()"></circle>';
-      rdots+='<circle class="'+chartId+'-r'+si+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
+      rdots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+pkey+'\')"></circle>';
+      rdots+='<circle data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
     });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
-    return '<div class="legend-item clickable" data-chart="'+chartId+'" data-si="'+si+'" onclick="toggleRadarIsolate(this)">'
+    const pkey=s.key||s.name;
+    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+pkey+'\')">'
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
   return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340" data-chart="'+chartId+'">'+grid+polys+rdots+'</svg><div class="chart-legend" data-chart="'+chartId+'" style="margin-top:0">'+legend+'</div></div>';
@@ -1013,7 +1015,7 @@ function renderStats() {
   if(!DATA||!DATA.participants.length){ el.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
   const S=computeStats();
   const P=S.P;
-  let html='';
+  let html='<div id="hl-banner-holder"></div>';
 
   html+='<div class="stats-section"><div class="stats-section-title">Podiums & recompenses</div><div class="stats-section-sub">Le gratin du concours, a l instant T</div>';
   const podF=rankBy(P,p=>S.totFictif[p],true).slice(0,3);
@@ -1083,13 +1085,13 @@ function renderStats() {
   html+='<div class="stats-section"><div class="stats-section-title">Chiffres cles</div><div class="stats-grid">'+facts.join('')+'</div></div>';
 
   html+='<div class="stats-section"><div class="stats-section-title">Le classement en images</div>';
-  const barItems=rankBy(P,p=>S.totFictif[p],true).map(x=>({label:displayName(x.p),value:x.v}));
+  const barItems=rankBy(P,p=>S.totFictif[p],true).map(x=>({key:x.p,label:displayName(x.p),value:x.v}));
   html+=chartCard('Classement fictif','Total PronoContest + side quests en cours',barChart(barItems));
-  const sqItems=rankBy(P,p=>S.sqFictif[p],true).map(x=>({label:displayName(x.p),value:x.v,color:'#60a0f0'}));
+  const sqItems=rankBy(P,p=>S.sqFictif[p],true).map(x=>({key:x.p,label:displayName(x.p),value:x.v,color:'#60a0f0'}));
   html+=chartCard('Points de side quests uniquement','Hors PronoContest \u2014 qui maitrise les quetes',barChart(sqItems));
   if(S.filledIdx.length>=2){
     const labels=S.filledIdx.map(i=>S.histoDates[i]);
-    const series=P.map((p,i)=>({name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    const series=P.map((p,i)=>({key:p,name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
     html+=chartCard('Evolution du classement','Total de points journee par journee (onglet Historique)',lineChart(series,labels));
   } else {
     html+=chartCard('Evolution du classement','','<div class="stats-empty">Pas assez de journees d historique remplies pour tracer une courbe</div>');
@@ -1099,7 +1101,7 @@ function renderStats() {
   if(podF.length===3){
     const axes=['Total','Side Q.','Validees','Visions','Original.'];
     const mx={tot:Math.max.apply(null,P.map(p=>S.totFictif[p]).concat([1])),sq:Math.max.apply(null,P.map(p=>S.sqFictif[p]).concat([1])),val:Math.max.apply(null,P.map(p=>S.cntValideWin[p]).concat([1])),vis:Math.max.apply(null,P.map(p=>S.liveHits[p]).concat([1])),uni:Math.max.apply(null,P.map(p=>S.uniquePicks[p]).concat([1]))};
-    const series=podF.map((x,i)=>({name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],raw:[S.totFictif[x.p]+' pts',S.sqFictif[x.p]+' pts',S.cntValideWin[x.p],S.liveHits[x.p],S.uniquePicks[x.p]],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    const series=podF.map((x,i)=>({key:x.p,name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],raw:[S.totFictif[x.p]+' pts',S.sqFictif[x.p]+' pts',S.cntValideWin[x.p],S.liveHits[x.p],S.uniquePicks[x.p]],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
     html+='<div class="stats-section"><div class="stats-section-title">Profil du Top 3</div><div class="stats-section-sub">Forces et faiblesses comparees des 3 leaders</div>'+chartCard('Radar comparatif','',radarChart(axes,series))+'</div>';
   }
 
@@ -1141,6 +1143,8 @@ function renderStats() {
   html+='</div></div>';
 
   el.innerHTML=html;
+  // Si un joueur était mis en avant, on réapplique le highlight
+  applyStatsHighlight();
 }
 
 // ══════════════════════════════════════════════════════════════════════════
