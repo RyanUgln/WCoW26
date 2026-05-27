@@ -359,6 +359,38 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   .opp-head-name { font-size:.92rem; }
   .opp-row td.opp-stat-name { font-size:.68rem; }
 }
+
+/* ── CALENDRIER ── */
+.countdown-card { background:var(--card); border:1px solid var(--gold); border-radius:12px; padding:1.3rem 1.5rem; margin-bottom:1.5rem; text-align:center; }
+.countdown-label { font-size:.7rem; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:.4rem; }
+.countdown-match { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold); letter-spacing:1px; line-height:1.1; margin-bottom:.2rem; }
+.countdown-meta { font-size:.72rem; color:var(--muted); margin-bottom:.9rem; }
+.countdown-timer { display:flex; justify-content:center; gap:1rem; }
+.cd-unit { display:flex; flex-direction:column; align-items:center; }
+.cd-num { font-family:'Bebas Neue',sans-serif; font-size:2.6rem; color:var(--text); line-height:1; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:.3rem .7rem; min-width:62px; }
+.cd-unit-label { font-size:.6rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-top:.35rem; }
+.countdown-live { color:var(--green); font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:1px; }
+
+.cal-day { margin-bottom:1.5rem; }
+.cal-day-header { font-family:'Bebas Neue',sans-serif; font-size:1.15rem; color:var(--gold); letter-spacing:1.5px; padding:.4rem 0; border-bottom:1px solid var(--gold-dim); margin-bottom:.6rem; position:sticky; top:0; background:var(--bg); z-index:2; }
+.cal-day.is-today .cal-day-header { color:var(--green); border-bottom-color:var(--green); }
+.cal-match { background:var(--card); border:1px solid var(--border); border-radius:9px; padding:.7rem 1rem; margin-bottom:.45rem; display:flex; align-items:center; gap:.8rem; }
+.cal-match.played { opacity:.82; }
+.cal-match.live-match { border-color:var(--green); }
+.cal-time { font-family:'Bebas Neue',sans-serif; font-size:1.05rem; color:var(--muted); width:54px; flex-shrink:0; text-align:center; }
+.cal-time.next-dot { color:var(--gold); }
+.cal-teams { flex:1; display:flex; flex-direction:column; gap:.2rem; min-width:0; }
+.cal-team { display:flex; align-items:center; justify-content:space-between; gap:.6rem; font-size:.86rem; }
+.cal-team-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-team.winner .cal-team-name { font-weight:600; color:var(--text); }
+.cal-team.winner .cal-score { font-weight:600; color:var(--text); }
+.cal-score { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--text); flex-shrink:0; min-width:20px; text-align:right; }
+.cal-vs { font-size:.78rem; color:var(--muted); }
+.cal-meta { font-size:.66rem; color:var(--muted); flex-shrink:0; text-align:right; max-width:120px; }
+.cal-meta .cal-group { color:var(--gold); }
+.cal-status { font-size:.62rem; text-transform:uppercase; letter-spacing:1px; padding:.15rem .45rem; border-radius:4px; flex-shrink:0; }
+.cal-status.scheduled { background:var(--surface-2); color:var(--muted); }
+.cal-status.done { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
 </style>
 </head>
 <body>
@@ -387,6 +419,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   <div class="tab"        data-tab="quests"       onclick="showTab('quests')">Side Quests</div>
   <div class="tab"        data-tab="participants" onclick="showTab('participants')">Participants</div>
   <div class="tab"        data-tab="stats"        onclick="showTab('stats')">Stats</div>
+  <div class="tab"        data-tab="calendrier"   onclick="showTab('calendrier')">Calendrier</div>
 </nav>
 
 <main>
@@ -444,6 +477,11 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
     <div id="statsub-opposition" class="hidden">
       <div id="opposition-content"></div>
     </div>
+  </div>
+
+  <div id="tab-calendrier" class="hidden">
+    <div id="countdown-box"></div>
+    <div id="calendrier-content"></div>
   </div>
 </main>
 
@@ -1280,6 +1318,218 @@ function oppPick(slot, value) {
 
 
 
+
+// ══════════════════════════════════════════════════════════════════════════
+// CALENDRIER — données openfootball (domaine public, sans clé API)
+// ══════════════════════════════════════════════════════════════════════════
+const WC_DATA_URL = 'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json';
+
+// Traduction EN -> FR des équipes (le fichier openfootball est en anglais)
+const TEAM_FR = {
+  'Mexico':'Mexique','South Africa':'Afrique du Sud','South Korea':'Corée du Sud',
+  'Czech Republic':'Tchéquie','Canada':'Canada','Bosnia and Herzegovina':'Bosnie-Herzégovine',
+  'Bosnia-Herzegovina':'Bosnie-Herzégovine','Qatar':'Qatar','Switzerland':'Suisse',
+  'Brazil':'Brésil','Morocco':'Maroc','Haiti':'Haïti','Scotland':'Écosse',
+  'United States':'États-Unis','USA':'États-Unis','Paraguay':'Paraguay',
+  'Australia':'Australie','Turkey':'Turquie','Türkiye':'Turquie',
+  'Germany':'Allemagne','Curacao':'Curaçao','Curaçao':'Curaçao',
+  'Ivory Coast':"Côte d'Ivoire",'Cote d\'Ivoire':"Côte d'Ivoire",'Ecuador':'Équateur',
+  'Netherlands':'Pays-Bas','Japan':'Japon','Sweden':'Suède','Tunisia':'Tunisie',
+  'Belgium':'Belgique','Egypt':'Égypte','Iran':'Iran','New Zealand':'Nouvelle-Zélande',
+  'Spain':'Espagne','Cape Verde':'Cap-Vert','Cabo Verde':'Cap-Vert',
+  'Saudi Arabia':'Arabie saoudite','Uruguay':'Uruguay','France':'France',
+  'Senegal':'Sénégal','Iraq':'Irak','Norway':'Norvège','Argentina':'Argentine',
+  'Algeria':'Algérie','Austria':'Autriche','Jordan':'Jordanie','Portugal':'Portugal',
+  'DR Congo':'RD Congo','Congo DR':'RD Congo','Uzbekistan':'Ouzbékistan',
+  'Colombia':'Colombie','England':'Angleterre','Croatia':'Croatie','Ghana':'Ghana',
+  'Panama':'Panama',
+};
+function teamFR(name){
+  if(!name) return '';
+  return TEAM_FR[name] || name; // placeholders (W101, 1A...) restent tels quels
+}
+
+// Conversion d'une date+heure openfootball en objet Date (heure locale stade -> instant absolu)
+function parseMatchDateTime(m){
+  // date: "2026-06-11", time: "13:00 UTC-6" ou "20:00 UTC-4" ou "13:00"
+  if(!m.date) return null;
+  const t = (m.time||'00:00').trim();
+  const tm = t.match(/(\d{1,2}):(\d{2})/);
+  const hh = tm?parseInt(tm[1]):0, mm = tm?parseInt(tm[2]):0;
+  const off = t.match(/UTC([+-]\d{1,2})/);
+  const offH = off?parseInt(off[1]):0;
+  const [Y,Mo,D] = m.date.split('-').map(Number);
+  // instant UTC = heure locale - décalage
+  return new Date(Date.UTC(Y, Mo-1, D, hh-offH, mm));
+}
+
+function calMatchHasScore(m){
+  return m.score && m.score.ft && Array.isArray(m.score.ft) && m.score.ft.length===2;
+}
+
+async function fetchCalendar(){
+  try{
+    const res = await fetch(WC_DATA_URL, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json = await res.json();
+    const matches = (json.matches||[]).map(m=>{
+      const dt = parseMatchDateTime(m);
+      return {
+        round: m.round||'', group: m.group||'',
+        ground: m.ground||'', date: m.date||'',
+        t1: teamFR(m.team1), t2: teamFR(m.team2),
+        rawT1: m.team1||'', rawT2: m.team2||'',
+        dt: dt, dtMs: dt?dt.getTime():0,
+        score: calMatchHasScore(m) ? {a:m.score.ft[0], b:m.score.ft[1]} : null,
+      };
+    });
+    matches.sort((a,b)=>a.dtMs-b.dtMs);
+    return matches;
+  }catch(e){
+    return null; // calendrier indisponible
+  }
+}
+
+// ── DÉCOMPTE PROCHAIN MATCH ───────────────────────────────────────────────
+let countdownTimer = null;
+
+function findNextMatch(){
+  if(!DATA || !DATA.calendar) return null;
+  const now = Date.now();
+  // Match "en cours" = a commencé il y a moins de 2h et pas de score final
+  for(const m of DATA.calendar){
+    if(!m.dtMs) continue;
+    if(m.dtMs<=now && now-m.dtMs < 2*3600*1000 && !m.score) return {match:m, live:true};
+  }
+  // Sinon le prochain à venir
+  for(const m of DATA.calendar){
+    if(m.dtMs && m.dtMs>now) return {match:m, live:false};
+  }
+  return null;
+}
+
+function renderCountdown(){
+  const box = document.getElementById('countdown-box');
+  if(!box) return;
+  const next = findNextMatch();
+  if(!next){
+    box.innerHTML = '';
+    return;
+  }
+  const m = next.match;
+  const matchLabel = (m.t1||'?') + '  —  ' + (m.t2||'?');
+  const meta = [m.group, m.round, m.ground].filter(Boolean).join(' · ');
+
+  if(next.live){
+    box.innerHTML = '<div class="countdown-card">'
+      + '<div class="countdown-label">Match en cours</div>'
+      + '<div class="countdown-match">'+matchLabel+'</div>'
+      + '<div class="countdown-meta">'+meta+'</div>'
+      + '<div class="countdown-live">● EN DIRECT</div></div>';
+    return;
+  }
+
+  const diff = m.dtMs - Date.now();
+  if(diff<=0){ renderCalendar(); return; }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff%86400000/3600000);
+  const mn = Math.floor(diff%3600000/60000);
+  const s = Math.floor(diff%60000/1000);
+  function unit(n,l){ return '<div class="cd-unit"><div class="cd-num">'+String(n).padStart(2,'0')+'</div><div class="cd-unit-label">'+l+'</div></div>'; }
+  box.innerHTML = '<div class="countdown-card">'
+    + '<div class="countdown-label">Prochain match dans</div>'
+    + '<div class="countdown-timer">'
+    + (d>0?unit(d,'jours'):'')
+    + unit(h,'heures') + unit(mn,'min') + unit(s,'sec')
+    + '</div>'
+    + '<div class="countdown-match" style="margin-top:.9rem">'+matchLabel+'</div>'
+    + '<div class="countdown-meta">'+meta+'</div></div>';
+}
+
+function startCountdown(){
+  stopCountdown();
+  renderCountdown();
+  countdownTimer = setInterval(renderCountdown, 1000);
+}
+function stopCountdown(){
+  if(countdownTimer){ clearInterval(countdownTimer); countdownTimer=null; }
+}
+
+// ── RENDU CALENDRIER ──────────────────────────────────────────────────────
+const JOURS_FR = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MOIS_FR  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+function frDateLabel(dt){
+  return JOURS_FR[dt.getDay()]+' '+dt.getDate()+' '+MOIS_FR[dt.getMonth()];
+}
+function frTime(dt){
+  return String(dt.getHours()).padStart(2,'0')+'h'+String(dt.getMinutes()).padStart(2,'0');
+}
+
+function renderCalendar(){
+  const el = document.getElementById('calendrier-content');
+  if(!el) return;
+  if(!DATA || !DATA.calendar){
+    el.innerHTML = '<div class="stats-empty">Calendrier indisponible pour le moment. Réessaie plus tard.</div>';
+    return;
+  }
+  if(!DATA.calendar.length){
+    el.innerHTML = '<div class="stats-empty">Aucun match dans le calendrier.</div>';
+    return;
+  }
+  const now = Date.now();
+  const next = findNextMatch();
+  const nextMs = (next && !next.live) ? next.match.dtMs : null;
+
+  // Regroupe les matchs par jour (heure de France)
+  const groups = [];
+  let cur = null;
+  DATA.calendar.forEach(m=>{
+    if(!m.dt) return;
+    const key = m.dt.getFullYear()+'-'+m.dt.getMonth()+'-'+m.dt.getDate();
+    if(!cur || cur.key!==key){
+      cur = { key:key, dt:m.dt, matches:[] };
+      groups.push(cur);
+    }
+    cur.matches.push(m);
+  });
+
+  const todayKey = (()=>{ const n=new Date(); return n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate(); })();
+
+  let html = '';
+  groups.forEach(g=>{
+    const isToday = g.key===todayKey;
+    html += '<div class="cal-day'+(isToday?' is-today':'')+'">';
+    html += '<div class="cal-day-header">'+frDateLabel(g.dt)+(isToday?" · aujourd'hui":'')+'</div>';
+    g.matches.forEach(m=>{
+      const played = !!m.score;
+      const isLive = next && next.live && next.match===m;
+      const isNext = nextMs && m.dtMs===nextMs && !played;
+      // équipe gagnante
+      let w1=false,w2=false;
+      if(played){
+        if(m.score.a>m.score.b) w1=true;
+        else if(m.score.b>m.score.a) w2=true;
+      }
+      const meta = [m.group, m.ground].filter(Boolean).join(' · ');
+      html += '<div class="cal-match'+(played?' played':'')+(isLive?' live-match':'')+'">';
+      html += '<div class="cal-time'+(isNext?' next-dot':'')+'">'+frTime(m.dt)+'</div>';
+      html += '<div class="cal-teams">';
+      html += '<div class="cal-team'+(w1?' winner':'')+'"><span class="cal-team-name">'+(m.t1||'?')+'</span>'
+            + (played?'<span class="cal-score">'+m.score.a+'</span>':'')+'</div>';
+      html += '<div class="cal-team'+(w2?' winner':'')+'"><span class="cal-team-name">'+(m.t2||'?')+'</span>'
+            + (played?'<span class="cal-score">'+m.score.b+'</span>':'')+'</div>';
+      html += '</div>';
+      html += '<div class="cal-meta">'+(m.group?'<span class="cal-group">'+m.group+'</span><br>':'')
+            + (m.ground||'')+'</div>';
+      html += '<div class="cal-status '+(played?'done':'scheduled')+'">'+(played?'Terminé':isLive?'En cours':'À venir')+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
 // ── RENDER LEADERBOARD ────────────────────────────────────────────────────
 function renderLeaderboard(containerId, participants, quests, pronoScores, mode) {
   const rows = participants.map(p => {
@@ -1561,13 +1811,16 @@ initTheme();
 function showTab(tab) {
   activeTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  ['classement','quests','participants','stats'].forEach(id=>
+  ['classement','quests','participants','stats','calendrier'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.toggle('hidden',id!==tab));
   if (tab==='participants') document.getElementById('detail-wrap').classList.remove('show');
   if (tab!=='quests') {
     const s = document.getElementById('quest-search');
     if (s && s.value) { s.value=''; filterQuests(); }
   }
+  // Le décompte ne tourne que sur l'onglet Calendrier
+  if (tab==='calendrier') startCountdown();
+  else stopCountdown();
   ttHide();
 }
 function showSub(sub) {
@@ -1596,7 +1849,7 @@ function setStatus(type,msg) {
   bar.classList.toggle('hidden', type==='ok');
   document.getElementById('status-dot').className='dot'+(type==='loading'?' loading':type==='error'?' error':'');
   document.getElementById('status-text').textContent=msg;
-  ['classement','quests','participants','stats'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','participants','stats','calendrier'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
 }
 
 // ── LOAD ──────────────────────────────────────────────────────────────────
@@ -1607,6 +1860,7 @@ function renderAll() {
   renderParticipants(DATA.participants, DATA.quests, DATA.pronoScores);
   renderStats();
   renderOpposition();
+  renderCalendar();
   // Réapplique le filtre de recherche si une recherche est active
   if (document.getElementById('quest-search')?.value) filterQuests();
 
@@ -1614,7 +1868,7 @@ function renderAll() {
   const liveCount = DATA.quests.filter(q=>q.liveAns).length;
   const pronOk    = Object.values(DATA.pronoScores).some(v=>v>0);
   setStatus('ok',`${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveCount} live · PronoContest ${pronOk?'✓':'non configuré'}`);
-  ['classement','quests','participants','stats'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','participants','stats','calendrier'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
   document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
   showSub(activeSub);
 }
@@ -1626,8 +1880,14 @@ function tryLoadFromCache() {
     const cached = JSON.parse(raw);
     if (!cached.time || (Date.now() - cached.time >= COOLDOWN_MS)) return false;
     DATA = cached.data;
+    DATA.calendar = null;   // sera chargé juste après
     lastLoadTime = cached.time;
     renderAll();
+    // Le calendrier n'est pas caché : on le charge en arrière-plan
+    fetchCalendar().then(cal => {
+      DATA.calendar = cal;
+      if (activeTab === 'calendrier') { renderCalendar(); renderCountdown(); }
+    });
     return true;
   } catch(e) { return false; }
 }
@@ -1642,18 +1902,21 @@ async function loadData(forceFromButton) {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoTS, histoTS] = await Promise.all([
+    const [f6rows, pronoTS, histoTS, calendar] = await Promise.all([
       fetchRange("'Feuille 6'!A1:AG200"),
       fetchSeries('PronoContest'),
       fetchSeries('Historique'),
+      fetchCalendar(),
     ]);
     const parsed = parseFeuille6(f6rows);
     const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
-    DATA = { ...parsed, pronoScores, pronoTS, histoTS };
+    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar };
     lastLoadTime = Date.now();
 
     try {
-      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: DATA }));
+      // Le calendrier (objets Date) n'est pas mis en cache — il se recharge à chaque fois
+      const { calendar:_cal, ...cacheable } = DATA;
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: cacheable }));
     } catch(e) { /* storage full or unavailable — ignore */ }
 
     renderAll();
