@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WCoW 2026</title>
-<link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ── THÈME SOMBRE (défaut) ── */
@@ -440,7 +440,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 <div class="header">
   <a class="logo-area" href="https://www.youtube.com/watch?v=gBuoUH3AOlo" target="_blank" rel="noopener">
     <div class="logo-circle">
-      <img src="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg"
+      <img src="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png"
            alt="WCoW26" onerror="this.parentElement.innerHTML='⚽'">
     </div>
     <div class="logo-text">
@@ -2219,7 +2219,7 @@ async function loadData(forceFromButton) {
   document.getElementById('error-box').classList.add('hidden');
   try {
     const [f6rows, pronoTS, histoTS, calendar, gazette, pseudoMap] = await Promise.all([
-      fetchRange("'Feuille 6'!A1:AG200"),
+      fetchRange("'Side Quests'!A1:AG200"),
       fetchSeries('PronoContest'),
       fetchSeries('Historique'),
       fetchCalendar(),
