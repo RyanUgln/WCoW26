@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WCoW 2026</title>
-<link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg">
-<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ── THÈME SOMBRE (défaut) ── */
@@ -185,6 +185,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .p-pseudo { font-size:.7rem; color:var(--muted); margin-top:1px; }
 .p-score { font-family:'Bebas Neue',sans-serif; font-size:1.25rem; color:var(--gold); margin-top:4px; }
 
+
 .detail-wrap { display:none; }
 .detail-wrap.show { display:block; }
 .detail-top { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.5rem; margin-bottom:1rem; display:flex; align-items:center; gap:1.5rem; }
@@ -196,6 +197,16 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .detail-pts { font-family:'Bebas Neue',sans-serif; font-size:2.5rem; color:var(--gold); line-height:1; }
 .detail-pts-lbl { font-size:.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
 .detail-breakdown { font-size:.7rem; color:var(--muted); margin-top:2px; }
+
+/* Accordéon détail joueur dans le classement */
+.player-wrap { display:flex; flex-direction:column; }
+.player-row { position:relative; }
+.player-row.expanded { border-color:var(--gold); border-bottom-left-radius:0; border-bottom-right-radius:0; }
+.player-chevron { color:var(--muted); font-size:.7rem; flex-shrink:0; transition:transform .2s; margin-left:.25rem; }
+.player-chevron.open { transform:rotate(180deg); color:var(--gold); }
+.player-detail { max-height:0; overflow:hidden; transition:max-height .35s ease; background:var(--surface); border-radius:0 0 10px 10px; }
+.player-detail.open { max-height:4000px; border:1px solid var(--gold); border-top:none; padding:1rem 1.25rem 1.25rem; }
+.player-detail .detail-top { margin-top:.25rem; }
 
 .qli { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:.85rem 1.25rem; margin-bottom:.4rem; display:flex; align-items:center; gap:1rem; }
 .qli.qli-validé    { border-color:var(--green-border); }
@@ -440,7 +451,7 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 <div class="header">
   <a class="logo-area" href="https://www.youtube.com/watch?v=gBuoUH3AOlo" target="_blank" rel="noopener">
     <div class="logo-circle">
-      <img src="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.jpg"
+      <img src="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png"
            alt="WCoW26" onerror="this.parentElement.innerHTML='⚽'">
     </div>
     <div class="logo-text">
@@ -459,7 +470,6 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 <nav>
   <div class="tab active" data-tab="classement"   onclick="showTab('classement')">Classement</div>
   <div class="tab"        data-tab="quests"       onclick="showTab('quests')">Side Quests</div>
-  <div class="tab"        data-tab="participants" onclick="showTab('participants')">Participants</div>
   <div class="tab"        data-tab="stats"        onclick="showTab('stats')">Stats</div>
   <div class="tab"        data-tab="calendrier"   onclick="showTab('calendrier')">Calendrier</div>
   <div class="tab"        data-tab="gazette"      onclick="showTab('gazette')">La Gazette du Soccer</div>
@@ -502,11 +512,6 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
     </div>
     <div id="quests-list"></div>
     <div id="quests-empty" class="quests-empty hidden">Aucune quête trouvée</div>
-  </div>
-
-  <div id="tab-participants" class="hidden">
-    <div class="p-grid" id="p-grid"></div>
-    <div class="detail-wrap" id="detail-wrap"></div>
   </div>
 
   <div id="tab-stats" class="hidden">
@@ -1856,8 +1861,10 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
       breakdown = `PronoContest: ${prono} pts`;
     }
     const ptsColor = (isFictif && sq > 0) ? 'style="color:var(--blue)"' : '';
+    const rowId = `${mode}-${p}`;
     return `
-    <div class="player-row ${medals[i]||''}" onclick="selectParticipant('${p}')">
+    <div class="player-wrap">
+    <div class="player-row ${medals[i]||''}" id="prow-${rowId}" onclick="togglePlayerDetail('${p}','${mode}')">
       <div class="rank-num ${rclass[i]||'rx'}">${i+1}</div>
       ${mkAvatar(p,42,'avatar')}
       <div class="player-info">
@@ -1868,6 +1875,9 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
         <div class="pts-big" ${ptsColor}>${total}</div>
         <div class="pts-label">pts</div>
       </div>
+      <div class="player-chevron" id="pchev-${rowId}">▼</div>
+    </div>
+    <div class="player-detail" id="pdetail-${rowId}"></div>
     </div>`;
   }).join('');
 }
@@ -1981,30 +1991,14 @@ function renderQuests(participants, quests) {
   }).join('');
 }
 
-// ── RENDER PARTICIPANTS ───────────────────────────────────────────────────
-function renderParticipants(participants, quests, pronoScores) {
-  document.getElementById('p-grid').innerHTML = participants.map(p => {
-    const disp = displayName(p);
-    const {total} = calcTotal(quests,pronoScores,p,'fictif');
-    return `
-    <div class="p-card" id="pcard-${p}" onclick="selectParticipant('${p}')">
-      ${mkAvatar(p,48,'p-av')}
-      <div class="p-name">${disp}</div>
-      <div class="p-score">${total} pts</div>
-    </div>`;
-  }).join('');
-}
-
-function selectParticipant(p) {
-  showTab('participants');
-  document.querySelectorAll('.p-card').forEach(c=>c.classList.remove('sel'));
-  const card=document.getElementById(`pcard-${p}`);
-  if (card) { card.classList.add('sel'); card.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-
+// ── DÉTAIL JOUEUR (accordéon dans le classement) ──────────────────────────
+// Construit le HTML du détail d'un joueur pour un mode donné (reel/fictif)
+function buildPlayerDetail(p, mode) {
   const {quests,pronoScores}=DATA;
   const disp=displayName(p), prono=pronoScores[p]||0;
-  const sq=quests.reduce((acc,q)=>acc+calcQuestPts(q,p,'fictif'),0);
+  const sq=quests.reduce((acc,q)=>acc+calcQuestPts(q,p,mode),0);
   const total=prono+sq, c=avColor(p), url=photoUrl(p);
+  const isFictif = mode==='fictif';
 
   const rows = quests.map(q => {
     const shortN=q.name.split('\n')[0];
@@ -2020,7 +2014,6 @@ function selectParticipant(p) {
     else if (etat==='validé')  { ansCls='hit-confirmed'; qliCls='qli-validé'; }
     else if (ref&&ansL&&ansL===ref) { ansCls='hit-live'; qliCls='qli-hit'; }
 
-    // Points cell: green if confirmed (réel), blue if fictif only
     let ptsCell;
     if (earnedReel > 0) {
       ptsCell = `<div class="qli-pts confirmed">+${earnedReel}</div>`;
@@ -2041,9 +2034,10 @@ function selectParticipant(p) {
     ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">`
     : p;
 
-  const dw=document.getElementById('detail-wrap');
-  dw.classList.add('show');
-  dw.innerHTML=`
+  const ptsLbl = isFictif ? 'points fictifs' : 'points réels';
+  const sqColor = isFictif ? 'var(--blue)' : 'var(--green)';
+
+  return `
   <div class="detail-top">
     <div class="detail-av" style="background:${url?'transparent':c.bg};color:${c.fg};border-color:var(--gold)">${avInner}</div>
     <div>
@@ -2051,11 +2045,35 @@ function selectParticipant(p) {
     </div>
     <div class="detail-right">
       <div class="detail-pts">${total}</div>
-      <div class="detail-pts-lbl">points fictifs</div>
-      <div class="detail-breakdown">PronoContest: ${prono} · <span style="color:var(--blue)">Side Quests: ${sq}</span></div>
+      <div class="detail-pts-lbl">${ptsLbl}</div>
+      <div class="detail-breakdown">PronoContest: ${prono} · <span style="color:${sqColor}">Side Quests: ${sq}</span></div>
     </div>
   </div>${rows}`;
 }
+
+// Déplie / replie le détail d'un joueur sous sa ligne de classement
+function togglePlayerDetail(p, mode) {
+  const detail = document.getElementById(`pdetail-${mode}-${p}`);
+  const row    = document.getElementById(`prow-${mode}-${p}`);
+  const chev   = document.getElementById(`pchev-${mode}-${p}`);
+  if (!detail) return;
+  const isOpen = detail.classList.contains('open');
+
+  // Referme tous les autres détails du même classement
+  const container = mode==='fictif' ? 'fictif-list' : 'reel-list';
+  document.getElementById(container).querySelectorAll('.player-detail.open').forEach(d => d.classList.remove('open'));
+  document.getElementById(container).querySelectorAll('.player-row.expanded').forEach(r => r.classList.remove('expanded'));
+  document.getElementById(container).querySelectorAll('.player-chevron.open').forEach(ch => ch.classList.remove('open'));
+
+  if (isOpen) return; // re-clic => on referme et on s'arrête
+
+  // Remplit (si pas déjà fait) et ouvre
+  detail.innerHTML = buildPlayerDetail(p, mode);
+  detail.classList.add('open');
+  if (row) row.classList.add('expanded');
+  if (chev) chev.classList.add('open');
+}
+
 
 // ── UTILS ─────────────────────────────────────────────────────────────────
 function toggleQ(qi) {
@@ -2119,9 +2137,8 @@ initTheme();
 function showTab(tab) {
   activeTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  ['classement','quests','participants','stats','calendrier','gazette'].forEach(id=>
+  ['classement','quests','stats','calendrier','gazette'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.toggle('hidden',id!==tab));
-  if (tab==='participants') document.getElementById('detail-wrap').classList.remove('show');
   if (tab!=='quests') {
     const s = document.getElementById('quest-search');
     if (s && s.value) { s.value=''; filterQuests(); }
@@ -2161,7 +2178,7 @@ function setStatus(type,msg) {
   bar.classList.toggle('hidden', type==='ok');
   document.getElementById('status-dot').className='dot'+(type==='loading'?' loading':type==='error'?' error':'');
   document.getElementById('status-text').textContent=msg;
-  ['classement','quests','participants','stats','calendrier','gazette'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','stats','calendrier','gazette'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
 }
 
 // ── LOAD ──────────────────────────────────────────────────────────────────
@@ -2169,7 +2186,6 @@ function renderAll() {
   renderLeaderboard('reel-list',   DATA.participants, DATA.quests, DATA.pronoScores, 'reel');
   renderLeaderboard('fictif-list', DATA.participants, DATA.quests, DATA.pronoScores, 'fictif');
   renderQuests(DATA.participants, DATA.quests);
-  renderParticipants(DATA.participants, DATA.quests, DATA.pronoScores);
   renderStats();
   renderOpposition();
   renderCalendar();
@@ -2181,7 +2197,7 @@ function renderAll() {
   const liveCount = DATA.quests.filter(q=>q.liveAns).length;
   const pronOk    = Object.values(DATA.pronoScores).some(v=>v>0);
   setStatus('ok',`${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveCount} live · PronoContest ${pronOk?'✓':'non configuré'}`);
-  ['classement','quests','participants','stats','calendrier','gazette'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','stats','calendrier','gazette'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
   document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
   showSub(activeSub);
 }
@@ -2219,7 +2235,7 @@ async function loadData(forceFromButton) {
   document.getElementById('error-box').classList.add('hidden');
   try {
     const [f6rows, pronoTS, histoTS, calendar, gazette, pseudoMap] = await Promise.all([
-      fetchRange("'Feuille 6'!A1:AG200"),
+      fetchRange("'Side Quests'!A1:AG200"),
       fetchSeries('PronoContest'),
       fetchSeries('Historique'),
       fetchCalendar(),
