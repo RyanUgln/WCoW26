@@ -116,12 +116,14 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .quest-card { background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:.6rem; overflow:hidden; transition:border-color .2s; }
 .quest-card:hover { background:var(--card-hover); }
 .quest-head { padding:1rem 1.5rem; display:flex; align-items:flex-start; gap:1rem; cursor:pointer; user-select:none; }
+.quest-thumb { width:52px; height:52px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--surface-2); border:1px solid var(--border); }
+.quest-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
 .quest-title-wrap { flex:1; min-width:0; }
 .quest-title { font-weight:500; font-size:.9rem; line-height:1.4; }
 .quest-sub { font-size:.75rem; color:var(--muted); margin-top:2px; }
 .quest-pills { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:5px; }
 .pill { display:inline-flex; align-items:center; gap:.3rem; border-radius:4px; padding:.15rem .5rem; font-size:.68rem; }
-.pill.live     { background:var(--green-dim); border:1px solid var(--green-border); color:var(--green); }
+.pill.live     { background:var(--blue-dim); border:1px solid var(--blue-border); color:var(--blue); }
 .pill.final    { background:var(--surface-2); border:1px solid var(--gold-dim); color:var(--gold); }
 .pill.prono-pill { background:var(--surface-2); border:1px solid var(--border); color:var(--muted); }
 .badge { background:var(--surface-2); border:1px solid var(--gold-dim); color:var(--gold); padding:.2rem .65rem; border-radius:4px; font-family:'Bebas Neue',sans-serif; font-size:.9rem; letter-spacing:1px; white-space:nowrap; flex-shrink:0; }
@@ -132,13 +134,13 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 
 /* REF ROW */
 .ref-row { display:flex; align-items:center; gap:.75rem; border-radius:6px; padding:.6rem 1rem; margin-bottom:.9rem; font-size:.82rem; }
-.ref-row.live    { background:var(--green-dim); border:1px solid var(--green-border); }
+.ref-row.live    { background:var(--blue-dim); border:1px solid var(--blue-border); }
 .ref-row.neutral { background:var(--surface-2); border:1px solid var(--gold-dim); }
 .ref-label { font-size:.65rem; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
-.ref-row.live    .ref-label { color:var(--green); }
+.ref-row.live    .ref-label { color:var(--blue); }
 .ref-row.neutral .ref-label { color:var(--gold); }
 .ref-value { font-weight:500; }
-.ref-row.live    .ref-value { color:var(--green); }
+.ref-row.live    .ref-value { color:var(--blue); }
 .ref-row.neutral .ref-value { color:var(--gold); }
 
 /* ANSWERS GRID */
@@ -303,6 +305,134 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .mini-table .mt-val { text-align:right; font-weight:600; }
 
 .stats-empty { text-align:center; color:var(--muted); padding:3rem 1rem; font-style:italic; }
+
+/* Interactivité graphes */
+#chart-tooltip { position:fixed; pointer-events:none; z-index:9999; background:var(--surface-2); border:1px solid var(--gold-dim); border-radius:7px; padding:.5rem .7rem; font-size:.74rem; color:var(--text); box-shadow:0 4px 16px rgba(0,0,0,.4); opacity:0; transition:opacity .12s; max-width:220px; }
+#chart-tooltip.show { opacity:1; }
+#chart-tooltip .tt-title { font-weight:600; color:var(--gold); margin-bottom:2px; }
+#chart-tooltip .tt-line { color:var(--muted); }
+#chart-tooltip .tt-val { color:var(--text); font-weight:600; }
+.hit-zone { cursor:pointer; }
+.legend-item.clickable { cursor:pointer; user-select:none; transition:opacity .15s; padding:.1rem .3rem; border-radius:4px; }
+.legend-item.clickable:hover { background:var(--surface-2); }
+.legend-item.dimmed { opacity:.35; }
+.bar-row.clickable { cursor:pointer; }
+.bar-row.dimmed { opacity:.3; }
+.series-dimmed { opacity:.12; transition:opacity .2s; }
+.series-focus { opacity:1; transition:opacity .2s; }
+.seg-iso { cursor:pointer; transition:opacity .2s; }
+.seg-iso.dimmed { opacity:.2; }
+.seg-iso.focused { opacity:1; }
+.chart-hint { font-size:.68rem; color:var(--muted); margin-top:.5rem; font-style:italic; }
+
+/* Bandeau highlight Stats */
+.hl-banner { display:flex; align-items:center; gap:.7rem; background:var(--surface-2); border:1px solid var(--gold-dim); border-radius:8px; padding:.55rem .9rem; margin-bottom:1.2rem; font-size:.8rem; }
+.hl-banner .hl-av { width:30px; height:30px; border-radius:50%; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.72rem; }
+.hl-banner .hl-av img { width:100%; height:100%; object-fit:cover; }
+.hl-banner .hl-label { color:var(--muted); }
+.hl-banner .hl-name { color:var(--gold); font-weight:600; }
+.hl-banner .hl-clear { margin-left:auto; background:transparent; border:1px solid var(--border); color:var(--muted); cursor:pointer; font-size:.7rem; padding:.3rem .7rem; border-radius:5px; text-transform:uppercase; letter-spacing:1px; }
+.hl-banner .hl-clear:hover { border-color:var(--gold); color:var(--gold); }
+
+/* ── OPPOSITION ── */
+.opp-selectors { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-bottom:1.2rem; }
+.opp-select { width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.55rem .7rem; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; cursor:pointer; }
+.opp-select:focus { outline:none; border-color:var(--gold); }
+.opp-table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.opp-table col.col-stat { width:34%; }
+.opp-head th { padding:1rem .6rem; text-align:center; border-bottom:1px solid var(--border); vertical-align:bottom; }
+.opp-head th.opp-corner { text-align:left; }
+.opp-head-av { width:54px; height:54px; border-radius:50%; margin:0 auto .4rem; overflow:hidden; border:2px solid var(--gold-dim); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:.95rem; }
+.opp-head-av img { width:100%; height:100%; object-fit:cover; }
+.opp-head-name { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--gold); letter-spacing:1px; line-height:1; }
+.opp-head-sub { font-size:.66rem; color:var(--muted); margin-top:2px; }
+.opp-section-row td { background:var(--surface-2); font-size:.66rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--gold); font-weight:600; padding:.5rem .7rem; }
+.opp-row td { padding:.6rem .7rem; border-bottom:1px solid var(--border); font-size:.82rem; text-align:center; }
+.opp-row td.opp-stat-name { text-align:left; color:var(--muted); font-size:.76rem; }
+.opp-row:last-child td { border-bottom:none; }
+.opp-val { font-weight:600; color:var(--text); }
+.opp-val.best { color:var(--gold); }
+.opp-val.empty { color:var(--border); }
+.opp-rank-badge { display:inline-block; min-width:20px; }
+@media (max-width:560px){
+  .opp-selectors { grid-template-columns:1fr; }
+  .opp-row td, .opp-head th { padding:.5rem .35rem; font-size:.74rem; }
+  .opp-head-av { width:42px; height:42px; }
+  .opp-head-name { font-size:.92rem; }
+  .opp-row td.opp-stat-name { font-size:.68rem; }
+}
+
+/* ── CALENDRIER ── */
+.countdown-card { background:var(--card); border:1px solid var(--gold); border-radius:12px; padding:1.3rem 1.5rem; margin-bottom:1.5rem; text-align:center; }
+.countdown-label { font-size:.7rem; text-transform:uppercase; letter-spacing:2px; color:var(--muted); margin-bottom:.4rem; }
+.countdown-match { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold); letter-spacing:1px; line-height:1.1; margin-bottom:.2rem; }
+.countdown-meta { font-size:.72rem; color:var(--muted); margin-bottom:.9rem; }
+.countdown-timer { display:flex; justify-content:center; gap:1rem; }
+.cd-unit { display:flex; flex-direction:column; align-items:center; }
+.cd-num { font-family:'Bebas Neue',sans-serif; font-size:2.6rem; color:var(--text); line-height:1; background:var(--surface-2); border:1px solid var(--border); border-radius:8px; padding:.3rem .7rem; min-width:62px; }
+.cd-unit-label { font-size:.6rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-top:.35rem; }
+.countdown-live { color:var(--green); font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:1px; }
+
+.cal-day { margin-bottom:1.5rem; }
+.cal-day-header { font-family:'Bebas Neue',sans-serif; font-size:1.15rem; color:var(--gold); letter-spacing:1.5px; padding:.4rem 0; border-bottom:1px solid var(--gold-dim); margin-bottom:.6rem; position:sticky; top:0; background:var(--bg); z-index:2; }
+.cal-day.is-today .cal-day-header { color:var(--green); border-bottom-color:var(--green); }
+.cal-match { background:var(--card); border:1px solid var(--border); border-radius:9px; padding:.7rem 1rem; margin-bottom:.45rem; display:flex; align-items:center; gap:.8rem; }
+.cal-match.played { opacity:.82; }
+.cal-match.live-match { border-color:var(--green); }
+.cal-time { font-family:'Bebas Neue',sans-serif; font-size:1.05rem; color:var(--muted); width:54px; flex-shrink:0; text-align:center; }
+.cal-time.next-dot { color:var(--gold); }
+.cal-teams { flex:1; display:flex; flex-direction:column; gap:.2rem; min-width:0; }
+.cal-team { display:flex; align-items:center; justify-content:space-between; gap:.6rem; font-size:.86rem; }
+.cal-team-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-team.winner .cal-team-name { font-weight:600; color:var(--text); }
+.cal-team.winner .cal-score { font-weight:600; color:var(--text); }
+.cal-score { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--text); flex-shrink:0; min-width:20px; text-align:right; }
+.cal-vs { font-size:.78rem; color:var(--muted); }
+.cal-meta { font-size:.66rem; color:var(--muted); flex-shrink:0; text-align:right; max-width:120px; }
+.cal-meta .cal-group { color:var(--gold); }
+.cal-status { font-size:.62rem; text-transform:uppercase; letter-spacing:1px; padding:.15rem .45rem; border-radius:4px; flex-shrink:0; }
+.cal-status.scheduled { background:var(--surface-2); color:var(--muted); }
+.cal-status.done { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
+
+/* ── GAZETTE ── */
+.gazette-toolbar { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin-bottom:1.2rem; }
+.gazette-select { background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.55rem .7rem; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; cursor:pointer; min-width:260px; }
+.gazette-select:focus { outline:none; border-color:var(--gold); }
+.gazette-edition-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold); letter-spacing:2px; line-height:1; margin-bottom:.2rem; }
+.gazette-edition-meta { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.gazette-carousel { display:flex; gap:1rem; overflow-x:auto; padding:.5rem .25rem 1rem; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
+.gazette-carousel::-webkit-scrollbar { height:8px; }
+.gazette-carousel::-webkit-scrollbar-track { background:var(--surface); border-radius:4px; }
+.gazette-carousel::-webkit-scrollbar-thumb { background:var(--gold-dim); border-radius:4px; }
+.gazette-page { flex:0 0 auto; width:min(340px,75vw); aspect-ratio:1/1.414; background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; cursor:pointer; scroll-snap-align:start; transition:border-color .2s,transform .2s; position:relative; }
+.gazette-page:hover { border-color:var(--gold); transform:translateY(-2px); }
+.gazette-page img { width:100%; height:100%; object-fit:cover; display:block; }
+.gazette-page-num { position:absolute; top:.5rem; left:.5rem; background:rgba(0,0,0,.55); color:#fff; font-family:'Bebas Neue',sans-serif; font-size:.85rem; letter-spacing:1px; padding:.15rem .55rem; border-radius:4px; }
+.gazette-page-broken { display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:.8rem; font-style:italic; padding:1rem; text-align:center; }
+.gazette-section-header { font-family:'Bebas Neue',sans-serif; font-size:.95rem; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin:2rem 0 .5rem; padding-bottom:.3rem; border-bottom:1px solid var(--border); }
+.gazette-archive-row { display:flex; align-items:center; gap:1rem; padding:.8rem 1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:.5rem; cursor:pointer; transition:border-color .2s; }
+.gazette-archive-row:hover { border-color:var(--gold); }
+.gazette-archive-num { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--gold); min-width:36px; line-height:1; }
+.gazette-archive-info { flex:1; min-width:0; }
+.gazette-archive-title { font-weight:600; font-size:.9rem; }
+.gazette-archive-meta { font-size:.7rem; color:var(--muted); margin-top:2px; }
+.gazette-archive-arrow { color:var(--muted); font-size:1.2rem; }
+
+/* Lightbox plein écran */
+.gazette-lightbox { position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:10000; display:flex; align-items:center; justify-content:center; padding:2rem; }
+.gazette-lightbox.hidden { display:none !important; }
+.lb-img { max-width:95%; max-height:95vh; object-fit:contain; border-radius:6px; box-shadow:0 10px 40px rgba(0,0,0,.6); display:block; }
+.lb-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff; cursor:pointer; font-size:1.3rem; width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.lb-close:hover { background:rgba(255,255,255,.25); }
+.lb-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff; cursor:pointer; font-size:2rem; width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:background .2s; line-height:1; padding-bottom:4px; }
+.lb-nav:hover { background:rgba(255,255,255,.25); }
+.lb-prev { left:1rem; }
+.lb-next { right:1rem; }
+.lb-counter { position:absolute; bottom:1.2rem; left:50%; transform:translateX(-50%); color:#fff; font-family:'Bebas Neue',sans-serif; letter-spacing:2px; font-size:.95rem; background:rgba(0,0,0,.5); padding:.3rem .9rem; border-radius:20px; }
+@media (max-width:600px){
+  .lb-nav { width:42px; height:42px; font-size:1.5rem; }
+  .lb-close { width:38px; height:38px; font-size:1.1rem; }
+}
 </style>
 </head>
 <body>
@@ -331,6 +461,8 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   <div class="tab"        data-tab="quests"       onclick="showTab('quests')">Side Quests</div>
   <div class="tab"        data-tab="participants" onclick="showTab('participants')">Participants</div>
   <div class="tab"        data-tab="stats"        onclick="showTab('stats')">Stats</div>
+  <div class="tab"        data-tab="calendrier"   onclick="showTab('calendrier')">Calendrier</div>
+  <div class="tab"        data-tab="gazette"      onclick="showTab('gazette')">La Gazette du Soccer</div>
 </nav>
 
 <main>
@@ -378,16 +510,53 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   </div>
 
   <div id="tab-stats" class="hidden">
-    <div id="stats-content"></div>
+    <div class="sub-nav">
+      <div class="sub-tab active" data-statsub="global"     onclick="showStatsSub('global')">Stats Globales</div>
+      <div class="sub-tab"        data-statsub="sidequests" onclick="showStatsSub('sidequests')">Side Quests</div>
+      <div class="sub-tab"        data-statsub="progression" onclick="showStatsSub('progression')">Progression</div>
+      <div class="sub-tab"        data-statsub="opposition" onclick="showStatsSub('opposition')">Opposition</div>
+    </div>
+    <div id="statsub-global">
+      <div id="stats-global-content"></div>
+    </div>
+    <div id="statsub-sidequests" class="hidden">
+      <div id="stats-sq-content"></div>
+    </div>
+    <div id="statsub-progression" class="hidden">
+      <div id="stats-prog-content"></div>
+    </div>
+    <div id="statsub-opposition" class="hidden">
+      <div id="opposition-content"></div>
+    </div>
+  </div>
+
+  <div id="tab-calendrier" class="hidden">
+    <div id="countdown-box"></div>
+    <div id="calendrier-content"></div>
+  </div>
+
+  <div id="tab-gazette" class="hidden">
+    <div id="gazette-toolbar"></div>
+    <div id="gazette-content"></div>
   </div>
 </main>
+
+<div id="chart-tooltip"></div>
+
+<div id="gazette-lightbox" class="gazette-lightbox hidden" onclick="closeLightbox(event)">
+  <button class="lb-close" onclick="closeLightbox(event,true)" title="Fermer">✕</button>
+  <button class="lb-nav lb-prev" onclick="lbNav(event,-1)" title="Page précédente">‹</button>
+  <button class="lb-nav lb-next" onclick="lbNav(event,1)" title="Page suivante">›</button>
+  <div class="lb-counter" id="lb-counter"></div>
+  <img class="lb-img" id="lb-img" alt="Page" onclick="event.stopPropagation()">
+</div>
 
 <script>
 const API_KEY     = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
 const SHEET_ID    = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
 const PHOTOS_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/participants/';
 
-const PSEUDOS = {
+let PSEUDOS = {
   Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais', Ro:'BoosterDre',
   Ax:'Michael Au Lit !', Os:'Chapchenko', So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
 };
@@ -419,7 +588,41 @@ function questType(name) {
   return 'live_3';
 }
 
+// Image associée à chaque side quest (fichiers carrés dans photos/side-quests/)
+const SIDEQUEST_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/side-quests/';
+function questImage(name) {
+  const n = name.toUpperCase();
+  const map = [
+    ["VIF D'OR",'le-vif-dor.png'], ['VIF D','le-vif-dor.png'],
+    ['SAUVAGES','les-sauvages.png'],
+    ['LET HIM COOK','let-him-cook.png'],
+    ['RÉSERVISTES','les-reservistes.png'], ['RESERVISTES','les-reservistes.png'],
+    ['REPÊCHÉ','les-repeches.png'], ['REPECHE','les-repeches.png'],
+    ['DUELS','duels.png'],
+    ['MUTINERIE','mutinerie.png'],
+    ['MESSI','messi.png'],
+    ['BUILD THE WALL','built-the-wall.png'],
+    ['ALEX HUNTER','alex-hunter.png'],
+    ['FESTIVAL','le-festival.png'],
+    ['ON PROLONGE','on-prolonge-le-plaisir.png'],
+    ["LA FORCE",'la-force-de-lamitie.png'], ['AMITIÉ','la-force-de-lamitie.png'], ['AMITIE','la-force-de-lamitie.png'],
+    ['LEGENDES','les-legendes.png'], ['LÉGENDES','les-legendes.png'],
+    ['PROJET BLUE LOCK','projet-blue-lock.png'], ['BLUE LOCK','projet-blue-lock.png'],
+    ['PARK THE BUS','park-the-bus.png'],
+    ['OGRES','ogres.png'],
+    ['BOOSTERDRE','boosterdre.png'],
+  ];
+  for (const [key,file] of map) {
+    if (n.includes(key)) return SIDEQUEST_BASE+file;
+  }
+  return null;
+}
+
 let DATA = null, activeTab = 'classement', activeSub = 'reel';
+let activeStatsSub = 'global';
+let oppSelection = [null, null, null];
+let oppInit = false;
+let statsHighlight = null;
 let lastLoadTime = null;
 const COOLDOWN_MS = 60000;
 const CACHE_KEY = 'wcow_cache_v1';
@@ -514,6 +717,27 @@ async function fetchSeries(sheetName) {
   }
 }
 
+// Lit l'onglet Participants pour récupérer les pseudos (colonnes: Nom, Pseudo, ...)
+async function fetchPseudos() {
+  try {
+    const rows = await fetchRange("'Participants'!A1:D40");
+    if (!rows || rows.length < 2) return {};
+    const map = {};
+    // ligne 0 = en-tête. Colonnes: A=index(vide), B=Nom, C=Pseudo, D=Confirmé...
+    // mais selon l'export la 1re colonne peut être vide -> on repère Nom et Pseudo
+    for (let i=1; i<rows.length; i++) {
+      const r = rows[i] || [];
+      // Nom en col B (index 1), Pseudo en col C (index 2) d'après la structure du Sheets
+      const nom    = (r[1]||'').toString().trim();
+      const pseudo = (r[2]||'').toString().trim();
+      if (nom && pseudo) map[nom] = pseudo;
+    }
+    return map;
+  } catch(e) {
+    return {};
+  }
+}
+
 // ── SCORE CALC ────────────────────────────────────────────────────────────
 // mode: 'fictif' | 'reel'
 function calcQuestPts(q, p, mode) {
@@ -560,6 +784,102 @@ function calcTotal(quests, pronoScores, p, mode) {
 // ══════════════════════════════════════════════════════════════════════════
 const CHART_PALETTE = ['#C9A83C','#3ecf8e','#60a0f0','#f87cb0','#f0a050','#b090f8','#40d0c0','#f08080','#9bd35a','#6b9ef8','#e0c060','#5ad0b0'];
 
+// ── TOOLTIP GRAPHES ───────────────────────────────────────────────────────
+function ttShow(evt, html) {
+  const tt = document.getElementById('chart-tooltip');
+  if (!tt) return;
+  tt.innerHTML = html;
+  tt.classList.add('show');
+  ttMove(evt);
+}
+function ttMove(evt) {
+  const tt = document.getElementById('chart-tooltip');
+  if (!tt || !tt.classList.contains('show')) return;
+  const pad = 14;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  const w = tt.offsetWidth, h = tt.offsetHeight;
+  if (x + w > window.innerWidth - 8)  x = evt.clientX - w - pad;
+  if (y + h > window.innerHeight - 8) y = evt.clientY - h - pad;
+  tt.style.left = x + 'px';
+  tt.style.top  = y + 'px';
+}
+function ttHide() {
+  const tt = document.getElementById('chart-tooltip');
+  if (tt) tt.classList.remove('show');
+}
+
+// ── HIGHLIGHT CROISÉ STATS ────────────────────────────────────────────────
+// Un seul participant peut être mis en avant ; tous les graphes "participants"
+// de la page Stats réagissent ensemble. Les éléments concernés portent
+// l'attribut data-pkey (barres, points/courbes, polygones radar, légendes).
+function setStatsHighlight(pkey) {
+  // clic sur le même -> on annule
+  statsHighlight = (statsHighlight === pkey) ? null : pkey;
+  applyStatsHighlight();
+}
+function clearStatsHighlight() {
+  statsHighlight = null;
+  applyStatsHighlight();
+}
+function applyStatsHighlight() {
+  const hl = statsHighlight;
+  // Le highlight croisé couvre les 3 sous-onglets de stats participants
+  const scopes = ['statsub-global','statsub-sidequests','statsub-progression']
+    .map(id => document.getElementById(id)).filter(Boolean);
+  if (!scopes.length) return;
+
+  scopes.forEach(scope => {
+    scope.querySelectorAll('[data-pkey]').forEach(el => {
+      el.classList.remove('series-dimmed','series-focus','dimmed','focused');
+      if (!hl) return;
+      const isMatch = el.dataset.pkey === hl;
+      if (el.classList.contains('bar-row') || el.classList.contains('legend-item')) {
+        el.classList.toggle('dimmed', !isMatch);
+        el.classList.toggle('focused', isMatch);
+      } else {
+        el.classList.toggle('series-dimmed', !isMatch);
+        el.classList.toggle('series-focus', isMatch);
+      }
+    });
+  });
+
+  // Bandeau
+  renderHighlightBanner();
+}
+function renderHighlightBanner() {
+  const holders = ['hl-banner-holder','hl-banner-holder-sq','hl-banner-holder-prog']
+    .map(id => document.getElementById(id)).filter(Boolean);
+  if (!holders.length) return;
+  let html = '';
+  if (statsHighlight) {
+    const p = statsHighlight;
+    const c = avColor(p), url = photoUrl(p);
+    const inner = url
+      ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
+      : p;
+    html = '<div class="hl-banner">'
+      + '<div class="hl-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>'
+      + '<span class="hl-label">Joueur mis en avant :</span>'
+      + '<span class="hl-name">'+displayName(p)+'</span>'
+      + '<button class="hl-clear" onclick="clearStatsHighlight()">Tout afficher</button>'
+      + '</div>';
+  }
+  holders.forEach(h => h.innerHTML = html);
+}
+
+// Camembert / stacked : isolation locale indépendante (parts, pas participants)
+function toggleSegIsolate(segEl) {
+  const group = segEl.parentElement;
+  const already = segEl.classList.contains('focused');
+  group.querySelectorAll('.seg-iso').forEach(s => s.classList.remove('dimmed','focused'));
+  if (already) return;
+  group.querySelectorAll('.seg-iso').forEach(s => {
+    if (s !== segEl) s.classList.add('dimmed');
+  });
+  segEl.classList.add('focused');
+}
+
+
 function avMini(p, size) {
   const c = avColor(p), url = photoUrl(p);
   if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'"></div>';
@@ -589,13 +909,19 @@ function factCard(num, label, colorCls) {
 function barChart(items, opts) {
   opts = opts || {};
   const max = Math.max.apply(null, items.map(i=>i.value).concat([1]));
-  return items.map((it,idx) => {
+  const rows = items.map((it,idx) => {
     const pct = Math.round(it.value/max*100);
     const color = it.color || CHART_PALETTE[idx % CHART_PALETTE.length];
-    return '<div class="bar-row"><div class="bar-name">'+it.label+'</div>'
+    const pkey = it.key || it.label;
+    const tip = "ttShow(event,'<div class=&quot;tt-title&quot;>"+it.label+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+it.value+(opts.suffix||'')+"</span> "+(opts.metric||'points')+"')";
+    return '<div class="bar-row clickable" data-pkey="'+pkey+'" '
+      + 'onmousemove="'+tip+'" onmouseleave="ttHide()" '
+      + 'onclick="setStatsHighlight(\''+pkey+'\')">'
+      + '<div class="bar-name">'+it.label+'</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+Math.max(pct,3)+'%;background:'+color+'">'+(pct>18&&opts.showVal!==false?it.value:'')+'</div></div>'
       + '<div class="bar-val">'+it.value+(opts.suffix||'')+'</div></div>';
   }).join('');
+  return rows;
 }
 function lineChart(series, labels) {
   const W=680,H=280,padL=38,padR=12,padT=16,padB=36;
@@ -605,6 +931,7 @@ function lineChart(series, labels) {
   const n=labels.length;
   const xAt=i=>padL+(n<=1?0:(i/(n-1))*(W-padL-padR));
   const yAt=v=>padT+(1-(v-minV)/((maxV-minV)||1))*(H-padT-padB);
+  const chartId = 'lc'+(Math.random().toString(36).slice(2,8));
   let grid='';
   for(let s=0;s<=4;s++){
     const val=minV+(maxV-minV)*s/4, y=yAt(val);
@@ -614,20 +941,30 @@ function lineChart(series, labels) {
   let xlabels='';
   const skip=Math.ceil(n/8);
   labels.forEach((lb,i)=>{ if(i%skip===0||i===n-1) xlabels+='<text x="'+xAt(i)+'" y="'+(H-padB+14)+'" text-anchor="middle" font-size="8" fill="var(--muted)">'+lb+'</text>'; });
-  let paths='';
+  let paths='', dots='';
   series.forEach((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    const pkey=s.key||s.name;
     let d='',started=false;
     s.points.forEach((v,i)=>{ if(v==null)return; d+=(started?'L':'M')+xAt(i).toFixed(1)+','+yAt(v).toFixed(1)+' '; started=true; });
-    paths+='<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
-    let lastI=-1; s.points.forEach((v,i)=>{ if(v!=null)lastI=i; });
-    if(lastI>=0) paths+='<circle cx="'+xAt(lastI)+'" cy="'+yAt(s.points[lastI])+'" r="3" fill="'+color+'"/>';
+    paths+='<path data-pkey="'+pkey+'" d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
+    s.points.forEach((v,i)=>{
+      if(v==null) return;
+      const cx=xAt(i).toFixed(1), cy=yAt(v).toFixed(1);
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+labels[i]+" : <span class=&quot;tt-val&quot;>"+v+"</span> pts')";
+      dots+='<circle data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
+      dots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+pkey+'\')"></circle>';
+    });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
-    return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
+    const pkey=s.key||s.name;
+    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+pkey+'\')">'
+      + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
-  return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'">'+grid+paths+xlabels+'</svg><div class="chart-legend">'+legend+'</div>';
+  return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" data-chart="'+chartId+'">'+grid+paths+dots+xlabels+'</svg>'
+    + '<div class="chart-legend" data-chart="'+chartId+'">'+legend+'</div>';
 }
 function donutChart(slices) {
   const total=slices.reduce((a,s)=>a+s.value,0)||1;
@@ -640,7 +977,10 @@ function donutChart(slices) {
     const xi2=cx+r*Math.cos(a2),yi2=cy+r*Math.sin(a2);
     const xi1=cx+r*Math.cos(angle),yi1=cy+r*Math.sin(angle);
     const color=s.color||CHART_PALETTE[i%CHART_PALETTE.length];
-    paths+='<path d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'"/>';
+    const pct=Math.round(frac*100);
+    const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+String(s.label).replace(/'/g,'')+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+s.value+"</span> prono(s) · "+pct+"%')";
+    paths+='<path class="hit-zone seg-iso" d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'" '
+      + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)"/>';
     angle=a2;
   });
   const legend=slices.map((s,i)=>{
@@ -653,29 +993,40 @@ function donutChart(slices) {
 function radarChart(axes, series) {
   const cx=180,cy=170,R=120,n=axes.length;
   const angAt=i=>-Math.PI/2+i/n*2*Math.PI;
+  const chartId='rd'+(Math.random().toString(36).slice(2,8));
   let grid='';
   for(let ring=1;ring<=4;ring++){
     const rr=R*ring/4; let pts='';
     for(let i=0;i<n;i++){ pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; }
-    grid+='<polygon points="'+pts+'" fill="none" stroke="var(--border)" stroke-width="1"/>';
+    grid+='<polygon class="'+chartId+'-grid" points="'+pts+'" fill="none" stroke="var(--border)" stroke-width="1"/>';
   }
   for(let i=0;i<n;i++){
-    grid+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(angAt(i)))+'" y2="'+(cy+R*Math.sin(angAt(i)))+'" stroke="var(--border)" stroke-width="1"/>';
     const lx=cx+(R+18)*Math.cos(angAt(i)),ly=cy+(R+18)*Math.sin(angAt(i));
     grid+='<text x="'+lx+'" y="'+(ly+3)+'" text-anchor="middle" font-size="8" fill="var(--muted)">'+axes[i]+'</text>';
   }
-  let polys='';
+  let polys='', rdots='';
   series.forEach((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
+    const pkey=s.key||s.name;
     let pts='';
     s.values.forEach((v,i)=>{ const rr=R*Math.max(0,Math.min(1,v)); pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; });
-    polys+='<polygon points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
+    polys+='<polygon data-pkey="'+pkey+'" points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
+    s.values.forEach((v,i)=>{
+      const rr=R*Math.max(0,Math.min(1,v));
+      const px=(cx+rr*Math.cos(angAt(i))).toFixed(1), py=(cy+rr*Math.sin(angAt(i))).toFixed(1);
+      const rawVal=(s.raw&&s.raw[i]!=null)?s.raw[i]:Math.round(v*100)+'%';
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
+      rdots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+pkey+'\')"></circle>';
+      rdots+='<circle data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
+    });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
-    return '<div class="legend-item"><div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
+    const pkey=s.key||s.name;
+    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+pkey+'\')">'
+      + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
-  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340">'+grid+polys+'</svg><div class="chart-legend" style="margin-top:0">'+legend+'</div></div>';
+  return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340" data-chart="'+chartId+'">'+grid+polys+rdots+'</svg><div class="chart-legend" data-chart="'+chartId+'" style="margin-top:0">'+legend+'</div></div>';
 }
 function chartCard(title, sub, inner) {
   return '<div class="chart-card"><div class="chart-card-title">'+title+'</div>'
@@ -820,14 +1171,27 @@ function computeStats() {
 }
 
 function renderStats() {
-  const el=document.getElementById('stats-content');
-  if(!DATA||!DATA.participants.length){ el.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
+  const elGlobal = document.getElementById('stats-global-content');
+  const elSQ     = document.getElementById('stats-sq-content');
+  const elProg   = document.getElementById('stats-prog-content');
+  if(!elGlobal) return;
+  if(!DATA||!DATA.participants.length){ elGlobal.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
   const S=computeStats();
   const P=S.P;
-  let html='';
 
-  html+='<div class="stats-section"><div class="stats-section-title">Podiums & recompenses</div><div class="stats-section-sub">Le gratin du concours, a l instant T</div>';
+  function miniTable(title,ranked,fmt){
+    const rows=ranked.slice(0,5).map((x,i)=>'<tr><td class="mt-rank">'+(i+1)+'</td><td>'+displayName(x.p)+'</td><td class="mt-val">'+fmt(x.v)+'</td></tr>').join('');
+    return '<div class="chart-card"><div class="chart-card-title">'+title+'</div><table class="mini-table"><tr><th></th><th>Participant</th><th style="text-align:right">Valeur</th></tr>'+rows+'</table></div>';
+  }
+
+  const leadF=argMax(P,p=>S.totFictif[p]);
+  const leadR=argMax(P,p=>S.totReel[p]);
+  const lastF=argMin(P,p=>S.totFictif[p]);
   const podF=rankBy(P,p=>S.totFictif[p],true).slice(0,3);
+
+  // ════════════════════════ STATS GLOBALES ════════════════════════
+  let g='<div id="hl-banner-holder"></div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Podiums & recompenses</div><div class="stats-section-sub">Le gratin du concours, a l instant T</div>';
   if(podF.length===3){
     const order=[podF[1],podF[0],podF[2]];
     const heights=[70,100,52],cls=['podium-2','podium-1','podium-3'],avS=[46,58,42];
@@ -841,46 +1205,23 @@ function renderStats() {
         +'<div class="podium-stand" style="height:'+heights[i]+'px;width:78px">'+realIdx+'</div></div>';
     });
     pod+='</div>';
-    html+=chartCard('Podium provisoire (classement fictif)','PronoContest + side quests en cours',pod);
+    g+=chartCard('Podium provisoire (classement fictif)','PronoContest + side quests en cours',pod);
   }
   const cards=[];
-  const leadF=argMax(P,p=>S.totFictif[p]);
-  const leadR=argMax(P,p=>S.totReel[p]);
   cards.push(trophyCard('\u{1F451}','Leader fictif',leadF.p,leadF.v+' pts au total','gold'));
   cards.push(trophyCard('\u{1F3C6}','Leader reel',leadR.p,leadR.v+' pts officiels','gold'));
-  const bestSQ=argMax(P,p=>S.sqFictif[p]);
-  cards.push(trophyCard('\u{1F3AF}','Roi des side quests',bestSQ.p,bestSQ.v+' pts de side quests'));
-  const visio=argMax(P,p=>S.liveHits[p]);
-  cards.push(trophyCard('\u{1F52E}','Le visionnaire',visio.p,visio.v+' pronos actuellement dans le vrai'));
-  const flamb=argMax(P,p=>S.cntValideWin[p]);
-  cards.push(trophyCard('\u{1F525}','Le flambeur',flamb.p,flamb.v+' side quests validees gagnantes'));
-  const rebelle=argMax(P,p=>S.uniquePicks[p]);
-  cards.push(trophyCard('\u{1F984}','Le rebelle',rebelle.p,rebelle.v+' pronos que personne d autre n a oses'));
   const mouton=argMax(P,p=>S.conformity[p]);
   cards.push(trophyCard('\u{1F411}','Le mouton',mouton.p,Math.round(mouton.v*100)+'% de pronos dans la majorite'));
-  if(S.biggestRise) cards.push(trophyCard('\u{1F680}','Plus grosse remontee',S.biggestRise.p,'+'+S.biggestRise.d+' pts sur la derniere journee'));
-  const reg=argMin(P,p=>S.regularity[p]==null?Infinity:S.regularity[p]);
-  if(reg.v!==Infinity) cards.push(trophyCard('\u{1F4D0}','Le metronome',reg.p,'Progression la plus reguliere'));
-  const nbLead=argMax(P,p=>S.timesLeader[p]);
-  if(nbLead.v>0) cards.push(trophyCard('\u{1F3C5}','Le plus souvent en tete',nbLead.p,nbLead.v+' journee(s) en position de leader'));
-  html+='<div class="stats-grid">'+cards.join('')+'</div></div>';
+  const rebelle=argMax(P,p=>S.uniquePicks[p]);
+  cards.push(trophyCard('\u{1F984}','Le rebelle',rebelle.p,rebelle.v+' pronos que personne d autre n a oses'));
+  g+='<div class="stats-grid">'+cards.join('')+'</div></div>';
 
   const spicy=[];
-  const lastF=argMin(P,p=>S.totFictif[p]);
   spicy.push(trophyCard('\u{1F944}','La lanterne rouge',lastF.p,'Dernier du classement fictif ('+lastF.v+' pts)','spicy'));
-  const poisse=argMax(P,p=>S.cntValideLose[p]+S.cntImpossible[p]);
-  spicy.push(trophyCard('\u{1F480}','La poisse',poisse.p,poisse.v+' side quests perdues ou impossibles','spicy'));
-  const illus=argMax(P,p=>S.sqFictif[p]-S.sqReel[p]);
-  spicy.push(trophyCard('\u{1F3AD}','L illusionniste',illus.p,illus.v+' pts de side quests encore pour de faux','spicy'));
-  if(S.biggestFall&&S.biggestFall.d<0) spicy.push(trophyCard('\u{1F4C9}','Le crash du jour',S.biggestFall.p,S.biggestFall.d+' pts sur la derniere journee','spicy'));
-  const ghost=argMin(P,p=>S.liveHits[p]);
-  spicy.push(trophyCard('\u{1F47B}','A cote de la plaque',ghost.p,'Seulement '+ghost.v+' pronos dans le vrai','spicy'));
   if(S.twinPair) spicy.push(trophyCard('\u{1F46F}','Les jumeaux',null,displayName(S.twinPair[0])+' & '+displayName(S.twinPair[1])+' \u2014 '+Math.round(S.twinScore*100)+'% de pronos identiques','spicy'));
   const optimiste=argMax(P,p=>S.yesCount[p]);
   spicy.push(trophyCard('\u2600\uFE0F','L eternel optimiste',optimiste.p,'Dit Oui a tout en finale','spicy'));
-  const impossibleKing=argMax(P,p=>S.cntImpossible[p]);
-  spicy.push(trophyCard('\u{1F6AB}','Le maudit',impossibleKing.p,impossibleKing.v+' quetes devenues impossibles','spicy'));
-  html+='<div class="stats-section"><div class="stats-section-title">Superlatifs qui piquent</div><div class="stats-section-sub">A prendre avec humour</div><div class="stats-grid">'+spicy.join('')+'</div></div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Superlatifs qui piquent</div><div class="stats-section-sub">A prendre avec humour</div><div class="stats-grid">'+spicy.join('')+'</div></div>';
 
   const moyF=Math.round(P.reduce((a,p)=>a+S.totFictif[p],0)/P.length);
   const ecart=leadF.v-lastF.v;
@@ -891,65 +1232,608 @@ function renderStats() {
     factCard(totalLive+'/'+S.sideQuests.length,'Side quests deja actives','green'),
     factCard(leadF.v,'Score du leader','green')
   ];
-  html+='<div class="stats-section"><div class="stats-section-title">Chiffres cles</div><div class="stats-grid">'+facts.join('')+'</div></div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Chiffres cles</div><div class="stats-grid">'+facts.join('')+'</div></div>';
 
-  html+='<div class="stats-section"><div class="stats-section-title">Le classement en images</div>';
-  const barItems=rankBy(P,p=>S.totFictif[p],true).map(x=>({label:displayName(x.p),value:x.v}));
-  html+=chartCard('Classement fictif','Total PronoContest + side quests en cours',barChart(barItems));
-  const sqItems=rankBy(P,p=>S.sqFictif[p],true).map(x=>({label:displayName(x.p),value:x.v,color:'#60a0f0'}));
-  html+=chartCard('Points de side quests uniquement','Hors PronoContest \u2014 qui maitrise les quetes',barChart(sqItems));
-  if(S.filledIdx.length>=2){
-    const labels=S.filledIdx.map(i=>S.histoDates[i]);
-    const series=P.map((p,i)=>({name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
-    html+=chartCard('Evolution du classement','Total de points journee par journee (onglet Historique)',lineChart(series,labels));
-  } else {
-    html+=chartCard('Evolution du classement','','<div class="stats-empty">Pas assez de journees d historique remplies pour tracer une courbe</div>');
-  }
-  html+='</div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Le classement en images</div>';
+  const barItems=rankBy(P,p=>S.totFictif[p],true).map(x=>({key:x.p,label:displayName(x.p),value:x.v}));
+  g+=chartCard('Classement fictif','Total PronoContest + side quests en cours',barChart(barItems));
+  g+='</div>';
 
   if(podF.length===3){
     const axes=['Total','Side Q.','Validees','Visions','Original.'];
     const mx={tot:Math.max.apply(null,P.map(p=>S.totFictif[p]).concat([1])),sq:Math.max.apply(null,P.map(p=>S.sqFictif[p]).concat([1])),val:Math.max.apply(null,P.map(p=>S.cntValideWin[p]).concat([1])),vis:Math.max.apply(null,P.map(p=>S.liveHits[p]).concat([1])),uni:Math.max.apply(null,P.map(p=>S.uniquePicks[p]).concat([1]))};
-    const series=podF.map((x,i)=>({name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
-    html+='<div class="stats-section"><div class="stats-section-title">Profil du Top 3</div><div class="stats-section-sub">Forces et faiblesses comparees des 3 leaders</div>'+chartCard('Radar comparatif','',radarChart(axes,series))+'</div>';
+    const series=podF.map((x,i)=>({key:x.p,name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],raw:[S.totFictif[x.p]+' pts',S.sqFictif[x.p]+' pts',S.cntValideWin[x.p],S.liveHits[x.p],S.uniquePicks[x.p]],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    g+='<div class="stats-section"><div class="stats-section-title">Profil du Top 3</div><div class="stats-section-sub">Forces et faiblesses comparees des 3 leaders</div>'+chartCard('Radar comparatif','',radarChart(axes,series))+'</div>';
   }
+  elGlobal.innerHTML=g;
 
-  html+='<div class="stats-section"><div class="stats-section-title">Anatomie des pronostics</div><div class="stats-section-sub">Comment le groupe se repartit sur chaque quete</div>';
+  // ════════════════════════ SIDE QUESTS ════════════════════════
+  let sq='<div id="hl-banner-holder-sq"></div>';
+  const sqCards=[];
+  const bestSQ=argMax(P,p=>S.sqFictif[p]);
+  sqCards.push(trophyCard('\u{1F3AF}','Roi des side quests',bestSQ.p,bestSQ.v+' pts de side quests','gold'));
+  const visio=argMax(P,p=>S.liveHits[p]);
+  sqCards.push(trophyCard('\u{1F52E}','Le visionnaire',visio.p,visio.v+' pronos actuellement dans le vrai'));
+  const flamb=argMax(P,p=>S.cntValideWin[p]);
+  sqCards.push(trophyCard('\u{1F525}','Le flambeur',flamb.p,flamb.v+' side quests validees gagnantes'));
+  const poisse=argMax(P,p=>S.cntValideLose[p]+S.cntImpossible[p]);
+  sqCards.push(trophyCard('\u{1F480}','La poisse',poisse.p,poisse.v+' side quests perdues ou impossibles','spicy'));
+  const illus=argMax(P,p=>S.sqFictif[p]-S.sqReel[p]);
+  sqCards.push(trophyCard('\u{1F3AD}','L illusionniste',illus.p,illus.v+' pts de side quests encore pour de faux','spicy'));
+  const ghost=argMin(P,p=>S.liveHits[p]);
+  sqCards.push(trophyCard('\u{1F47B}','A cote de la plaque',ghost.p,'Seulement '+ghost.v+' pronos dans le vrai','spicy'));
+  const impossibleKing=argMax(P,p=>S.cntImpossible[p]);
+  sqCards.push(trophyCard('\u{1F6AB}','Le maudit',impossibleKing.p,impossibleKing.v+' quetes devenues impossibles','spicy'));
+  sq+='<div class="stats-section"><div class="stats-section-title">Les rois (et les maudits) des quetes</div><div class="stats-grid">'+sqCards.join('')+'</div></div>';
+
+  sq+='<div class="stats-section"><div class="stats-section-title">Points de side quests</div>';
+  const sqItems=rankBy(P,p=>S.sqFictif[p],true).map(x=>({key:x.p,label:displayName(x.p),value:x.v,color:'#60a0f0'}));
+  sq+=chartCard('Classement side quests','Hors PronoContest \u2014 qui maitrise les quetes',barChart(sqItems));
+  sq+='</div>';
+
+  sq+='<div class="stats-section"><div class="stats-section-title">Anatomie des pronostics</div><div class="stats-section-sub">Comment le groupe se repartit sur chaque quete</div>';
   const sortedDiv=S.questChoices.slice().sort((a,b)=>b.diversity-a.diversity);
   const mostDiverse=sortedDiv[0], leastDiverse=sortedDiv[sortedDiv.length-1];
-  if(mostDiverse) html+=chartCard('Quete la plus disputee : '+mostDiverse.name,mostDiverse.diversity+' reponses differentes',donutChart(mostDiverse.choices.map(c=>({label:c.val,value:c.count}))));
-  if(leastDiverse) html+=chartCard('Quete la plus consensuelle : '+leastDiverse.name,'Seulement '+leastDiverse.diversity+' reponse(s) differente(s)',donutChart(leastDiverse.choices.map(c=>({label:c.val,value:c.count}))));
+  if(mostDiverse) sq+=chartCard('Quete la plus disputee : '+mostDiverse.name,mostDiverse.diversity+' reponses differentes',donutChart(mostDiverse.choices.map(c=>({label:c.val,value:c.count}))));
+  if(leastDiverse) sq+=chartCard('Quete la plus consensuelle : '+leastDiverse.name,'Seulement '+leastDiverse.diversity+' reponse(s) differente(s)',donutChart(leastDiverse.choices.map(c=>({label:c.val,value:c.count}))));
   let qbars='';
   S.questChoices.forEach(qc=>{
     const total=qc.choices.reduce((a,c)=>a+c.count,0);
     if(!total) return;
     const segs=qc.choices.map((c,i)=>{
       const pct=c.count/total*100, color=CHART_PALETTE[i%CHART_PALETTE.length];
-      return '<div class="qstat-seg" style="width:'+pct+'%;background:'+color+'" title="'+c.val+': '+c.count+'">'+(pct>12?c.count:'')+'</div>';
+      const whoNames=c.who.map(p=>displayName(p)).join(', ').replace(/'/g,'');
+      const cval=String(c.val).replace(/'/g,'');
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+cval+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+c.count+"</span> prono(s) · "+Math.round(pct)+"%</div><div class=&quot;tt-line&quot;>"+whoNames+"')";
+      return '<div class="qstat-seg hit-zone seg-iso" style="width:'+pct+'%;background:'+color+'" '
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)">'+(pct>6?c.count:'')+'</div>';
     }).join('');
     const choices=qc.choices.map((c,i)=>'<div class="qstat-choice"><span class="legend-dot" style="background:'+CHART_PALETTE[i%CHART_PALETTE.length]+'"></span>'+c.val+' ('+c.count+')</div>').join('');
     qbars+='<div class="qstat"><div class="qstat-head"><div class="qstat-name">'+qc.name+'</div><div class="qstat-meta">'+total+' pronos \u00b7 '+qc.diversity+' choix</div></div><div class="qstat-bar">'+segs+'</div><div class="qstat-choices">'+choices+'</div></div>';
   });
-  html+=chartCard('Repartition quete par quete','Le detail de qui a mise sur quoi',qbars);
-  html+='</div>';
+  sq+=chartCard('Repartition quete par quete','Le detail de qui a mise sur quoi',qbars);
+  sq+='</div>';
 
-  html+='<div class="stats-section"><div class="stats-section-title">Les classements annexes</div>';
-  function miniTable(title,ranked,fmt){
-    const rows=ranked.slice(0,5).map((x,i)=>'<tr><td class="mt-rank">'+(i+1)+'</td><td>'+displayName(x.p)+'</td><td class="mt-val">'+fmt(x.v)+'</td></tr>').join('');
-    return '<div class="chart-card"><div class="chart-card-title">'+title+'</div><table class="mini-table"><tr><th></th><th>Participant</th><th style="text-align:right">Valeur</th></tr>'+rows+'</table></div>';
+  sq+='<div class="stats-section"><div class="stats-section-title">Les classements annexes</div><div class="stats-grid wide">';
+  sq+=miniTable('Top side quests',rankBy(P,p=>S.sqFictif[p],true),v=>v+' pts');
+  sq+=miniTable('Plus de quetes validees',rankBy(P,p=>S.cntValideWin[p],true),v=>v);
+  sq+=miniTable('Les plus originaux',rankBy(P,p=>S.uniquePicks[p],true),v=>v+' pronos uniques');
+  sq+=miniTable('Plus de visions correctes',rankBy(P,p=>S.liveHits[p],true),v=>v);
+  sq+=miniTable('Le plus de poisse',rankBy(P,p=>S.cntValideLose[p]+S.cntImpossible[p],true),v=>v+' rates');
+  sq+='</div></div>';
+  if(elSQ) elSQ.innerHTML=sq;
+
+  // ════════════════════════ PROGRESSION ════════════════════════
+  let pr='<div id="hl-banner-holder-prog"></div>';
+  if(S.filledIdx.length>=2){
+    const progCards=[];
+    if(S.biggestRise) progCards.push(trophyCard('\u{1F680}','Plus grosse remontee',S.biggestRise.p,'+'+S.biggestRise.d+' pts sur la derniere journee','gold'));
+    if(S.biggestFall&&S.biggestFall.d<0) progCards.push(trophyCard('\u{1F4C9}','Le crash du jour',S.biggestFall.p,S.biggestFall.d+' pts sur la derniere journee','spicy'));
+    const reg=argMin(P,p=>S.regularity[p]==null?Infinity:S.regularity[p]);
+    if(reg.v!==Infinity) progCards.push(trophyCard('\u{1F4D0}','Le metronome',reg.p,'Progression la plus reguliere'));
+    const nbLead=argMax(P,p=>S.timesLeader[p]);
+    if(nbLead.v>0) progCards.push(trophyCard('\u{1F3C5}','Le plus souvent en tete',nbLead.p,nbLead.v+' journee(s) en position de leader','gold'));
+    if(progCards.length) pr+='<div class="stats-section"><div class="stats-section-title">Les temps forts</div><div class="stats-grid">'+progCards.join('')+'</div></div>';
+
+    const labels=S.filledIdx.map(i=>S.histoDates[i]);
+    const series=P.map((p,i)=>({key:p,name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    pr+='<div class="stats-section"><div class="stats-section-title">Evolution du classement</div><div class="stats-section-sub">Total de points journee par journee</div>'+chartCard('Courbe d\'evolution','Clique un nom pour isoler sa courbe',lineChart(series,labels))+'</div>';
+
+    pr+='<div class="stats-section"><div class="stats-section-title">Classements de progression</div><div class="stats-grid wide">';
+    pr+=miniTable('Progression derniere journee',rankBy(P,p=>S.lastProg[p]||0,true),v=>(v>=0?'+':'')+v+' pts');
+    pr+=miniTable('Journees passees en tete',rankBy(P,p=>S.timesLeader[p],true),v=>v+' j');
+    pr+='</div></div>';
+  } else {
+    pr='<div class="stats-empty">Pas assez de journees d\'historique remplies pour afficher la progression.<br>Les courbes apparaitront au fil de la competition.</div>';
   }
-  html+='<div class="stats-grid wide">';
-  html+=miniTable('Top side quests',rankBy(P,p=>S.sqFictif[p],true),v=>v+' pts');
-  html+=miniTable('Plus de quetes validees',rankBy(P,p=>S.cntValideWin[p],true),v=>v);
-  html+=miniTable('Les plus originaux',rankBy(P,p=>S.uniquePicks[p],true),v=>v+' pronos uniques');
-  html+=miniTable('Plus de visions correctes',rankBy(P,p=>S.liveHits[p],true),v=>v);
-  if(S.filledIdx.length>=2) html+=miniTable('Progression derniere journee',rankBy(P,p=>S.lastProg[p]||0,true),v=>(v>=0?'+':'')+v+' pts');
-  html+=miniTable('Le plus de poisse',rankBy(P,p=>S.cntValideLose[p]+S.cntImpossible[p],true),v=>v+' rates');
-  html+='</div></div>';
+  if(elProg) elProg.innerHTML=pr;
 
-  el.innerHTML=html;
+  // Si un joueur était mis en avant, on réapplique le highlight
+  applyStatsHighlight();
 }
 
+// ══════════════════════════════════════════════════════════════════════════
+// OPPOSITION — comparaison de 2-3 participants
+// ══════════════════════════════════════════════════════════════════════════
+function oppHeadAv(p) {
+  const c=avColor(p), url=photoUrl(p);
+  const inner = url
+    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
+    : p;
+  return '<div class="opp-head-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>';
+}
+
+function renderOpposition() {
+  const el=document.getElementById('opposition-content');
+  if(!DATA||!DATA.participants.length){ el.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
+  const S=computeStats();
+  const P=S.P;
+
+  // Initialise la sélection par défaut une seule fois : top 3 fictif
+  const podF=rankBy(P,p=>S.totFictif[p],true);
+  if(!oppInit){
+    oppSelection[0]=podF[0]?podF[0].p:P[0];
+    oppSelection[1]=podF[1]?podF[1].p:(P[1]||null);
+    oppSelection[2]=podF[2]?podF[2].p:(P[2]||null);
+    oppInit=true;
+  }
+  // sécurité : un participant sélectionné qui n'existe plus -> vidé
+  oppSelection=oppSelection.map(s=> (s&&P.indexOf(s)>=0)?s:null);
+
+  // Rangs fictif/réel
+  const rankFictif={}, rankReel={};
+  rankBy(P,p=>S.totFictif[p],true).forEach((x,i)=>rankFictif[x.p]=i+1);
+  rankBy(P,p=>S.totReel[p],true).forEach((x,i)=>rankReel[x.p]=i+1);
+
+  // Sélecteurs
+  function selOptions(slotIdx){
+    let opts='';
+    if(slotIdx===2) opts+='<option value="">— aucun —</option>';
+    P.forEach(p=>{
+      const sel=oppSelection[slotIdx]===p?' selected':'';
+      opts+='<option value="'+p+'"'+sel+'>'+displayName(p)+'</option>';
+    });
+    return opts;
+  }
+  let selectors='<div class="opp-selectors">';
+  for(let i=0;i<3;i++){
+    selectors+='<select class="opp-select" onchange="oppPick('+i+',this.value)">'+selOptions(i)+'</select>';
+  }
+  selectors+='</div>';
+
+  // Colonnes actives
+  const cols=oppSelection.filter(p=>p);
+  if(cols.length<2){
+    el.innerHTML=selectors+'<div class="stats-empty">Selectionne au moins 2 participants a comparer</div>';
+    return;
+  }
+
+  // Définition des lignes de stats. dir: 'max' => plus haut = meilleur, 'min' => plus bas = meilleur
+  const sections=[
+    { title:'Scores', rows:[
+      { label:'Total fictif',           dir:'max', fmt:v=>v+' pts', get:p=>S.totFictif[p] },
+      { label:'Total reel',             dir:'max', fmt:v=>v+' pts', get:p=>S.totReel[p] },
+      { label:'Points PronoContest',    dir:'max', fmt:v=>v+' pts', get:p=>(DATA.pronoScores[p]||0) },
+      { label:'Points side quests',     dir:'max', fmt:v=>v+' pts', get:p=>S.sqFictif[p] },
+      { label:'Rang fictif actuel',     dir:'min', fmt:v=>'#'+v,    get:p=>rankFictif[p] },
+      { label:'Rang reel actuel',       dir:'min', fmt:v=>'#'+v,    get:p=>rankReel[p] },
+      { label:'Meilleur rang atteint',  dir:'min', fmt:v=>v>=99?'—':'#'+v, get:p=>S.bestRank[p] },
+    ]},
+    { title:'Side quests', rows:[
+      { label:'Quetes validees gagnantes', dir:'max', fmt:v=>v, get:p=>S.cntValideWin[p] },
+      { label:'Quetes encore possibles',   dir:'max', fmt:v=>v, get:p=>S.cntPossible[p] },
+      { label:'Quetes perdues / impossibles', dir:'min', fmt:v=>v, get:p=>S.cntValideLose[p]+S.cntImpossible[p] },
+      { label:'Pronos dans le vrai (visions)', dir:'max', fmt:v=>v, get:p=>S.liveHits[p] },
+      { label:'Pronos uniques (originalite)',  dir:'max', fmt:v=>v, get:p=>S.uniquePicks[p] },
+    ]},
+    { title:'Comportement', rows:[
+      { label:'Taux de conformite',     dir:'max', fmt:v=>Math.round(v*100)+'%', get:p=>S.conformity[p] },
+      { label:'Reponses "Oui" en finale', dir:'neutral', fmt:v=>v, get:p=>S.yesCount[p] },
+    ]},
+    { title:'Evolution', rows:[
+      { label:'Progression derniere journee', dir:'max', fmt:v=>v==null?'—':(v>=0?'+':'')+v+' pts', get:p=>(S.lastProg[p]!=null?S.lastProg[p]:null) },
+      { label:'Journees passees en tete',     dir:'max', fmt:v=>v, get:p=>S.timesLeader[p] },
+    ]},
+  ];
+
+  // En-tête
+  let head='<thead><tr class="opp-head">';
+  head+='<th class="opp-corner"></th>';
+  cols.forEach(p=>{
+    head+='<th>'+oppHeadAv(p)+'<div class="opp-head-name">'+displayName(p)+'</div>'
+      +'<div class="opp-head-sub">'+S.totFictif[p]+' pts · #'+rankFictif[p]+'</div></th>';
+  });
+  head+='</tr></thead>';
+
+  // Corps
+  let body='<tbody>';
+  sections.forEach(sec=>{
+    body+='<tr class="opp-section-row"><td colspan="'+(cols.length+1)+'">'+sec.title+'</td></tr>';
+    sec.rows.forEach(row=>{
+      const vals=cols.map(p=>row.get(p));
+      // Détermine la/les meilleure(s) valeur(s)
+      let best=null;
+      const numeric=vals.filter(v=>v!=null && !isNaN(v));
+      if(row.dir==='max'&&numeric.length) best=Math.max.apply(null,numeric);
+      if(row.dir==='min'&&numeric.length) best=Math.min.apply(null,numeric);
+      body+='<tr class="opp-row"><td class="opp-stat-name">'+row.label+'</td>';
+      cols.forEach((p,ci)=>{
+        const v=vals[ci];
+        const isEmpty=(v==null||v===''||(typeof v==='number'&&isNaN(v)));
+        const isBest=(best!=null && v===best && row.dir!=='neutral' && numeric.length>1 &&
+                      !(numeric.every(x=>x===numeric[0])));
+        const cls='opp-val'+(isBest?' best':'')+(isEmpty?' empty':'');
+        body+='<td><span class="'+cls+'">'+(isEmpty?'—':row.fmt(v))+'</span></td>';
+      });
+      body+='</tr>';
+    });
+  });
+  body+='</tbody>';
+
+  let colgroup='<colgroup><col class="col-stat">';
+  cols.forEach(()=>colgroup+='<col>');
+  colgroup+='</colgroup>';
+
+  el.innerHTML=selectors
+    +'<table class="opp-table">'+colgroup+head+body+'</table>';
+}
+
+function oppPick(slot, value) {
+  oppSelection[slot] = value || null;
+  renderOpposition();
+}
+
+
+
+
+// ══════════════════════════════════════════════════════════════════════════
+// CALENDRIER — données openfootball (domaine public, sans clé API)
+// ══════════════════════════════════════════════════════════════════════════
+const WC_DATA_URL = 'https://raw.githubusercontent.com/openfootball/worldcup.json/master/2026/worldcup.json';
+
+// Traduction EN -> FR des équipes (le fichier openfootball est en anglais)
+const TEAM_FR = {
+  'Mexico':'Mexique','South Africa':'Afrique du Sud','South Korea':'Corée du Sud',
+  'Czech Republic':'Tchéquie','Canada':'Canada','Bosnia and Herzegovina':'Bosnie-Herzégovine',
+  'Bosnia-Herzegovina':'Bosnie-Herzégovine','Qatar':'Qatar','Switzerland':'Suisse',
+  'Brazil':'Brésil','Morocco':'Maroc','Haiti':'Haïti','Scotland':'Écosse',
+  'United States':'États-Unis','USA':'États-Unis','Paraguay':'Paraguay',
+  'Australia':'Australie','Turkey':'Turquie','Türkiye':'Turquie',
+  'Germany':'Allemagne','Curacao':'Curaçao','Curaçao':'Curaçao',
+  'Ivory Coast':"Côte d'Ivoire",'Cote d\'Ivoire':"Côte d'Ivoire",'Ecuador':'Équateur',
+  'Netherlands':'Pays-Bas','Japan':'Japon','Sweden':'Suède','Tunisia':'Tunisie',
+  'Belgium':'Belgique','Egypt':'Égypte','Iran':'Iran','New Zealand':'Nouvelle-Zélande',
+  'Spain':'Espagne','Cape Verde':'Cap-Vert','Cabo Verde':'Cap-Vert',
+  'Saudi Arabia':'Arabie saoudite','Uruguay':'Uruguay','France':'France',
+  'Senegal':'Sénégal','Iraq':'Irak','Norway':'Norvège','Argentina':'Argentine',
+  'Algeria':'Algérie','Austria':'Autriche','Jordan':'Jordanie','Portugal':'Portugal',
+  'DR Congo':'RD Congo','Congo DR':'RD Congo','Uzbekistan':'Ouzbékistan',
+  'Colombia':'Colombie','England':'Angleterre','Croatia':'Croatie','Ghana':'Ghana',
+  'Panama':'Panama',
+};
+function teamFR(name){
+  if(!name) return '';
+  return TEAM_FR[name] || name; // placeholders (W101, 1A...) restent tels quels
+}
+
+// Conversion d'une date+heure openfootball en objet Date (heure locale stade -> instant absolu)
+function parseMatchDateTime(m){
+  // date: "2026-06-11", time: "13:00 UTC-6" ou "20:00 UTC-4" ou "13:00"
+  if(!m.date) return null;
+  const t = (m.time||'00:00').trim();
+  const tm = t.match(/(\d{1,2}):(\d{2})/);
+  const hh = tm?parseInt(tm[1]):0, mm = tm?parseInt(tm[2]):0;
+  const off = t.match(/UTC([+-]\d{1,2})/);
+  const offH = off?parseInt(off[1]):0;
+  const [Y,Mo,D] = m.date.split('-').map(Number);
+  // instant UTC = heure locale - décalage
+  return new Date(Date.UTC(Y, Mo-1, D, hh-offH, mm));
+}
+
+function calMatchHasScore(m){
+  return m.score && m.score.ft && Array.isArray(m.score.ft) && m.score.ft.length===2;
+}
+
+async function fetchCalendar(){
+  try{
+    const res = await fetch(WC_DATA_URL, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json = await res.json();
+    const matches = (json.matches||[]).map(m=>{
+      const dt = parseMatchDateTime(m);
+      return {
+        round: m.round||'', group: m.group||'',
+        ground: m.ground||'', date: m.date||'',
+        t1: teamFR(m.team1), t2: teamFR(m.team2),
+        rawT1: m.team1||'', rawT2: m.team2||'',
+        dt: dt, dtMs: dt?dt.getTime():0,
+        score: calMatchHasScore(m) ? {a:m.score.ft[0], b:m.score.ft[1]} : null,
+      };
+    });
+    matches.sort((a,b)=>a.dtMs-b.dtMs);
+    return matches;
+  }catch(e){
+    return null; // calendrier indisponible
+  }
+}
+
+// ── DÉCOMPTE PROCHAIN MATCH ───────────────────────────────────────────────
+let countdownTimer = null;
+
+function findNextMatch(){
+  if(!DATA || !DATA.calendar) return null;
+  const now = Date.now();
+  // Match "en cours" = a commencé il y a moins de 2h et pas de score final
+  for(const m of DATA.calendar){
+    if(!m.dtMs) continue;
+    if(m.dtMs<=now && now-m.dtMs < 2*3600*1000 && !m.score) return {match:m, live:true};
+  }
+  // Sinon le prochain à venir
+  for(const m of DATA.calendar){
+    if(m.dtMs && m.dtMs>now) return {match:m, live:false};
+  }
+  return null;
+}
+
+function renderCountdown(){
+  const box = document.getElementById('countdown-box');
+  if(!box) return;
+  const next = findNextMatch();
+  if(!next){
+    box.innerHTML = '';
+    return;
+  }
+  const m = next.match;
+  const matchLabel = (m.t1||'?') + '  —  ' + (m.t2||'?');
+  const meta = [m.group, m.round, m.ground].filter(Boolean).join(' · ');
+
+  if(next.live){
+    box.innerHTML = '<div class="countdown-card">'
+      + '<div class="countdown-label">Match en cours</div>'
+      + '<div class="countdown-match">'+matchLabel+'</div>'
+      + '<div class="countdown-meta">'+meta+'</div>'
+      + '<div class="countdown-live">● EN DIRECT</div></div>';
+    return;
+  }
+
+  const diff = m.dtMs - Date.now();
+  if(diff<=0){ renderCalendar(); return; }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff%86400000/3600000);
+  const mn = Math.floor(diff%3600000/60000);
+  const s = Math.floor(diff%60000/1000);
+  function unit(n,l){ return '<div class="cd-unit"><div class="cd-num">'+String(n).padStart(2,'0')+'</div><div class="cd-unit-label">'+l+'</div></div>'; }
+  box.innerHTML = '<div class="countdown-card">'
+    + '<div class="countdown-label">Prochain match dans</div>'
+    + '<div class="countdown-timer">'
+    + (d>0?unit(d,'jours'):'')
+    + unit(h,'heures') + unit(mn,'min') + unit(s,'sec')
+    + '</div>'
+    + '<div class="countdown-match" style="margin-top:.9rem">'+matchLabel+'</div>'
+    + '<div class="countdown-meta">'+meta+'</div></div>';
+}
+
+function startCountdown(){
+  stopCountdown();
+  renderCountdown();
+  countdownTimer = setInterval(renderCountdown, 1000);
+}
+function stopCountdown(){
+  if(countdownTimer){ clearInterval(countdownTimer); countdownTimer=null; }
+}
+
+// ── RENDU CALENDRIER ──────────────────────────────────────────────────────
+const JOURS_FR = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MOIS_FR  = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+function frDateLabel(dt){
+  return JOURS_FR[dt.getDay()]+' '+dt.getDate()+' '+MOIS_FR[dt.getMonth()];
+}
+function frTime(dt){
+  return String(dt.getHours()).padStart(2,'0')+'h'+String(dt.getMinutes()).padStart(2,'0');
+}
+
+function renderCalendar(){
+  const el = document.getElementById('calendrier-content');
+  if(!el) return;
+  if(!DATA || !DATA.calendar){
+    el.innerHTML = '<div class="stats-empty">Calendrier indisponible pour le moment. Réessaie plus tard.</div>';
+    return;
+  }
+  if(!DATA.calendar.length){
+    el.innerHTML = '<div class="stats-empty">Aucun match dans le calendrier.</div>';
+    return;
+  }
+  const now = Date.now();
+  const next = findNextMatch();
+  const nextMs = (next && !next.live) ? next.match.dtMs : null;
+
+  // Regroupe les matchs par jour (heure de France)
+  const groups = [];
+  let cur = null;
+  DATA.calendar.forEach(m=>{
+    if(!m.dt) return;
+    const key = m.dt.getFullYear()+'-'+m.dt.getMonth()+'-'+m.dt.getDate();
+    if(!cur || cur.key!==key){
+      cur = { key:key, dt:m.dt, matches:[] };
+      groups.push(cur);
+    }
+    cur.matches.push(m);
+  });
+
+  const todayKey = (()=>{ const n=new Date(); return n.getFullYear()+'-'+n.getMonth()+'-'+n.getDate(); })();
+
+  let html = '';
+  groups.forEach(g=>{
+    const isToday = g.key===todayKey;
+    html += '<div class="cal-day'+(isToday?' is-today':'')+'">';
+    html += '<div class="cal-day-header">'+frDateLabel(g.dt)+(isToday?" · aujourd'hui":'')+'</div>';
+    g.matches.forEach(m=>{
+      const played = !!m.score;
+      const isLive = next && next.live && next.match===m;
+      const isNext = nextMs && m.dtMs===nextMs && !played;
+      // équipe gagnante
+      let w1=false,w2=false;
+      if(played){
+        if(m.score.a>m.score.b) w1=true;
+        else if(m.score.b>m.score.a) w2=true;
+      }
+      const meta = [m.group, m.ground].filter(Boolean).join(' · ');
+      html += '<div class="cal-match'+(played?' played':'')+(isLive?' live-match':'')+'">';
+      html += '<div class="cal-time'+(isNext?' next-dot':'')+'">'+frTime(m.dt)+'</div>';
+      html += '<div class="cal-teams">';
+      html += '<div class="cal-team'+(w1?' winner':'')+'"><span class="cal-team-name">'+(m.t1||'?')+'</span>'
+            + (played?'<span class="cal-score">'+m.score.a+'</span>':'')+'</div>';
+      html += '<div class="cal-team'+(w2?' winner':'')+'"><span class="cal-team-name">'+(m.t2||'?')+'</span>'
+            + (played?'<span class="cal-score">'+m.score.b+'</span>':'')+'</div>';
+      html += '</div>';
+      html += '<div class="cal-meta">'+(m.group?'<span class="cal-group">'+m.group+'</span><br>':'')
+            + (m.ground||'')+'</div>';
+      html += '<div class="cal-status '+(played?'done':'scheduled')+'">'+(played?'Terminé':isLive?'En cours':'À venir')+'</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════
+// GAZETTE — éditions de journal, images sur GitHub, méta sur Sheets
+// ══════════════════════════════════════════════════════════════════════════
+const GAZETTE_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/gazette/';
+
+async function fetchGazette() {
+  try {
+    const rows = await fetchRange("'Gazette'!A1:E200");
+    if (!rows || rows.length < 2) return [];
+    // ligne 0 = en-tête. Colonnes: Édition, Date, Titre édition, Page, Image
+    const byEdition = {};
+    for (let i=1; i<rows.length; i++) {
+      const r = rows[i] || [];
+      const ed = (r[0]||'').toString().trim();
+      const date = (r[1]||'').toString().trim();
+      const title = (r[2]||'').toString().trim();
+      const page = parseInt((r[3]||'0').toString().trim()) || 0;
+      const image = (r[4]||'').toString().trim();
+      if (!ed || !image) continue;
+      const edNum = parseInt(ed) || 0;
+      if (!edNum) continue;
+      if (!byEdition[edNum]) {
+        byEdition[edNum] = { num: edNum, date, title, pages: [] };
+      }
+      byEdition[edNum].pages.push({ page, image, url: GAZETTE_BASE+'edition-'+edNum+'/'+image });
+    }
+    // Tri des pages dans chaque édition, et des éditions par numéro décroissant
+    const editions = Object.values(byEdition);
+    editions.forEach(e => e.pages.sort((a,b) => a.page - b.page));
+    editions.sort((a,b) => b.num - a.num);
+    return editions;
+  } catch(e) {
+    return [];
+  }
+}
+
+// ── ÉTAT ──────────────────────────────────────────────────────────────────
+let gazetteSelectedNum = null;  // édition en cours d'affichage en grand
+let lbState = null;             // { pages:[urls], idx:0 }
+
+function renderGazette() {
+  const toolbar = document.getElementById('gazette-toolbar');
+  const content = document.getElementById('gazette-content');
+  if (!toolbar || !content) return;
+
+  const editions = (DATA && DATA.gazette) || [];
+  if (!editions.length) {
+    toolbar.innerHTML = '';
+    content.innerHTML = '<div class="stats-empty">Aucune édition pour le moment.</div>';
+    return;
+  }
+
+  // Édition à afficher : dernière par défaut, sinon celle sélectionnée
+  let current = null;
+  if (gazetteSelectedNum != null) {
+    current = editions.find(e => e.num === gazetteSelectedNum);
+  }
+  if (!current) current = editions[0]; // = la plus récente (tri décroissant)
+
+  // Sélecteur si plusieurs éditions
+  let toolHtml = '';
+  if (editions.length > 1) {
+    let opts = '';
+    editions.forEach(e => {
+      const sel = e.num === current.num ? ' selected' : '';
+      opts += '<option value="'+e.num+'"'+sel+'>N°'+e.num+' · '+e.title+' ('+e.date+')</option>';
+    });
+    toolHtml = '<select class="gazette-select" onchange="gazettePick(this.value)">'+opts+'</select>';
+  }
+  toolbar.innerHTML = toolHtml;
+
+  // Carrousel de l'édition courante
+  let html = '<div class="gazette-edition-title">N°'+current.num+' · '+current.title+'</div>';
+  html += '<div class="gazette-edition-meta">'+current.date+' · '+current.pages.length+' page'+(current.pages.length>1?'s':'')+'</div>';
+  html += '<div class="gazette-carousel">';
+  current.pages.forEach((p,idx) => {
+    html += '<div class="gazette-page" onclick="openLightbox('+current.num+','+idx+')">'
+      + '<div class="gazette-page-num">P.'+p.page+'</div>'
+      + '<img src="'+p.url+'" alt="Édition '+current.num+' page '+p.page+'" loading="lazy" '
+      + 'onerror="this.parentElement.innerHTML=&quot;<div class=\\&quot;gazette-page-broken\\&quot;>Image manquante<br>'+p.image+'</div>&quot;">'
+      + '</div>';
+  });
+  html += '</div>';
+
+  // Archive : autres éditions
+  const others = editions.filter(e => e.num !== current.num);
+  if (others.length) {
+    html += '<div class="gazette-section-header">Éditions précédentes</div>';
+    others.forEach(e => {
+      html += '<div class="gazette-archive-row" onclick="gazettePick('+e.num+')">'
+        + '<div class="gazette-archive-num">N°'+e.num+'</div>'
+        + '<div class="gazette-archive-info">'
+        +   '<div class="gazette-archive-title">'+e.title+'</div>'
+        +   '<div class="gazette-archive-meta">'+e.date+' · '+e.pages.length+' page'+(e.pages.length>1?'s':'')+'</div>'
+        + '</div>'
+        + '<div class="gazette-archive-arrow">›</div>'
+        + '</div>';
+    });
+  }
+
+  content.innerHTML = html;
+}
+
+function gazettePick(num) {
+  gazetteSelectedNum = parseInt(num);
+  renderGazette();
+  // Scroll vers le carrousel
+  const c = document.getElementById('gazette-content');
+  if (c) c.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ── LIGHTBOX PLEIN ÉCRAN ──────────────────────────────────────────────────
+function openLightbox(editionNum, pageIdx) {
+  const editions = (DATA && DATA.gazette) || [];
+  const ed = editions.find(e => e.num === editionNum);
+  if (!ed) return;
+  lbState = { pages: ed.pages.map(p => p.url), idx: pageIdx, edition: ed };
+  const box = document.getElementById('gazette-lightbox');
+  box.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  updateLightbox();
+  // touche clavier
+  document.addEventListener('keydown', lbKeyHandler);
+}
+function updateLightbox() {
+  if (!lbState) return;
+  const img = document.getElementById('lb-img');
+  const counter = document.getElementById('lb-counter');
+  img.src = lbState.pages[lbState.idx];
+  counter.textContent = 'N°'+lbState.edition.num+' · Page '+(lbState.idx+1)+' / '+lbState.pages.length;
+  // Affiche/masque flèches selon position
+  document.querySelector('.lb-prev').style.visibility = lbState.idx>0 ? 'visible' : 'hidden';
+  document.querySelector('.lb-next').style.visibility = lbState.idx<lbState.pages.length-1 ? 'visible' : 'hidden';
+}
+function lbNav(evt, dir) {
+  if (evt) evt.stopPropagation();
+  if (!lbState) return;
+  const newIdx = lbState.idx + dir;
+  if (newIdx < 0 || newIdx >= lbState.pages.length) return;
+  lbState.idx = newIdx;
+  updateLightbox();
+}
+function closeLightbox(evt, force) {
+  // Clic sur le fond ferme, clic sur l'image ne ferme pas (gestion via stopPropagation)
+  if (!force && evt && evt.target.tagName === 'IMG') return;
+  const box = document.getElementById('gazette-lightbox');
+  box.classList.add('hidden');
+  document.body.style.overflow = '';
+  lbState = null;
+  document.removeEventListener('keydown', lbKeyHandler);
+}
+function lbKeyHandler(evt) {
+  if (evt.key === 'Escape') closeLightbox(null, true);
+  else if (evt.key === 'ArrowLeft') lbNav(null, -1);
+  else if (evt.key === 'ArrowRight') lbNav(null, 1);
+}
 
 // ── RENDER LEADERBOARD ────────────────────────────────────────────────────
 function renderLeaderboard(containerId, participants, quests, pronoScores, mode) {
@@ -978,7 +1862,6 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
       ${mkAvatar(p,42,'avatar')}
       <div class="player-info">
         <div class="player-display">${disp}</div>
-        ${disp!==p?`<div class="player-sub">${p}</div>`:''}
         <div class="pts-breakdown">${breakdown}</div>
       </div>
       <div class="pts-block">
@@ -1003,7 +1886,7 @@ function renderQuests(participants, quests) {
     else if (type==='final_only') pills=`<div class="pill final">${liveAns?'Résultat : '+liveAns:'Résultat final uniquement'}</div>`;
     else if (type==='repeches')   pills=`<div class="pill final">${liveAns?'Résultat : '+liveAns:'Résultat phase de groupes'}</div>`;
     else if (type==='vif_or')     pills=`<div class="pill final">Statut individuel par admin</div>`;
-    else if (liveAns) pills=`<div class="pill live"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite;flex-shrink:0"></div>${liveAns}</div>`;
+    else if (liveAns) pills=`<div class="pill live"><div style="width:5px;height:5px;border-radius:50%;background:var(--blue);animation:pulse 1.5s ease infinite;flex-shrink:0"></div>${liveAns}</div>`;
 
     // Ref block
     let refBlock = '';
@@ -1061,7 +1944,7 @@ function renderQuests(participants, quests) {
 
       return `<div class="ans-chip ${chipCls}">
         ${ptsBadge}
-        <div class="ans-who">${p}</div>
+        <div class="ans-who">${displayName(p)}</div>
         ${ansValHtml}
         <div class="ans-etat">${etatLabel}</div>
       </div>`;
@@ -1073,9 +1956,15 @@ function renderQuests(participants, quests) {
       ...participants.map(p => q.answers[p] || '')
     ].join(' '));
 
+    const qImg = questImage(name);
+    const qImgHtml = qImg
+      ? `<div class="quest-thumb"><img src="${qImg}" alt="${shortName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
+      : '';
+
     return `
     <div class="quest-card" data-search="${searchText}">
       <div class="quest-head" onclick="toggleQ(${qi})">
+        ${qImgHtml}
         <div class="quest-title-wrap">
           <div class="quest-title">${shortName}</div>
           ${subName?`<div class="quest-sub">${subName}</div>`:''}
@@ -1101,7 +1990,6 @@ function renderParticipants(participants, quests, pronoScores) {
     <div class="p-card" id="pcard-${p}" onclick="selectParticipant('${p}')">
       ${mkAvatar(p,48,'p-av')}
       <div class="p-name">${disp}</div>
-      ${disp!==p?`<div class="p-pseudo">${p}</div>`:''}
       <div class="p-score">${total} pts</div>
     </div>`;
   }).join('');
@@ -1160,7 +2048,6 @@ function selectParticipant(p) {
     <div class="detail-av" style="background:${url?'transparent':c.bg};color:${c.fg};border-color:var(--gold)">${avInner}</div>
     <div>
       <div class="detail-name">${disp}</div>
-      ${disp!==p?`<div class="detail-sub">${p}</div>`:''}
     </div>
     <div class="detail-right">
       <div class="detail-pts">${total}</div>
@@ -1232,19 +2119,34 @@ initTheme();
 function showTab(tab) {
   activeTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  ['classement','quests','participants','stats'].forEach(id=>
+  ['classement','quests','participants','stats','calendrier','gazette'].forEach(id=>
     document.getElementById(`tab-${id}`).classList.toggle('hidden',id!==tab));
   if (tab==='participants') document.getElementById('detail-wrap').classList.remove('show');
   if (tab!=='quests') {
     const s = document.getElementById('quest-search');
     if (s && s.value) { s.value=''; filterQuests(); }
   }
+  // Le décompte ne tourne que sur l'onglet Calendrier
+  if (tab==='calendrier') startCountdown();
+  else stopCountdown();
+  // Si la lightbox de la Gazette est ouverte et qu'on quitte l'onglet, on ferme
+  if (tab!=='gazette' && lbState) closeLightbox(null, true);
+  ttHide();
 }
 function showSub(sub) {
   activeSub=sub;
-  document.querySelectorAll('.sub-tab').forEach(t=>t.classList.toggle('active',t.dataset.sub===sub));
+  document.querySelectorAll('.sub-tab[data-sub]').forEach(t=>t.classList.toggle('active',t.dataset.sub===sub));
   document.getElementById('sub-reel').classList.toggle('hidden',   sub!=='reel');
   document.getElementById('sub-fictif').classList.toggle('hidden', sub!=='fictif');
+}
+function showStatsSub(sub) {
+  activeStatsSub=sub;
+  document.querySelectorAll('.sub-tab[data-statsub]').forEach(t=>t.classList.toggle('active',t.dataset.statsub===sub));
+  document.getElementById('statsub-global').classList.toggle('hidden',      sub!=='global');
+  document.getElementById('statsub-sidequests').classList.toggle('hidden',  sub!=='sidequests');
+  document.getElementById('statsub-progression').classList.toggle('hidden', sub!=='progression');
+  document.getElementById('statsub-opposition').classList.toggle('hidden',  sub!=='opposition');
+  ttHide();
 }
 function formatUpdateTime(t) {
   const now=new Date(), isToday=t.toDateString()===now.toDateString();
@@ -1254,9 +2156,12 @@ function formatUpdateTime(t) {
   return `Mis à jour le ${d}/${m}/${y} à ${time}`;
 }
 function setStatus(type,msg) {
+  const bar = document.getElementById('status-bar');
+  // La barre n'est visible que pendant le chargement ou en cas d'erreur
+  bar.classList.toggle('hidden', type==='ok');
   document.getElementById('status-dot').className='dot'+(type==='loading'?' loading':type==='error'?' error':'');
   document.getElementById('status-text').textContent=msg;
-  ['classement','quests','participants','stats'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','participants','stats','calendrier','gazette'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
 }
 
 // ── LOAD ──────────────────────────────────────────────────────────────────
@@ -1266,6 +2171,9 @@ function renderAll() {
   renderQuests(DATA.participants, DATA.quests);
   renderParticipants(DATA.participants, DATA.quests, DATA.pronoScores);
   renderStats();
+  renderOpposition();
+  renderCalendar();
+  renderGazette();
   // Réapplique le filtre de recherche si une recherche est active
   if (document.getElementById('quest-search')?.value) filterQuests();
 
@@ -1273,7 +2181,7 @@ function renderAll() {
   const liveCount = DATA.quests.filter(q=>q.liveAns).length;
   const pronOk    = Object.values(DATA.pronoScores).some(v=>v>0);
   setStatus('ok',`${DATA.participants.length} participants · ${DATA.quests.length} side quests · ${liveCount} live · PronoContest ${pronOk?'✓':'non configuré'}`);
-  ['classement','quests','participants','stats'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
+  ['classement','quests','participants','stats','calendrier','gazette'].forEach(id=>document.getElementById(`tab-${id}`).classList.add('hidden'));
   document.getElementById(`tab-${activeTab}`).classList.remove('hidden');
   showSub(activeSub);
 }
@@ -1285,8 +2193,17 @@ function tryLoadFromCache() {
     const cached = JSON.parse(raw);
     if (!cached.time || (Date.now() - cached.time >= COOLDOWN_MS)) return false;
     DATA = cached.data;
+    if (DATA.pseudoMap && Object.keys(DATA.pseudoMap).length) {
+      PSEUDOS = { ...PSEUDOS, ...DATA.pseudoMap };
+    }
+    DATA.calendar = null;   // sera chargé juste après
     lastLoadTime = cached.time;
     renderAll();
+    // Le calendrier n'est pas caché : on le charge en arrière-plan
+    fetchCalendar().then(cal => {
+      DATA.calendar = cal;
+      if (activeTab === 'calendrier') { renderCalendar(); renderCountdown(); }
+    });
     return true;
   } catch(e) { return false; }
 }
@@ -1301,18 +2218,27 @@ async function loadData(forceFromButton) {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoTS, histoTS] = await Promise.all([
+    const [f6rows, pronoTS, histoTS, calendar, gazette, pseudoMap] = await Promise.all([
       fetchRange("'Feuille 6'!A1:AG200"),
       fetchSeries('PronoContest'),
       fetchSeries('Historique'),
+      fetchCalendar(),
+      fetchGazette(),
+      fetchPseudos(),
     ]);
+    // Fusionne les pseudos du Sheets (prioritaires) dans la map
+    if (pseudoMap && Object.keys(pseudoMap).length) {
+      PSEUDOS = { ...PSEUDOS, ...pseudoMap };
+    }
     const parsed = parseFeuille6(f6rows);
     const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
-    DATA = { ...parsed, pronoScores, pronoTS, histoTS };
+    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette, pseudoMap };
     lastLoadTime = Date.now();
 
     try {
-      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: DATA }));
+      // Le calendrier (objets Date) n'est pas mis en cache — il se recharge à chaque fois
+      const { calendar:_cal, ...cacheable } = DATA;
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: cacheable }));
     } catch(e) { /* storage full or unavailable — ignore */ }
 
     renderAll();
