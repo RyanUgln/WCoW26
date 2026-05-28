@@ -405,6 +405,10 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .cal-status.scheduled { background:var(--surface-2); color:var(--muted); }
 .cal-status.done { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
 
+/* ── BANDEAU MODE DÉMO ── */
+.demo-banner { position:sticky; top:0; z-index:9000; background:linear-gradient(90deg,#7a2a8a,#b03060); color:#fff; padding:.55rem 1rem; font-size:.8rem; text-align:center; letter-spacing:1px; font-weight:600; box-shadow:0 2px 8px rgba(0,0,0,.3); }
+.demo-banner a { color:#ffe0a0; text-decoration:underline; }
+
 /* ── GAZETTE ── */
 .gazette-toolbar { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin-bottom:1.2rem; }
 .gazette-select { background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.55rem .7rem; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; cursor:pointer; min-width:260px; }
@@ -447,6 +451,8 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 </style>
 </head>
 <body>
+
+<div id="demo-banner" class="demo-banner hidden">🎭 MODE DÉMO — données simulées, ce n'est pas la vraie compétition · <a href="?">Désactiver</a></div>
 
 <div class="header">
   <a class="logo-area" href="https://www.youtube.com/watch?v=gBuoUH3AOlo" target="_blank" rel="noopener">
@@ -2134,6 +2140,12 @@ function initTheme() {
 }
 initTheme();
 
+// Affiche le bandeau démo si ?demo=1
+if (isDemoMode()) {
+  const b = document.getElementById('demo-banner');
+  if (b) b.classList.remove('hidden');
+}
+
 function showTab(tab) {
   activeTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
@@ -2202,7 +2214,144 @@ function renderAll() {
   showSub(activeSub);
 }
 
+
+// ══════════════════════════════════════════════════════════════════════════
+// MODE DÉMO — ?demo=1 dans l'URL
+// Simule des matchs joués, des side quests résolues, des scores PronoContest
+// et un historique, pour visualiser le rendu pendant la compétition.
+// ══════════════════════════════════════════════════════════════════════════
+function isDemoMode() {
+  try { return new URLSearchParams(location.search).get('demo') === '1'; }
+  catch(e) { return false; }
+}
+
+function applyDemoOverrides(D) {
+  if (!D || !D.participants || !D.participants.length) return D;
+
+  // ─── 1. CALENDRIER : matchs joués + 1 en cours + reste à venir ───────────
+  if (D.calendar && D.calendar.length) {
+    // Trie par date pour être sûr (déjà trié normalement)
+    D.calendar.sort((a,b) => (a.dtMs||0) - (b.dtMs||0));
+    // Scores plausibles à appliquer aux N premiers matchs
+    const fakeScores = [
+      {a:2, b:1}, {a:1, b:1}, {a:3, b:0}, {a:0, b:0}, {a:2, b:2},
+      {a:1, b:0}, {a:4, b:1}, {a:2, b:3},
+    ];
+    let played = 0;
+    for (let i=0; i<D.calendar.length && played<fakeScores.length; i++) {
+      const m = D.calendar[i];
+      if (!m.dtMs) continue;
+      m.score = { a: fakeScores[played].a, b: fakeScores[played].b };
+      played++;
+    }
+    // Le match suivant devient "en cours" : on force son dtMs à il y a 25 min, sans score
+    const nextIdx = played;
+    if (nextIdx < D.calendar.length) {
+      D.calendar[nextIdx].dtMs = Date.now() - 25*60*1000;
+      D.calendar[nextIdx].dt   = new Date(D.calendar[nextIdx].dtMs);
+      D.calendar[nextIdx].score = null;
+    }
+    // Le match d'après devient le "prochain", calé dans 2h
+    if (nextIdx+1 < D.calendar.length) {
+      D.calendar[nextIdx+1].dtMs = Date.now() + 2*3600*1000;
+      D.calendar[nextIdx+1].dt   = new Date(D.calendar[nextIdx+1].dtMs);
+      D.calendar[nextIdx+1].score = null;
+    }
+  }
+
+  // ─── 2. SIDE QUESTS : Réponses Live + états simulés ───────────────────────
+  // Pour chaque quête, on fixe une Réponse Live et on règle qq états participants.
+  // Les pronos restent ceux du Sheets, donc certains gagnent / d'autres perdent
+  // naturellement selon ce qu'ils avaient répondu.
+  if (D.quests && D.quests.length) {
+    D.quests.forEach((q,qi) => {
+      if (q.type === 'prono') return; // gérées par PronoContest, on ne touche pas
+      if (q.type === 'vif_or') {
+        // 2 personnes validées sur le Vif d'or
+        const P = D.participants;
+        if (P.length >= 4) {
+          q.etats[P[1]] = 'validé';
+          q.etats[P[4 % P.length]] = 'validé';
+        }
+        return;
+      }
+      // Choisit comme Réponse Live le prono le plus fréquent (pour rendre vivant)
+      const counts = {};
+      D.participants.forEach(p => {
+        const a = (q.answers[p]||'').trim();
+        if (!a) return;
+        const k = a.toLowerCase();
+        counts[k] = counts[k] || {val:a, n:0};
+        counts[k].n++;
+      });
+      const sorted = Object.values(counts).sort((a,b) => b.n - a.n);
+      if (sorted.length) {
+        // Sur ~60% des quêtes, on prend le prono majoritaire (les "moutons" gagnent)
+        // Sur les autres, on prend un prono minoritaire (les "rebelles" gagnent)
+        const pick = (qi % 3 === 0 && sorted.length > 1) ? sorted[sorted.length-1] : sorted[0];
+        q.liveAns = pick.val;
+      }
+
+      // Pour les quêtes "live_3", on valide une partie aléatoire mais déterministe
+      if (q.type === 'live_3') {
+        D.participants.forEach((p,pi) => {
+          const e = (q.etats[p]||'possible').toLowerCase();
+          if (e !== 'possible') return; // on respecte ce qui était déjà mis
+          const seed = (qi*7 + pi*13) % 10;
+          if (seed < 4) q.etats[p] = 'validé';      // 40% validées
+          else if (seed < 5) q.etats[p] = 'impossible'; // 10% impossibles
+          // 50% restent "possible" -> visibles en bleu si correspondent à Réponse Live
+        });
+      } else if (q.type === 'repeches' || q.type === 'final_only') {
+        // Pour ces types, on ne valide presque rien (la phase finale n'est pas finie)
+        // Mais on peut en valider 1-2 pour démo
+        D.participants.forEach((p,pi) => {
+          const seed = (qi*5 + pi*11) % 10;
+          if (seed === 0) q.etats[p] = 'validé';
+        });
+      }
+    });
+  }
+
+  // ─── 3. SCORES PRONOCONTEST simulés ──────────────────────────────────────
+  // Scores plausibles, variés, calés sur ~mi-phase de groupes
+  // Garde les noms exacts des participants.
+  const P = D.participants;
+  const baseScores = [240,310,290,180,260,200,150,330,275,225,195,255,235,285,170];
+  // shuffle déterministe selon nb participants
+  const demoProno = {};
+  P.forEach((p,i) => {
+    demoProno[p] = baseScores[i % baseScores.length] + (i*7) % 30;
+  });
+  D.pronoScores = demoProno;
+  if (D.pronoTS) D.pronoTS.latest = demoProno;
+
+  // ─── 4. HISTORIQUE simulé sur 10 journées ────────────────────────────────
+  if (D.histoTS) {
+    const dates = ['12/06','13/06','14/06','15/06','16/06','17/06','18/06','19/06','20/06','21/06'];
+    const series = {};
+    P.forEach((p,i) => {
+      const final = demoProno[p];
+      // Génère une progression croissante avec un peu de bruit
+      const pts = [];
+      let v = 0;
+      for (let j=0; j<dates.length; j++) {
+        const target = Math.round(final * (j+1)/dates.length);
+        const noise = ((i*3 + j*5) % 7) - 3;  // -3 à +3
+        v = Math.max(0, target + noise);
+        pts.push(v);
+      }
+      series[p] = pts;
+    });
+    D.histoTS = { dates, series, latest: demoProno };
+  }
+
+  return D;
+}
+
 function tryLoadFromCache() {
+  // En mode démo, on ne lit jamais le cache (pour toujours regénérer les données simulées)
+  if (isDemoMode()) return false;
   try {
     const raw = sessionStorage.getItem(CACHE_KEY);
     if (!raw) return false;
@@ -2249,13 +2398,22 @@ async function loadData(forceFromButton) {
     const parsed = parseFeuille6(f6rows);
     const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
     DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette, pseudoMap };
+
+    // Mode démo : modifie les données en mémoire avant le rendu
+    if (isDemoMode()) {
+      DATA = applyDemoOverrides(DATA);
+    }
+
     lastLoadTime = Date.now();
 
-    try {
-      // Le calendrier (objets Date) n'est pas mis en cache — il se recharge à chaque fois
-      const { calendar:_cal, ...cacheable } = DATA;
-      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: cacheable }));
-    } catch(e) { /* storage full or unavailable — ignore */ }
+    // En mode démo, on évite de polluer le cache (sinon il "fuit" en mode normal)
+    if (!isDemoMode()) {
+      try {
+        // Le calendrier (objets Date) n'est pas mis en cache — il se recharge à chaque fois
+        const { calendar:_cal, ...cacheable } = DATA;
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: cacheable }));
+      } catch(e) { /* storage full or unavailable — ignore */ }
+    }
 
     renderAll();
   } catch(err) {
