@@ -116,6 +116,8 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .quest-card { background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:.6rem; overflow:hidden; transition:border-color .2s; }
 .quest-card:hover { background:var(--card-hover); }
 .quest-head { padding:1rem 1.5rem; display:flex; align-items:flex-start; gap:1rem; cursor:pointer; user-select:none; }
+.quest-thumb { width:52px; height:52px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--surface-2); border:1px solid var(--border); }
+.quest-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
 .quest-title-wrap { flex:1; min-width:0; }
 .quest-title { font-weight:500; font-size:.9rem; line-height:1.4; }
 .quest-sub { font-size:.75rem; color:var(--muted); margin-top:2px; }
@@ -509,11 +511,19 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 
   <div id="tab-stats" class="hidden">
     <div class="sub-nav">
-      <div class="sub-tab active" data-statsub="general"    onclick="showStatsSub('general')">Stats générales</div>
+      <div class="sub-tab active" data-statsub="global"     onclick="showStatsSub('global')">Stats Globales</div>
+      <div class="sub-tab"        data-statsub="sidequests" onclick="showStatsSub('sidequests')">Side Quests</div>
+      <div class="sub-tab"        data-statsub="progression" onclick="showStatsSub('progression')">Progression</div>
       <div class="sub-tab"        data-statsub="opposition" onclick="showStatsSub('opposition')">Opposition</div>
     </div>
-    <div id="statsub-general">
-      <div id="stats-content"></div>
+    <div id="statsub-global">
+      <div id="stats-global-content"></div>
+    </div>
+    <div id="statsub-sidequests" class="hidden">
+      <div id="stats-sq-content"></div>
+    </div>
+    <div id="statsub-progression" class="hidden">
+      <div id="stats-prog-content"></div>
     </div>
     <div id="statsub-opposition" class="hidden">
       <div id="opposition-content"></div>
@@ -546,7 +556,7 @@ const API_KEY     = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
 const SHEET_ID    = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
 const PHOTOS_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/participants/';
 
-const PSEUDOS = {
+let PSEUDOS = {
   Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais', Ro:'BoosterDre',
   Ax:'Michael Au Lit !', Os:'Chapchenko', So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
 };
@@ -578,8 +588,38 @@ function questType(name) {
   return 'live_3';
 }
 
+// Image associée à chaque side quest (fichiers carrés dans photos/side-quests/)
+const SIDEQUEST_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/side-quests/';
+function questImage(name) {
+  const n = name.toUpperCase();
+  const map = [
+    ["VIF D'OR",'le-vif-dor.png'], ['VIF D','le-vif-dor.png'],
+    ['SAUVAGES','les-sauvages.png'],
+    ['LET HIM COOK','let-him-cook.png'],
+    ['RÉSERVISTES','les-reservistes.png'], ['RESERVISTES','les-reservistes.png'],
+    ['REPÊCHÉ','les-repeches.png'], ['REPECHE','les-repeches.png'],
+    ['DUELS','duels.png'],
+    ['MUTINERIE','mutinerie.png'],
+    ['MESSI','messi.png'],
+    ['BUILD THE WALL','built-the-wall.png'],
+    ['ALEX HUNTER','alex-hunter.png'],
+    ['FESTIVAL','le-festival.png'],
+    ['ON PROLONGE','on-prolonge-le-plaisir.png'],
+    ["LA FORCE",'la-force-de-lamitie.png'], ['AMITIÉ','la-force-de-lamitie.png'], ['AMITIE','la-force-de-lamitie.png'],
+    ['LEGENDES','les-legendes.png'], ['LÉGENDES','les-legendes.png'],
+    ['PROJET BLUE LOCK','projet-blue-lock.png'], ['BLUE LOCK','projet-blue-lock.png'],
+    ['PARK THE BUS','park-the-bus.png'],
+    ['OGRES','ogres.png'],
+    ['BOOSTERDRE','boosterdre.png'],
+  ];
+  for (const [key,file] of map) {
+    if (n.includes(key)) return SIDEQUEST_BASE+file;
+  }
+  return null;
+}
+
 let DATA = null, activeTab = 'classement', activeSub = 'reel';
-let activeStatsSub = 'general';
+let activeStatsSub = 'global';
 let oppSelection = [null, null, null];
 let oppInit = false;
 let statsHighlight = null;
@@ -677,6 +717,27 @@ async function fetchSeries(sheetName) {
   }
 }
 
+// Lit l'onglet Participants pour récupérer les pseudos (colonnes: Nom, Pseudo, ...)
+async function fetchPseudos() {
+  try {
+    const rows = await fetchRange("'Participants'!A1:D40");
+    if (!rows || rows.length < 2) return {};
+    const map = {};
+    // ligne 0 = en-tête. Colonnes: A=index(vide), B=Nom, C=Pseudo, D=Confirmé...
+    // mais selon l'export la 1re colonne peut être vide -> on repère Nom et Pseudo
+    for (let i=1; i<rows.length; i++) {
+      const r = rows[i] || [];
+      // Nom en col B (index 1), Pseudo en col C (index 2) d'après la structure du Sheets
+      const nom    = (r[1]||'').toString().trim();
+      const pseudo = (r[2]||'').toString().trim();
+      if (nom && pseudo) map[nom] = pseudo;
+    }
+    return map;
+  } catch(e) {
+    return {};
+  }
+}
+
 // ── SCORE CALC ────────────────────────────────────────────────────────────
 // mode: 'fictif' | 'reel'
 function calcQuestPts(q, p, mode) {
@@ -761,42 +822,49 @@ function clearStatsHighlight() {
   applyStatsHighlight();
 }
 function applyStatsHighlight() {
-  const scope = document.getElementById('statsub-general');
-  if (!scope) return;
   const hl = statsHighlight;
+  // Le highlight croisé couvre les 3 sous-onglets de stats participants
+  const scopes = ['statsub-global','statsub-sidequests','statsub-progression']
+    .map(id => document.getElementById(id)).filter(Boolean);
+  if (!scopes.length) return;
 
-  // Éléments SVG (courbe, radar) et barres : marqués par data-pkey
-  scope.querySelectorAll('[data-pkey]').forEach(el => {
-    el.classList.remove('series-dimmed','series-focus','dimmed','focused');
-    if (!hl) return;
-    const isMatch = el.dataset.pkey === hl;
-    if (el.classList.contains('bar-row') || el.classList.contains('legend-item')) {
-      el.classList.toggle('dimmed', !isMatch);
-      el.classList.toggle('focused', isMatch);
-    } else {
-      el.classList.toggle('series-dimmed', !isMatch);
-      el.classList.toggle('series-focus', isMatch);
-    }
+  scopes.forEach(scope => {
+    scope.querySelectorAll('[data-pkey]').forEach(el => {
+      el.classList.remove('series-dimmed','series-focus','dimmed','focused');
+      if (!hl) return;
+      const isMatch = el.dataset.pkey === hl;
+      if (el.classList.contains('bar-row') || el.classList.contains('legend-item')) {
+        el.classList.toggle('dimmed', !isMatch);
+        el.classList.toggle('focused', isMatch);
+      } else {
+        el.classList.toggle('series-dimmed', !isMatch);
+        el.classList.toggle('series-focus', isMatch);
+      }
+    });
   });
 
   // Bandeau
   renderHighlightBanner();
 }
 function renderHighlightBanner() {
-  const holder = document.getElementById('hl-banner-holder');
-  if (!holder) return;
-  if (!statsHighlight) { holder.innerHTML = ''; return; }
-  const p = statsHighlight;
-  const c = avColor(p), url = photoUrl(p);
-  const inner = url
-    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
-    : p;
-  holder.innerHTML = '<div class="hl-banner">'
-    + '<div class="hl-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>'
-    + '<span class="hl-label">Joueur mis en avant :</span>'
-    + '<span class="hl-name">'+displayName(p)+'</span>'
-    + '<button class="hl-clear" onclick="clearStatsHighlight()">Tout afficher</button>'
-    + '</div>';
+  const holders = ['hl-banner-holder','hl-banner-holder-sq','hl-banner-holder-prog']
+    .map(id => document.getElementById(id)).filter(Boolean);
+  if (!holders.length) return;
+  let html = '';
+  if (statsHighlight) {
+    const p = statsHighlight;
+    const c = avColor(p), url = photoUrl(p);
+    const inner = url
+      ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
+      : p;
+    html = '<div class="hl-banner">'
+      + '<div class="hl-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>'
+      + '<span class="hl-label">Joueur mis en avant :</span>'
+      + '<span class="hl-name">'+displayName(p)+'</span>'
+      + '<button class="hl-clear" onclick="clearStatsHighlight()">Tout afficher</button>'
+      + '</div>';
+  }
+  holders.forEach(h => h.innerHTML = html);
 }
 
 // Camembert / stacked : isolation locale indépendante (parts, pas participants)
@@ -1103,14 +1171,27 @@ function computeStats() {
 }
 
 function renderStats() {
-  const el=document.getElementById('stats-content');
-  if(!DATA||!DATA.participants.length){ el.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
+  const elGlobal = document.getElementById('stats-global-content');
+  const elSQ     = document.getElementById('stats-sq-content');
+  const elProg   = document.getElementById('stats-prog-content');
+  if(!elGlobal) return;
+  if(!DATA||!DATA.participants.length){ elGlobal.innerHTML='<div class="stats-empty">Donnees indisponibles</div>'; return; }
   const S=computeStats();
   const P=S.P;
-  let html='<div id="hl-banner-holder"></div>';
 
-  html+='<div class="stats-section"><div class="stats-section-title">Podiums & recompenses</div><div class="stats-section-sub">Le gratin du concours, a l instant T</div>';
+  function miniTable(title,ranked,fmt){
+    const rows=ranked.slice(0,5).map((x,i)=>'<tr><td class="mt-rank">'+(i+1)+'</td><td>'+displayName(x.p)+'</td><td class="mt-val">'+fmt(x.v)+'</td></tr>').join('');
+    return '<div class="chart-card"><div class="chart-card-title">'+title+'</div><table class="mini-table"><tr><th></th><th>Participant</th><th style="text-align:right">Valeur</th></tr>'+rows+'</table></div>';
+  }
+
+  const leadF=argMax(P,p=>S.totFictif[p]);
+  const leadR=argMax(P,p=>S.totReel[p]);
+  const lastF=argMin(P,p=>S.totFictif[p]);
   const podF=rankBy(P,p=>S.totFictif[p],true).slice(0,3);
+
+  // ════════════════════════ STATS GLOBALES ════════════════════════
+  let g='<div id="hl-banner-holder"></div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Podiums & recompenses</div><div class="stats-section-sub">Le gratin du concours, a l instant T</div>';
   if(podF.length===3){
     const order=[podF[1],podF[0],podF[2]];
     const heights=[70,100,52],cls=['podium-2','podium-1','podium-3'],avS=[46,58,42];
@@ -1124,46 +1205,23 @@ function renderStats() {
         +'<div class="podium-stand" style="height:'+heights[i]+'px;width:78px">'+realIdx+'</div></div>';
     });
     pod+='</div>';
-    html+=chartCard('Podium provisoire (classement fictif)','PronoContest + side quests en cours',pod);
+    g+=chartCard('Podium provisoire (classement fictif)','PronoContest + side quests en cours',pod);
   }
   const cards=[];
-  const leadF=argMax(P,p=>S.totFictif[p]);
-  const leadR=argMax(P,p=>S.totReel[p]);
   cards.push(trophyCard('\u{1F451}','Leader fictif',leadF.p,leadF.v+' pts au total','gold'));
   cards.push(trophyCard('\u{1F3C6}','Leader reel',leadR.p,leadR.v+' pts officiels','gold'));
-  const bestSQ=argMax(P,p=>S.sqFictif[p]);
-  cards.push(trophyCard('\u{1F3AF}','Roi des side quests',bestSQ.p,bestSQ.v+' pts de side quests'));
-  const visio=argMax(P,p=>S.liveHits[p]);
-  cards.push(trophyCard('\u{1F52E}','Le visionnaire',visio.p,visio.v+' pronos actuellement dans le vrai'));
-  const flamb=argMax(P,p=>S.cntValideWin[p]);
-  cards.push(trophyCard('\u{1F525}','Le flambeur',flamb.p,flamb.v+' side quests validees gagnantes'));
-  const rebelle=argMax(P,p=>S.uniquePicks[p]);
-  cards.push(trophyCard('\u{1F984}','Le rebelle',rebelle.p,rebelle.v+' pronos que personne d autre n a oses'));
   const mouton=argMax(P,p=>S.conformity[p]);
   cards.push(trophyCard('\u{1F411}','Le mouton',mouton.p,Math.round(mouton.v*100)+'% de pronos dans la majorite'));
-  if(S.biggestRise) cards.push(trophyCard('\u{1F680}','Plus grosse remontee',S.biggestRise.p,'+'+S.biggestRise.d+' pts sur la derniere journee'));
-  const reg=argMin(P,p=>S.regularity[p]==null?Infinity:S.regularity[p]);
-  if(reg.v!==Infinity) cards.push(trophyCard('\u{1F4D0}','Le metronome',reg.p,'Progression la plus reguliere'));
-  const nbLead=argMax(P,p=>S.timesLeader[p]);
-  if(nbLead.v>0) cards.push(trophyCard('\u{1F3C5}','Le plus souvent en tete',nbLead.p,nbLead.v+' journee(s) en position de leader'));
-  html+='<div class="stats-grid">'+cards.join('')+'</div></div>';
+  const rebelle=argMax(P,p=>S.uniquePicks[p]);
+  cards.push(trophyCard('\u{1F984}','Le rebelle',rebelle.p,rebelle.v+' pronos que personne d autre n a oses'));
+  g+='<div class="stats-grid">'+cards.join('')+'</div></div>';
 
   const spicy=[];
-  const lastF=argMin(P,p=>S.totFictif[p]);
   spicy.push(trophyCard('\u{1F944}','La lanterne rouge',lastF.p,'Dernier du classement fictif ('+lastF.v+' pts)','spicy'));
-  const poisse=argMax(P,p=>S.cntValideLose[p]+S.cntImpossible[p]);
-  spicy.push(trophyCard('\u{1F480}','La poisse',poisse.p,poisse.v+' side quests perdues ou impossibles','spicy'));
-  const illus=argMax(P,p=>S.sqFictif[p]-S.sqReel[p]);
-  spicy.push(trophyCard('\u{1F3AD}','L illusionniste',illus.p,illus.v+' pts de side quests encore pour de faux','spicy'));
-  if(S.biggestFall&&S.biggestFall.d<0) spicy.push(trophyCard('\u{1F4C9}','Le crash du jour',S.biggestFall.p,S.biggestFall.d+' pts sur la derniere journee','spicy'));
-  const ghost=argMin(P,p=>S.liveHits[p]);
-  spicy.push(trophyCard('\u{1F47B}','A cote de la plaque',ghost.p,'Seulement '+ghost.v+' pronos dans le vrai','spicy'));
   if(S.twinPair) spicy.push(trophyCard('\u{1F46F}','Les jumeaux',null,displayName(S.twinPair[0])+' & '+displayName(S.twinPair[1])+' \u2014 '+Math.round(S.twinScore*100)+'% de pronos identiques','spicy'));
   const optimiste=argMax(P,p=>S.yesCount[p]);
   spicy.push(trophyCard('\u2600\uFE0F','L eternel optimiste',optimiste.p,'Dit Oui a tout en finale','spicy'));
-  const impossibleKing=argMax(P,p=>S.cntImpossible[p]);
-  spicy.push(trophyCard('\u{1F6AB}','Le maudit',impossibleKing.p,impossibleKing.v+' quetes devenues impossibles','spicy'));
-  html+='<div class="stats-section"><div class="stats-section-title">Superlatifs qui piquent</div><div class="stats-section-sub">A prendre avec humour</div><div class="stats-grid">'+spicy.join('')+'</div></div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Superlatifs qui piquent</div><div class="stats-section-sub">A prendre avec humour</div><div class="stats-grid">'+spicy.join('')+'</div></div>';
 
   const moyF=Math.round(P.reduce((a,p)=>a+S.totFictif[p],0)/P.length);
   const ecart=leadF.v-lastF.v;
@@ -1174,34 +1232,50 @@ function renderStats() {
     factCard(totalLive+'/'+S.sideQuests.length,'Side quests deja actives','green'),
     factCard(leadF.v,'Score du leader','green')
   ];
-  html+='<div class="stats-section"><div class="stats-section-title">Chiffres cles</div><div class="stats-grid">'+facts.join('')+'</div></div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Chiffres cles</div><div class="stats-grid">'+facts.join('')+'</div></div>';
 
-  html+='<div class="stats-section"><div class="stats-section-title">Le classement en images</div>';
+  g+='<div class="stats-section"><div class="stats-section-title">Le classement en images</div>';
   const barItems=rankBy(P,p=>S.totFictif[p],true).map(x=>({key:x.p,label:displayName(x.p),value:x.v}));
-  html+=chartCard('Classement fictif','Total PronoContest + side quests en cours',barChart(barItems));
-  const sqItems=rankBy(P,p=>S.sqFictif[p],true).map(x=>({key:x.p,label:displayName(x.p),value:x.v,color:'#60a0f0'}));
-  html+=chartCard('Points de side quests uniquement','Hors PronoContest \u2014 qui maitrise les quetes',barChart(sqItems));
-  if(S.filledIdx.length>=2){
-    const labels=S.filledIdx.map(i=>S.histoDates[i]);
-    const series=P.map((p,i)=>({key:p,name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
-    html+=chartCard('Evolution du classement','Total de points journee par journee (onglet Historique)',lineChart(series,labels));
-  } else {
-    html+=chartCard('Evolution du classement','','<div class="stats-empty">Pas assez de journees d historique remplies pour tracer une courbe</div>');
-  }
-  html+='</div>';
+  g+=chartCard('Classement fictif','Total PronoContest + side quests en cours',barChart(barItems));
+  g+='</div>';
 
   if(podF.length===3){
     const axes=['Total','Side Q.','Validees','Visions','Original.'];
     const mx={tot:Math.max.apply(null,P.map(p=>S.totFictif[p]).concat([1])),sq:Math.max.apply(null,P.map(p=>S.sqFictif[p]).concat([1])),val:Math.max.apply(null,P.map(p=>S.cntValideWin[p]).concat([1])),vis:Math.max.apply(null,P.map(p=>S.liveHits[p]).concat([1])),uni:Math.max.apply(null,P.map(p=>S.uniquePicks[p]).concat([1]))};
     const series=podF.map((x,i)=>({key:x.p,name:displayName(x.p),values:[S.totFictif[x.p]/mx.tot,S.sqFictif[x.p]/mx.sq,S.cntValideWin[x.p]/mx.val,S.liveHits[x.p]/mx.vis,S.uniquePicks[x.p]/mx.uni],raw:[S.totFictif[x.p]+' pts',S.sqFictif[x.p]+' pts',S.cntValideWin[x.p],S.liveHits[x.p],S.uniquePicks[x.p]],color:CHART_PALETTE[i%CHART_PALETTE.length]}));
-    html+='<div class="stats-section"><div class="stats-section-title">Profil du Top 3</div><div class="stats-section-sub">Forces et faiblesses comparees des 3 leaders</div>'+chartCard('Radar comparatif','',radarChart(axes,series))+'</div>';
+    g+='<div class="stats-section"><div class="stats-section-title">Profil du Top 3</div><div class="stats-section-sub">Forces et faiblesses comparees des 3 leaders</div>'+chartCard('Radar comparatif','',radarChart(axes,series))+'</div>';
   }
+  elGlobal.innerHTML=g;
 
-  html+='<div class="stats-section"><div class="stats-section-title">Anatomie des pronostics</div><div class="stats-section-sub">Comment le groupe se repartit sur chaque quete</div>';
+  // ════════════════════════ SIDE QUESTS ════════════════════════
+  let sq='<div id="hl-banner-holder-sq"></div>';
+  const sqCards=[];
+  const bestSQ=argMax(P,p=>S.sqFictif[p]);
+  sqCards.push(trophyCard('\u{1F3AF}','Roi des side quests',bestSQ.p,bestSQ.v+' pts de side quests','gold'));
+  const visio=argMax(P,p=>S.liveHits[p]);
+  sqCards.push(trophyCard('\u{1F52E}','Le visionnaire',visio.p,visio.v+' pronos actuellement dans le vrai'));
+  const flamb=argMax(P,p=>S.cntValideWin[p]);
+  sqCards.push(trophyCard('\u{1F525}','Le flambeur',flamb.p,flamb.v+' side quests validees gagnantes'));
+  const poisse=argMax(P,p=>S.cntValideLose[p]+S.cntImpossible[p]);
+  sqCards.push(trophyCard('\u{1F480}','La poisse',poisse.p,poisse.v+' side quests perdues ou impossibles','spicy'));
+  const illus=argMax(P,p=>S.sqFictif[p]-S.sqReel[p]);
+  sqCards.push(trophyCard('\u{1F3AD}','L illusionniste',illus.p,illus.v+' pts de side quests encore pour de faux','spicy'));
+  const ghost=argMin(P,p=>S.liveHits[p]);
+  sqCards.push(trophyCard('\u{1F47B}','A cote de la plaque',ghost.p,'Seulement '+ghost.v+' pronos dans le vrai','spicy'));
+  const impossibleKing=argMax(P,p=>S.cntImpossible[p]);
+  sqCards.push(trophyCard('\u{1F6AB}','Le maudit',impossibleKing.p,impossibleKing.v+' quetes devenues impossibles','spicy'));
+  sq+='<div class="stats-section"><div class="stats-section-title">Les rois (et les maudits) des quetes</div><div class="stats-grid">'+sqCards.join('')+'</div></div>';
+
+  sq+='<div class="stats-section"><div class="stats-section-title">Points de side quests</div>';
+  const sqItems=rankBy(P,p=>S.sqFictif[p],true).map(x=>({key:x.p,label:displayName(x.p),value:x.v,color:'#60a0f0'}));
+  sq+=chartCard('Classement side quests','Hors PronoContest \u2014 qui maitrise les quetes',barChart(sqItems));
+  sq+='</div>';
+
+  sq+='<div class="stats-section"><div class="stats-section-title">Anatomie des pronostics</div><div class="stats-section-sub">Comment le groupe se repartit sur chaque quete</div>';
   const sortedDiv=S.questChoices.slice().sort((a,b)=>b.diversity-a.diversity);
   const mostDiverse=sortedDiv[0], leastDiverse=sortedDiv[sortedDiv.length-1];
-  if(mostDiverse) html+=chartCard('Quete la plus disputee : '+mostDiverse.name,mostDiverse.diversity+' reponses differentes',donutChart(mostDiverse.choices.map(c=>({label:c.val,value:c.count}))));
-  if(leastDiverse) html+=chartCard('Quete la plus consensuelle : '+leastDiverse.name,'Seulement '+leastDiverse.diversity+' reponse(s) differente(s)',donutChart(leastDiverse.choices.map(c=>({label:c.val,value:c.count}))));
+  if(mostDiverse) sq+=chartCard('Quete la plus disputee : '+mostDiverse.name,mostDiverse.diversity+' reponses differentes',donutChart(mostDiverse.choices.map(c=>({label:c.val,value:c.count}))));
+  if(leastDiverse) sq+=chartCard('Quete la plus consensuelle : '+leastDiverse.name,'Seulement '+leastDiverse.diversity+' reponse(s) differente(s)',donutChart(leastDiverse.choices.map(c=>({label:c.val,value:c.count}))));
   let qbars='';
   S.questChoices.forEach(qc=>{
     const total=qc.choices.reduce((a,c)=>a+c.count,0);
@@ -1217,24 +1291,43 @@ function renderStats() {
     const choices=qc.choices.map((c,i)=>'<div class="qstat-choice"><span class="legend-dot" style="background:'+CHART_PALETTE[i%CHART_PALETTE.length]+'"></span>'+c.val+' ('+c.count+')</div>').join('');
     qbars+='<div class="qstat"><div class="qstat-head"><div class="qstat-name">'+qc.name+'</div><div class="qstat-meta">'+total+' pronos \u00b7 '+qc.diversity+' choix</div></div><div class="qstat-bar">'+segs+'</div><div class="qstat-choices">'+choices+'</div></div>';
   });
-  html+=chartCard('Repartition quete par quete','Le detail de qui a mise sur quoi',qbars);
-  html+='</div>';
+  sq+=chartCard('Repartition quete par quete','Le detail de qui a mise sur quoi',qbars);
+  sq+='</div>';
 
-  html+='<div class="stats-section"><div class="stats-section-title">Les classements annexes</div>';
-  function miniTable(title,ranked,fmt){
-    const rows=ranked.slice(0,5).map((x,i)=>'<tr><td class="mt-rank">'+(i+1)+'</td><td>'+displayName(x.p)+'</td><td class="mt-val">'+fmt(x.v)+'</td></tr>').join('');
-    return '<div class="chart-card"><div class="chart-card-title">'+title+'</div><table class="mini-table"><tr><th></th><th>Participant</th><th style="text-align:right">Valeur</th></tr>'+rows+'</table></div>';
+  sq+='<div class="stats-section"><div class="stats-section-title">Les classements annexes</div><div class="stats-grid wide">';
+  sq+=miniTable('Top side quests',rankBy(P,p=>S.sqFictif[p],true),v=>v+' pts');
+  sq+=miniTable('Plus de quetes validees',rankBy(P,p=>S.cntValideWin[p],true),v=>v);
+  sq+=miniTable('Les plus originaux',rankBy(P,p=>S.uniquePicks[p],true),v=>v+' pronos uniques');
+  sq+=miniTable('Plus de visions correctes',rankBy(P,p=>S.liveHits[p],true),v=>v);
+  sq+=miniTable('Le plus de poisse',rankBy(P,p=>S.cntValideLose[p]+S.cntImpossible[p],true),v=>v+' rates');
+  sq+='</div></div>';
+  if(elSQ) elSQ.innerHTML=sq;
+
+  // ════════════════════════ PROGRESSION ════════════════════════
+  let pr='<div id="hl-banner-holder-prog"></div>';
+  if(S.filledIdx.length>=2){
+    const progCards=[];
+    if(S.biggestRise) progCards.push(trophyCard('\u{1F680}','Plus grosse remontee',S.biggestRise.p,'+'+S.biggestRise.d+' pts sur la derniere journee','gold'));
+    if(S.biggestFall&&S.biggestFall.d<0) progCards.push(trophyCard('\u{1F4C9}','Le crash du jour',S.biggestFall.p,S.biggestFall.d+' pts sur la derniere journee','spicy'));
+    const reg=argMin(P,p=>S.regularity[p]==null?Infinity:S.regularity[p]);
+    if(reg.v!==Infinity) progCards.push(trophyCard('\u{1F4D0}','Le metronome',reg.p,'Progression la plus reguliere'));
+    const nbLead=argMax(P,p=>S.timesLeader[p]);
+    if(nbLead.v>0) progCards.push(trophyCard('\u{1F3C5}','Le plus souvent en tete',nbLead.p,nbLead.v+' journee(s) en position de leader','gold'));
+    if(progCards.length) pr+='<div class="stats-section"><div class="stats-section-title">Les temps forts</div><div class="stats-grid">'+progCards.join('')+'</div></div>';
+
+    const labels=S.filledIdx.map(i=>S.histoDates[i]);
+    const series=P.map((p,i)=>({key:p,name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    pr+='<div class="stats-section"><div class="stats-section-title">Evolution du classement</div><div class="stats-section-sub">Total de points journee par journee</div>'+chartCard('Courbe d\'evolution','Clique un nom pour isoler sa courbe',lineChart(series,labels))+'</div>';
+
+    pr+='<div class="stats-section"><div class="stats-section-title">Classements de progression</div><div class="stats-grid wide">';
+    pr+=miniTable('Progression derniere journee',rankBy(P,p=>S.lastProg[p]||0,true),v=>(v>=0?'+':'')+v+' pts');
+    pr+=miniTable('Journees passees en tete',rankBy(P,p=>S.timesLeader[p],true),v=>v+' j');
+    pr+='</div></div>';
+  } else {
+    pr='<div class="stats-empty">Pas assez de journees d\'historique remplies pour afficher la progression.<br>Les courbes apparaitront au fil de la competition.</div>';
   }
-  html+='<div class="stats-grid wide">';
-  html+=miniTable('Top side quests',rankBy(P,p=>S.sqFictif[p],true),v=>v+' pts');
-  html+=miniTable('Plus de quetes validees',rankBy(P,p=>S.cntValideWin[p],true),v=>v);
-  html+=miniTable('Les plus originaux',rankBy(P,p=>S.uniquePicks[p],true),v=>v+' pronos uniques');
-  html+=miniTable('Plus de visions correctes',rankBy(P,p=>S.liveHits[p],true),v=>v);
-  if(S.filledIdx.length>=2) html+=miniTable('Progression derniere journee',rankBy(P,p=>S.lastProg[p]||0,true),v=>(v>=0?'+':'')+v+' pts');
-  html+=miniTable('Le plus de poisse',rankBy(P,p=>S.cntValideLose[p]+S.cntImpossible[p],true),v=>v+' rates');
-  html+='</div></div>';
+  if(elProg) elProg.innerHTML=pr;
 
-  el.innerHTML=html;
   // Si un joueur était mis en avant, on réapplique le highlight
   applyStatsHighlight();
 }
@@ -1769,7 +1862,6 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
       ${mkAvatar(p,42,'avatar')}
       <div class="player-info">
         <div class="player-display">${disp}</div>
-        ${disp!==p?`<div class="player-sub">${p}</div>`:''}
         <div class="pts-breakdown">${breakdown}</div>
       </div>
       <div class="pts-block">
@@ -1852,7 +1944,7 @@ function renderQuests(participants, quests) {
 
       return `<div class="ans-chip ${chipCls}">
         ${ptsBadge}
-        <div class="ans-who">${p}</div>
+        <div class="ans-who">${displayName(p)}</div>
         ${ansValHtml}
         <div class="ans-etat">${etatLabel}</div>
       </div>`;
@@ -1864,9 +1956,15 @@ function renderQuests(participants, quests) {
       ...participants.map(p => q.answers[p] || '')
     ].join(' '));
 
+    const qImg = questImage(name);
+    const qImgHtml = qImg
+      ? `<div class="quest-thumb"><img src="${qImg}" alt="${shortName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`
+      : '';
+
     return `
     <div class="quest-card" data-search="${searchText}">
       <div class="quest-head" onclick="toggleQ(${qi})">
+        ${qImgHtml}
         <div class="quest-title-wrap">
           <div class="quest-title">${shortName}</div>
           ${subName?`<div class="quest-sub">${subName}</div>`:''}
@@ -1892,7 +1990,6 @@ function renderParticipants(participants, quests, pronoScores) {
     <div class="p-card" id="pcard-${p}" onclick="selectParticipant('${p}')">
       ${mkAvatar(p,48,'p-av')}
       <div class="p-name">${disp}</div>
-      ${disp!==p?`<div class="p-pseudo">${p}</div>`:''}
       <div class="p-score">${total} pts</div>
     </div>`;
   }).join('');
@@ -1951,7 +2048,6 @@ function selectParticipant(p) {
     <div class="detail-av" style="background:${url?'transparent':c.bg};color:${c.fg};border-color:var(--gold)">${avInner}</div>
     <div>
       <div class="detail-name">${disp}</div>
-      ${disp!==p?`<div class="detail-sub">${p}</div>`:''}
     </div>
     <div class="detail-right">
       <div class="detail-pts">${total}</div>
@@ -2046,8 +2142,10 @@ function showSub(sub) {
 function showStatsSub(sub) {
   activeStatsSub=sub;
   document.querySelectorAll('.sub-tab[data-statsub]').forEach(t=>t.classList.toggle('active',t.dataset.statsub===sub));
-  document.getElementById('statsub-general').classList.toggle('hidden',    sub!=='general');
-  document.getElementById('statsub-opposition').classList.toggle('hidden', sub!=='opposition');
+  document.getElementById('statsub-global').classList.toggle('hidden',      sub!=='global');
+  document.getElementById('statsub-sidequests').classList.toggle('hidden',  sub!=='sidequests');
+  document.getElementById('statsub-progression').classList.toggle('hidden', sub!=='progression');
+  document.getElementById('statsub-opposition').classList.toggle('hidden',  sub!=='opposition');
   ttHide();
 }
 function formatUpdateTime(t) {
@@ -2095,6 +2193,9 @@ function tryLoadFromCache() {
     const cached = JSON.parse(raw);
     if (!cached.time || (Date.now() - cached.time >= COOLDOWN_MS)) return false;
     DATA = cached.data;
+    if (DATA.pseudoMap && Object.keys(DATA.pseudoMap).length) {
+      PSEUDOS = { ...PSEUDOS, ...DATA.pseudoMap };
+    }
     DATA.calendar = null;   // sera chargé juste après
     lastLoadTime = cached.time;
     renderAll();
@@ -2117,16 +2218,21 @@ async function loadData(forceFromButton) {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoTS, histoTS, calendar, gazette] = await Promise.all([
+    const [f6rows, pronoTS, histoTS, calendar, gazette, pseudoMap] = await Promise.all([
       fetchRange("'Feuille 6'!A1:AG200"),
       fetchSeries('PronoContest'),
       fetchSeries('Historique'),
       fetchCalendar(),
       fetchGazette(),
+      fetchPseudos(),
     ]);
+    // Fusionne les pseudos du Sheets (prioritaires) dans la map
+    if (pseudoMap && Object.keys(pseudoMap).length) {
+      PSEUDOS = { ...PSEUDOS, ...pseudoMap };
+    }
     const parsed = parseFeuille6(f6rows);
     const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
-    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette };
+    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette, pseudoMap };
     lastLoadTime = Date.now();
 
     try {
