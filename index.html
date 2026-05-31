@@ -674,13 +674,15 @@ async function fetchRange(range) {
   return json.values||[];
 }
 
-// ── PARSE Feuille 6 ───────────────────────────────────────────────────────
-// Row 0: ["","","", "Lu","","Ry","","Au","",...]   ← participant names (merged 2 cols each)
-// Row 1: ["","","Réponse Live","Pronostic","État","Pronostic","État",...]
-// Row 2+: data
+// ── PARSE Side Quests ─────────────────────────────────────────────────────
+// Row 0: empty (because the pseudonyms in row 1 are merged across 2 cols each;
+//   the merge "absorbs" row 0 into row 1 in the API response)
+// Row 1: ["","","", "Réponse Live", "Luka...","", "Tom...","", ...]   ← pseudos
+// Row 2+: quests — col B = name, col C = points, col D = Réponse Live, then
+//   for each pseudo, [Pronostic, État] pair
 function parseFeuille6(rows) {
   if (rows.length < 3) return { participants:[], quests:[] };
-  const nameRow = rows[0];
+  const nameRow = rows[1] || [];
   const participants = [];
   const pCols = {}; // { p: { pro: idx, etat: idx } }
 
