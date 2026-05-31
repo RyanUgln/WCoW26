@@ -570,19 +570,24 @@ const API_KEY     = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
 const SHEET_ID    = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
 const PHOTOS_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/participants/';
 
-let PSEUDOS = {
-  Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais', Ro:'BoosterDre',
-  Ax:'Michael Au Lit !', Os:'Chapchenko', So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
-};
+// PSEUDOS gardé (vide) pour rétro-compat de displayName, mais les pseudos sont désormais les identifiants directs
+let PSEUDOS = {};
 const PHOTO_MAP = {
-  Lu:'participant.png', Ry:'participant%20-%20Copie.png',
-  Au:'participant%20-%20Copie%20(2).png', Im:'participant%20-%20Copie%20(3).png',
-  Al:'participant%20-%20Copie%20(4).png', Co:'participant%20-%20Copie%20(5).png',
-  Ha:'participant%20-%20Copie%20(6).png', Ad:'participant%20-%20Copie%20(7).png',
-  Ro:'participant%20-%20Copie%20(8).png', Ax:'participant%20-%20Copie%20(9).png',
-  Os:'participant%20-%20Copie%20(10).png', So:'participant%20-%20Copie%20(11).png',
-  Pa:'participant%20-%20Copie%20(12).png', He:'participant%20-%20Copie%20(13).png',
-  Ba:'participant%20-%20Copie%20(14).png',
+  'Luka "Guts" Vušković': 'luka-guts-vuskovic.png',
+  'Tom Bradusor':           'tom-bradusor.png',
+  "Johnny \"'Al\" Fantino": 'johnny-al-fantino.png',
+  'Imadiño':                'imadino.png',
+  'Apoula':                 'apoula.png',
+  'Coco Prono':             'coco-prono.png',
+  'Zidanewaitingroom':      'zidanewaitingroom.png',
+  'Amaury Cantonnais':      'amaury-cantonais.png',
+  'BoosterDre':             'boosterdre.png',
+  'Michael Au Lit !':       'michael-au-lit.png',
+  'Chapchenko':             'chapchenko.png',
+  'Zizidâne Coupet':        'zizidane-coupet.png',
+  'Zimpo':                  'zimpo.png',
+  'Flaminco Fortunello':    'flaminco-fortunello.png',
+  'Tib':                    'tib.png',
 };
 const AV_COLORS = [
   {bg:'#1a2e5a',fg:'#6b9ef8'},{bg:'#1a3a28',fg:'#4ecf8e'},
@@ -644,11 +649,21 @@ const CACHE_KEY = 'wcow_cache_v1';
 function displayName(p) { return PSEUDOS[p] || p; }
 function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
 function photoUrl(p) { return PHOTO_MAP[p] ? PHOTOS_BASE+PHOTO_MAP[p] : null; }
+// Initiales lisibles depuis un pseudo (ex: "Coco Prono" -> "CP", "Tib" -> "TI")
+function initials(p) {
+  if (!p) return '?';
+  const clean = p.replace(/["'`]/g,'').trim();
+  const words = clean.split(/\s+/).filter(w => w.length >= 2);
+  if (words.length === 0) return clean.slice(0,2).toUpperCase();
+  if (words.length === 1) return words[0].slice(0,2).toUpperCase();
+  return (words[0][0] + words[words.length-1][0]).toUpperCase();
+}
 
 function mkAvatar(p, size, cls) {
   const c=avColor(p), url=photoUrl(p);
-  if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${p}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'"></div>`;
-  return `<div class="${cls}" style="width:${size}px;height:${size}px;background:${c.bg};color:${c.fg};border-color:${c.fg}33">${p}</div>`;
+  const ini = initials(p);
+  if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${p}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'"></div>`;
+  return `<div class="${cls}" style="width:${size}px;height:${size}px;background:${c.bg};color:${c.fg};border-color:${c.fg}33">${ini}</div>`;
 }
 
 // ── FETCH ─────────────────────────────────────────────────────────────────
@@ -669,7 +684,7 @@ function parseFeuille6(rows) {
   const participants = [];
   const pCols = {}; // { p: { pro: idx, etat: idx } }
 
-  for (let i = 3; i < nameRow.length; i += 2) {
+  for (let i = 4; i < nameRow.length; i += 2) {
     const p = (nameRow[i]||'').trim();
     if (p) { participants.push(p); pCols[p] = { pro: i, etat: i+1 }; }
   }
@@ -679,10 +694,10 @@ function parseFeuille6(rows) {
   const NO_IMPOSSIBLE = ['repeches','final_only','prono'];
   for (let i = 2; i < rows.length; i++) {
     const row = rows[i]||[];
-    const name = (row[0]||'').trim();
+    const name = (row[1]||'').trim();
     if (!name || name.startsWith('États')) continue;
-    const ptsRaw  = (row[1]||'').trim();
-    const liveAns = (row[2]||'').trim();
+    const ptsRaw  = (row[2]||'').trim();
+    const liveAns = (row[3]||'').trim();
     const ptsNum  = parseInt((ptsRaw.match(/\d+/)||['0'])[0])||0;
     const type    = questType(name);
     const answers={}, etats={};
@@ -732,26 +747,6 @@ async function fetchSeries(sheetName) {
 }
 
 // Lit l'onglet Participants pour récupérer les pseudos (colonnes: Nom, Pseudo, ...)
-async function fetchPseudos() {
-  try {
-    const rows = await fetchRange("'Participants'!A1:D40");
-    if (!rows || rows.length < 2) return {};
-    const map = {};
-    // ligne 0 = en-tête. Colonnes: A=index(vide), B=Nom, C=Pseudo, D=Confirmé...
-    // mais selon l'export la 1re colonne peut être vide -> on repère Nom et Pseudo
-    for (let i=1; i<rows.length; i++) {
-      const r = rows[i] || [];
-      // Nom en col B (index 1), Pseudo en col C (index 2) d'après la structure du Sheets
-      const nom    = (r[1]||'').toString().trim();
-      const pseudo = (r[2]||'').toString().trim();
-      if (nom && pseudo) map[nom] = pseudo;
-    }
-    return map;
-  } catch(e) {
-    return {};
-  }
-}
-
 // ── SCORE CALC ────────────────────────────────────────────────────────────
 // mode: 'fictif' | 'reel'
 function calcQuestPts(q, p, mode) {
@@ -868,9 +863,10 @@ function renderHighlightBanner() {
   if (statsHighlight) {
     const p = statsHighlight;
     const c = avColor(p), url = photoUrl(p);
+    const ini = initials(p);
     const inner = url
-      ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
-      : p;
+      ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
+      : ini;
     html = '<div class="hl-banner">'
       + '<div class="hl-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>'
       + '<span class="hl-label">Joueur mis en avant :</span>'
@@ -896,14 +892,16 @@ function toggleSegIsolate(segEl) {
 
 function avMini(p, size) {
   const c = avColor(p), url = photoUrl(p);
-  if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'"></div>';
-  return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px;background:'+c.bg+';color:'+c.fg+'">'+p+'</div>';
+  const ini = initials(p);
+  if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'"></div>';
+  return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px;background:'+c.bg+';color:'+c.fg+'">'+ini+'</div>';
 }
 // Contenu intérieur d'un avatar (img ou initiales), sans wrapper div
 function avInner(p) {
   const c = avColor(p), url = photoUrl(p);
-  if (url) return '<img src="'+url+'" alt="'+p+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">';
-  return p;
+  const ini = initials(p);
+  if (url) return '<img src="'+url+'" alt="'+p+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">';
+  return ini;
 }
 function avBg(p) { return avColor(p).bg; }
 function avFg(p) { return avColor(p).fg; }
@@ -1351,9 +1349,10 @@ function renderStats() {
 // ══════════════════════════════════════════════════════════════════════════
 function oppHeadAv(p) {
   const c=avColor(p), url=photoUrl(p);
+  const ini = initials(p);
   const inner = url
-    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
-    : p;
+    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
+    : ini;
   return '<div class="opp-head-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>';
 }
 
@@ -2045,9 +2044,10 @@ function buildPlayerDetail(p, mode) {
     </div>`;
   }).join('');
 
+  const ini = initials(p);
   const avInner = url
-    ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">`
-    : p;
+    ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'">`
+    : ini;
 
   const ptsLbl = isFictif ? 'points fictifs' : 'points réels';
   const sqColor = isFictif ? 'var(--blue)' : 'var(--green)';
@@ -2367,9 +2367,6 @@ function tryLoadFromCache() {
     const cached = JSON.parse(raw);
     if (!cached.time || (Date.now() - cached.time >= COOLDOWN_MS)) return false;
     DATA = cached.data;
-    if (DATA.pseudoMap && Object.keys(DATA.pseudoMap).length) {
-      PSEUDOS = { ...PSEUDOS, ...DATA.pseudoMap };
-    }
     DATA.calendar = null;   // sera chargé juste après
     lastLoadTime = cached.time;
     renderAll();
@@ -2392,21 +2389,16 @@ async function loadData(forceFromButton) {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoTS, histoTS, calendar, gazette, pseudoMap] = await Promise.all([
-      fetchRange("'Side Quests'!A1:AG200"),
+    const [f6rows, pronoTS, histoTS, calendar, gazette] = await Promise.all([
+      fetchRange("'Side Quests'!A1:AI200"),
       fetchSeries('PronoContest'),
       fetchSeries('Historique'),
       fetchCalendar(),
       fetchGazette(),
-      fetchPseudos(),
     ]);
-    // Fusionne les pseudos du Sheets (prioritaires) dans la map
-    if (pseudoMap && Object.keys(pseudoMap).length) {
-      PSEUDOS = { ...PSEUDOS, ...pseudoMap };
-    }
     const parsed = parseFeuille6(f6rows);
     const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
-    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette, pseudoMap };
+    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette };
 
     // Mode démo : modifie les données en mémoire avant le rendu
     if (isDemoMode()) {
