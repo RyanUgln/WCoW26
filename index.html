@@ -213,6 +213,9 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .qli.qli-impossible{ opacity:.4; }
 .qli.qli-hit       { border-color:var(--blue-border); }
 .qli-name { flex:1; font-size:.8rem; color:var(--muted); }
+.qli-thumb { width:36px; height:36px; border-radius:6px; overflow:hidden; flex-shrink:0; background:var(--surface-2); border:1px solid var(--border); }
+.qli-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.qli-thumb-empty { background:var(--surface-2); }
 .qli-ans { font-size:.88rem; font-weight:500; }
 .qli-ans.no  { color:var(--muted); font-style:italic; font-weight:400; }
 .qli-ans.hit-confirmed { color:var(--green); }
@@ -405,21 +408,28 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .cal-status.scheduled { background:var(--surface-2); color:var(--muted); }
 .cal-status.done { background:var(--green-dim); color:var(--green); border:1px solid var(--green-border); }
 
+/* ── BANDEAU MODE DÉMO ── */
+.demo-banner { position:sticky; top:0; z-index:9000; background:linear-gradient(90deg,#7a2a8a,#b03060); color:#fff; padding:.55rem 1rem; font-size:.8rem; text-align:center; letter-spacing:1px; font-weight:600; box-shadow:0 2px 8px rgba(0,0,0,.3); }
+.demo-banner a { color:#ffe0a0; text-decoration:underline; }
+
 /* ── GAZETTE ── */
-.gazette-toolbar { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin-bottom:1.2rem; }
+.gazette-toolbar { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin-bottom:2rem; }
 .gazette-select { background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.55rem .7rem; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; cursor:pointer; min-width:260px; }
 .gazette-select:focus { outline:none; border-color:var(--gold); }
-.gazette-edition-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold); letter-spacing:2px; line-height:1; margin-bottom:.2rem; }
-.gazette-edition-meta { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
-.gazette-carousel { display:flex; gap:1rem; overflow-x:auto; padding:.5rem .25rem 1rem; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; }
-.gazette-carousel::-webkit-scrollbar { height:8px; }
-.gazette-carousel::-webkit-scrollbar-track { background:var(--surface); border-radius:4px; }
-.gazette-carousel::-webkit-scrollbar-thumb { background:var(--gold-dim); border-radius:4px; }
-.gazette-page { flex:0 0 auto; width:min(340px,75vw); aspect-ratio:1/1.414; background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; cursor:pointer; scroll-snap-align:start; transition:border-color .2s,transform .2s; position:relative; }
-.gazette-page:hover { border-color:var(--gold); transform:translateY(-2px); }
-.gazette-page img { width:100%; height:100%; object-fit:cover; display:block; }
-.gazette-page-num { position:absolute; top:.5rem; left:.5rem; background:rgba(0,0,0,.55); color:#fff; font-family:'Bebas Neue',sans-serif; font-size:.85rem; letter-spacing:1px; padding:.15rem .55rem; border-radius:4px; }
-.gazette-page-broken { display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:.8rem; font-style:italic; padding:1rem; text-align:center; }
+.gazette-edition-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold); letter-spacing:2px; line-height:1.1; margin-bottom:.3rem; text-align:center; }
+.gazette-edition-meta { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; text-align:center; margin-bottom:1rem; }
+/* Aperçu de l'édition courante : couverture + bouton lire */
+.gazette-cover-wrap { display:flex; flex-direction:column; align-items:center; gap:1rem; padding:.5rem 0 1.5rem; }
+.gazette-cover { width:min(380px,80vw); aspect-ratio:1/1.414; background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; cursor:pointer; transition:border-color .2s,transform .2s; position:relative; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,0,0,.15); }
+.gazette-cover:hover { border-color:var(--gold); transform:translateY(-2px); }
+.gazette-cover canvas { max-width:100%; max-height:100%; display:block; }
+.gazette-cover-overlay { position:absolute; inset:0; background:rgba(0,0,0,.0); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s,background .2s; pointer-events:none; }
+.gazette-cover:hover .gazette-cover-overlay { opacity:1; background:rgba(0,0,0,.25); }
+.gazette-cover-overlay-text { background:var(--gold); color:#1a1505; font-family:'Bebas Neue',sans-serif; letter-spacing:2px; padding:.5rem 1.2rem; border-radius:6px; font-size:1rem; }
+.gazette-cover-loading { color:var(--muted); font-size:.8rem; font-style:italic; }
+.gazette-cover-broken { color:var(--muted); font-size:.85rem; font-style:italic; padding:1rem; text-align:center; }
+.gazette-open-btn { background:var(--gold); color:#1a1505; border:none; padding:.7rem 1.6rem; border-radius:8px; font-family:'Bebas Neue',sans-serif; letter-spacing:2px; font-size:1rem; cursor:pointer; transition:transform .15s,box-shadow .2s; }
+.gazette-open-btn:hover { transform:scale(1.03); box-shadow:0 4px 16px rgba(201,168,60,.4); }
 .gazette-section-header { font-family:'Bebas Neue',sans-serif; font-size:.95rem; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin:2rem 0 .5rem; padding-bottom:.3rem; border-bottom:1px solid var(--border); }
 .gazette-archive-row { display:flex; align-items:center; gap:1rem; padding:.8rem 1rem; background:var(--card); border:1px solid var(--border); border-radius:10px; margin-bottom:.5rem; cursor:pointer; transition:border-color .2s; }
 .gazette-archive-row:hover { border-color:var(--gold); }
@@ -432,7 +442,11 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 /* Lightbox plein écran */
 .gazette-lightbox { position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:10000; display:flex; align-items:center; justify-content:center; padding:2rem; }
 .gazette-lightbox.hidden { display:none !important; }
-.lb-img { max-width:95%; max-height:95vh; object-fit:contain; border-radius:6px; box-shadow:0 10px 40px rgba(0,0,0,.6); display:block; }
+.lb-spread { display:flex; align-items:center; justify-content:center; gap:8px; max-width:96vw; max-height:92vh; }
+.lb-canvas { background:#fff; box-shadow:0 10px 40px rgba(0,0,0,.6); border-radius:4px; max-height:92vh; max-width:100%; height:auto; width:auto; display:block; }
+.lb-canvas.hidden { display:none; }
+.lb-loader { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#fff; font-family:'Bebas Neue',sans-serif; letter-spacing:2px; font-size:1.1rem; background:rgba(0,0,0,.6); padding:.7rem 1.3rem; border-radius:10px; }
+.lb-loader.hidden { display:none; }
 .lb-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff; cursor:pointer; font-size:1.3rem; width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:background .2s; }
 .lb-close:hover { background:rgba(255,255,255,.25); }
 .lb-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3); color:#fff; cursor:pointer; font-size:2rem; width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:background .2s; line-height:1; padding-bottom:4px; }
@@ -445,8 +459,17 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   .lb-close { width:38px; height:38px; font-size:1.1rem; }
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs" type="module"></script>
+<script type="module">
+  // Initialise PDF.js avec son worker
+  import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+  window.pdfjsLib = pdfjsLib;
+</script>
 </head>
 <body>
+
+<div id="demo-banner" class="demo-banner hidden">🎭 MODE DÉMO — données simulées, ce n'est pas la vraie compétition · <a href="?">Désactiver</a></div>
 
 <div class="header">
   <a class="logo-area" href="https://www.youtube.com/watch?v=gBuoUH3AOlo" target="_blank" rel="noopener">
@@ -553,7 +576,11 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
   <button class="lb-nav lb-prev" onclick="lbNav(event,-1)" title="Page précédente">‹</button>
   <button class="lb-nav lb-next" onclick="lbNav(event,1)" title="Page suivante">›</button>
   <div class="lb-counter" id="lb-counter"></div>
-  <img class="lb-img" id="lb-img" alt="Page" onclick="event.stopPropagation()">
+  <div class="lb-spread" id="lb-spread" onclick="event.stopPropagation()">
+    <canvas class="lb-canvas" id="lb-canvas-left"></canvas>
+    <canvas class="lb-canvas" id="lb-canvas-right"></canvas>
+  </div>
+  <div class="lb-loader hidden" id="lb-loader">Chargement…</div>
 </div>
 
 <script>
@@ -561,19 +588,24 @@ const API_KEY     = 'AIzaSyA3dCnqy8UsHEyGaH0TSqGewBD6777MOuY';
 const SHEET_ID    = '1gaDAhfxO56r3f4b6Ym9Tnq227NAdafIcSOC1jK800gg';
 const PHOTOS_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/participants/';
 
-let PSEUDOS = {
-  Al:'Apoula', Co:'Coco', Ad:'Amaury Cantonnais', Ro:'BoosterDre',
-  Ax:'Michael Au Lit !', Os:'Chapchenko', So:'Zizi Coupet', Pa:'Zimpo', Ba:'Tib'
-};
+// PSEUDOS gardé (vide) pour rétro-compat de displayName, mais les pseudos sont désormais les identifiants directs
+let PSEUDOS = {};
 const PHOTO_MAP = {
-  Lu:'participant.png', Ry:'participant%20-%20Copie.png',
-  Au:'participant%20-%20Copie%20(2).png', Im:'participant%20-%20Copie%20(3).png',
-  Al:'participant%20-%20Copie%20(4).png', Co:'participant%20-%20Copie%20(5).png',
-  Ha:'participant%20-%20Copie%20(6).png', Ad:'participant%20-%20Copie%20(7).png',
-  Ro:'participant%20-%20Copie%20(8).png', Ax:'participant%20-%20Copie%20(9).png',
-  Os:'participant%20-%20Copie%20(10).png', So:'participant%20-%20Copie%20(11).png',
-  Pa:'participant%20-%20Copie%20(12).png', He:'participant%20-%20Copie%20(13).png',
-  Ba:'participant%20-%20Copie%20(14).png',
+  'Luka "Guts" Vušković': 'luka-guts-vuskovic.png',
+  'Tom Bradusor':           'tom-bradusor.png',
+  "Johnny \"'Al\" Fantino": 'johnny-al-fantino.png',
+  'Imadiño':                'imadino.png',
+  'Apoula':                 'apoula.png',
+  'Coco Prono':             'coco-prono.png',
+  'Zidanewaitingroom':      'zidanewaitingroom.png',
+  'Amaury Cantonnais':      'amaury-cantonais.png',
+  'BoosterDre':             'boosterdre.png',
+  'Michael Au Lit !':       'michael-au-lit.png',
+  'Chapchenko':             'chapchenko.png',
+  'Zizidâne Coupet':        'zizidane-coupet.png',
+  'Zimpo':                  'zimpo.png',
+  'Flaminco Fortunello':    'flaminco-fortunello.png',
+  'Tib':                    'tib.png',
 };
 const AV_COLORS = [
   {bg:'#1a2e5a',fg:'#6b9ef8'},{bg:'#1a3a28',fg:'#4ecf8e'},
@@ -635,11 +667,21 @@ const CACHE_KEY = 'wcow_cache_v1';
 function displayName(p) { return PSEUDOS[p] || p; }
 function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
 function photoUrl(p) { return PHOTO_MAP[p] ? PHOTOS_BASE+PHOTO_MAP[p] : null; }
+// Initiales lisibles depuis un pseudo (ex: "Coco Prono" -> "CP", "Tib" -> "TI")
+function initials(p) {
+  if (!p) return '?';
+  const clean = p.replace(/["'`]/g,'').trim();
+  const words = clean.split(/\s+/).filter(w => w.length >= 2);
+  if (words.length === 0) return clean.slice(0,2).toUpperCase();
+  if (words.length === 1) return words[0].slice(0,2).toUpperCase();
+  return (words[0][0] + words[words.length-1][0]).toUpperCase();
+}
 
 function mkAvatar(p, size, cls) {
   const c=avColor(p), url=photoUrl(p);
-  if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${p}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'"></div>`;
-  return `<div class="${cls}" style="width:${size}px;height:${size}px;background:${c.bg};color:${c.fg};border-color:${c.fg}33">${p}</div>`;
+  const ini = initials(p);
+  if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${p}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'"></div>`;
+  return `<div class="${cls}" style="width:${size}px;height:${size}px;background:${c.bg};color:${c.fg};border-color:${c.fg}33">${ini}</div>`;
 }
 
 // ── FETCH ─────────────────────────────────────────────────────────────────
@@ -650,17 +692,19 @@ async function fetchRange(range) {
   return json.values||[];
 }
 
-// ── PARSE Feuille 6 ───────────────────────────────────────────────────────
-// Row 0: ["","","", "Lu","","Ry","","Au","",...]   ← participant names (merged 2 cols each)
-// Row 1: ["","","Réponse Live","Pronostic","État","Pronostic","État",...]
-// Row 2+: data
+// ── PARSE Side Quests ─────────────────────────────────────────────────────
+// Row 0: empty (because the pseudonyms in row 1 are merged across 2 cols each;
+//   the merge "absorbs" row 0 into row 1 in the API response)
+// Row 1: ["","","", "Réponse Live", "Luka...","", "Tom...","", ...]   ← pseudos
+// Row 2+: quests — col B = name, col C = points, col D = Réponse Live, then
+//   for each pseudo, [Pronostic, État] pair
 function parseFeuille6(rows) {
   if (rows.length < 3) return { participants:[], quests:[] };
-  const nameRow = rows[0];
+  const nameRow = rows[1] || [];
   const participants = [];
   const pCols = {}; // { p: { pro: idx, etat: idx } }
 
-  for (let i = 3; i < nameRow.length; i += 2) {
+  for (let i = 4; i < nameRow.length; i += 2) {
     const p = (nameRow[i]||'').trim();
     if (p) { participants.push(p); pCols[p] = { pro: i, etat: i+1 }; }
   }
@@ -670,10 +714,10 @@ function parseFeuille6(rows) {
   const NO_IMPOSSIBLE = ['repeches','final_only','prono'];
   for (let i = 2; i < rows.length; i++) {
     const row = rows[i]||[];
-    const name = (row[0]||'').trim();
+    const name = (row[1]||'').trim();
     if (!name || name.startsWith('États')) continue;
-    const ptsRaw  = (row[1]||'').trim();
-    const liveAns = (row[2]||'').trim();
+    const ptsRaw  = (row[2]||'').trim();
+    const liveAns = (row[3]||'').trim();
     const ptsNum  = parseInt((ptsRaw.match(/\d+/)||['0'])[0])||0;
     const type    = questType(name);
     const answers={}, etats={};
@@ -723,26 +767,6 @@ async function fetchSeries(sheetName) {
 }
 
 // Lit l'onglet Participants pour récupérer les pseudos (colonnes: Nom, Pseudo, ...)
-async function fetchPseudos() {
-  try {
-    const rows = await fetchRange("'Participants'!A1:D40");
-    if (!rows || rows.length < 2) return {};
-    const map = {};
-    // ligne 0 = en-tête. Colonnes: A=index(vide), B=Nom, C=Pseudo, D=Confirmé...
-    // mais selon l'export la 1re colonne peut être vide -> on repère Nom et Pseudo
-    for (let i=1; i<rows.length; i++) {
-      const r = rows[i] || [];
-      // Nom en col B (index 1), Pseudo en col C (index 2) d'après la structure du Sheets
-      const nom    = (r[1]||'').toString().trim();
-      const pseudo = (r[2]||'').toString().trim();
-      if (nom && pseudo) map[nom] = pseudo;
-    }
-    return map;
-  } catch(e) {
-    return {};
-  }
-}
-
 // ── SCORE CALC ────────────────────────────────────────────────────────────
 // mode: 'fictif' | 'reel'
 function calcQuestPts(q, p, mode) {
@@ -859,9 +883,10 @@ function renderHighlightBanner() {
   if (statsHighlight) {
     const p = statsHighlight;
     const c = avColor(p), url = photoUrl(p);
+    const ini = initials(p);
     const inner = url
-      ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
-      : p;
+      ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
+      : ini;
     html = '<div class="hl-banner">'
       + '<div class="hl-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>'
       + '<span class="hl-label">Joueur mis en avant :</span>'
@@ -887,14 +912,16 @@ function toggleSegIsolate(segEl) {
 
 function avMini(p, size) {
   const c = avColor(p), url = photoUrl(p);
-  if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'"></div>';
-  return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px;background:'+c.bg+';color:'+c.fg+'">'+p+'</div>';
+  const ini = initials(p);
+  if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'"></div>';
+  return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px;background:'+c.bg+';color:'+c.fg+'">'+ini+'</div>';
 }
 // Contenu intérieur d'un avatar (img ou initiales), sans wrapper div
 function avInner(p) {
   const c = avColor(p), url = photoUrl(p);
-  if (url) return '<img src="'+url+'" alt="'+p+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">';
-  return p;
+  const ini = initials(p);
+  if (url) return '<img src="'+url+'" alt="'+p+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">';
+  return ini;
 }
 function avBg(p) { return avColor(p).bg; }
 function avFg(p) { return avColor(p).fg; }
@@ -1342,9 +1369,10 @@ function renderStats() {
 // ══════════════════════════════════════════════════════════════════════════
 function oppHeadAv(p) {
   const c=avColor(p), url=photoUrl(p);
+  const ini = initials(p);
   const inner = url
-    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+p+'\'">'
-    : p;
+    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
+    : ini;
   return '<div class="opp-head-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>';
 }
 
@@ -1684,34 +1712,28 @@ function renderCalendar(){
 
 
 // ══════════════════════════════════════════════════════════════════════════
-// GAZETTE — éditions de journal, images sur GitHub, méta sur Sheets
+// GAZETTE — éditions PDF sur GitHub, méta sur Sheets, rendu via PDF.js
 // ══════════════════════════════════════════════════════════════════════════
 const GAZETTE_BASE = 'https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/gazette/';
 
 async function fetchGazette() {
   try {
-    const rows = await fetchRange("'Gazette'!A1:E200");
+    const rows = await fetchRange("'Gazette'!A1:D200");
     if (!rows || rows.length < 2) return [];
-    // ligne 0 = en-tête. Colonnes: Édition, Date, Titre édition, Page, Image
-    const byEdition = {};
+    // ligne 0 = en-tête. Colonnes attendues: Édition, Date, Titre édition, Fichier
+    const editions = [];
     for (let i=1; i<rows.length; i++) {
       const r = rows[i] || [];
-      const ed = (r[0]||'').toString().trim();
-      const date = (r[1]||'').toString().trim();
-      const title = (r[2]||'').toString().trim();
-      const page = parseInt((r[3]||'0').toString().trim()) || 0;
-      const image = (r[4]||'').toString().trim();
-      if (!ed || !image) continue;
+      const ed     = (r[0]||'').toString().trim();
+      const date   = (r[1]||'').toString().trim();
+      const title  = (r[2]||'').toString().trim();
+      const file   = (r[3]||'').toString().trim();
+      if (!ed || !file) continue;
       const edNum = parseInt(ed) || 0;
       if (!edNum) continue;
-      if (!byEdition[edNum]) {
-        byEdition[edNum] = { num: edNum, date, title, pages: [] };
-      }
-      byEdition[edNum].pages.push({ page, image, url: GAZETTE_BASE+'edition-'+edNum+'/'+image });
+      editions.push({ num:edNum, date, title, file, url: GAZETTE_BASE+file });
     }
-    // Tri des pages dans chaque édition, et des éditions par numéro décroissant
-    const editions = Object.values(byEdition);
-    editions.forEach(e => e.pages.sort((a,b) => a.page - b.page));
+    // Éditions triées par numéro décroissant (la plus récente en premier)
     editions.sort((a,b) => b.num - a.num);
     return editions;
   } catch(e) {
@@ -1720,8 +1742,9 @@ async function fetchGazette() {
 }
 
 // ── ÉTAT ──────────────────────────────────────────────────────────────────
-let gazetteSelectedNum = null;  // édition en cours d'affichage en grand
-let lbState = null;             // { pages:[urls], idx:0 }
+let gazetteSelectedNum = null;
+let lbState = null;           // { pdf, numPages, leftPage, edition }
+let gazettePdfCache = {};     // cache des pdf chargés : { url -> pdfDocument }
 
 function renderGazette() {
   const toolbar = document.getElementById('gazette-toolbar');
@@ -1735,12 +1758,12 @@ function renderGazette() {
     return;
   }
 
-  // Édition à afficher : dernière par défaut, sinon celle sélectionnée
+  // Édition à afficher : dernière par défaut, ou celle sélectionnée
   let current = null;
   if (gazetteSelectedNum != null) {
     current = editions.find(e => e.num === gazetteSelectedNum);
   }
-  if (!current) current = editions[0]; // = la plus récente (tri décroissant)
+  if (!current) current = editions[0];
 
   // Sélecteur si plusieurs éditions
   let toolHtml = '';
@@ -1754,17 +1777,17 @@ function renderGazette() {
   }
   toolbar.innerHTML = toolHtml;
 
-  // Carrousel de l'édition courante
+  // Aperçu de l'édition courante : couverture cliquable
+  const coverCanvasId = 'gazette-cover-canvas-'+current.num;
   let html = '<div class="gazette-edition-title">N°'+current.num+' · '+current.title+'</div>';
-  html += '<div class="gazette-edition-meta">'+current.date+' · '+current.pages.length+' page'+(current.pages.length>1?'s':'')+'</div>';
-  html += '<div class="gazette-carousel">';
-  current.pages.forEach((p,idx) => {
-    html += '<div class="gazette-page" onclick="openLightbox('+current.num+','+idx+')">'
-      + '<div class="gazette-page-num">P.'+p.page+'</div>'
-      + '<img src="'+p.url+'" alt="Édition '+current.num+' page '+p.page+'" loading="lazy" '
-      + 'onerror="this.parentElement.innerHTML=&quot;<div class=\\&quot;gazette-page-broken\\&quot;>Image manquante<br>'+p.image+'</div>&quot;">'
-      + '</div>';
-  });
+  html += '<div class="gazette-edition-meta">'+current.date+'</div>';
+  html += '<div class="gazette-cover-wrap">';
+  html += '  <div class="gazette-cover" onclick="openLightbox('+current.num+')">';
+  html += '    <div class="gazette-cover-loading" id="cover-loading-'+current.num+'">Chargement de la couverture…</div>';
+  html += '    <canvas id="'+coverCanvasId+'" style="display:none"></canvas>';
+  html += '    <div class="gazette-cover-overlay"><div class="gazette-cover-overlay-text">Lire en plein écran</div></div>';
+  html += '  </div>';
+  html += '  <button class="gazette-open-btn" onclick="openLightbox('+current.num+')">Ouvrir l\'édition</button>';
   html += '</div>';
 
   // Archive : autres éditions
@@ -1776,7 +1799,7 @@ function renderGazette() {
         + '<div class="gazette-archive-num">N°'+e.num+'</div>'
         + '<div class="gazette-archive-info">'
         +   '<div class="gazette-archive-title">'+e.title+'</div>'
-        +   '<div class="gazette-archive-meta">'+e.date+' · '+e.pages.length+' page'+(e.pages.length>1?'s':'')+'</div>'
+        +   '<div class="gazette-archive-meta">'+e.date+'</div>'
         + '</div>'
         + '<div class="gazette-archive-arrow">›</div>'
         + '</div>';
@@ -1784,50 +1807,184 @@ function renderGazette() {
   }
 
   content.innerHTML = html;
+
+  // Rend la couverture (page 1) après injection du HTML
+  renderGazetteCover(current);
+}
+
+// Rend la première page d'un PDF dans la couverture
+async function renderGazetteCover(edition) {
+  if (!window.pdfjsLib) {
+    // PDF.js pas encore chargé : on réessaie dans un instant
+    setTimeout(() => renderGazetteCover(edition), 300);
+    return;
+  }
+  const canvas = document.getElementById('gazette-cover-canvas-'+edition.num);
+  const loader = document.getElementById('cover-loading-'+edition.num);
+  if (!canvas) return;
+  try {
+    const pdf = await loadGazettePdf(edition.url);
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({ scale: 1 });
+    const ratio = (window.devicePixelRatio || 1);
+    const targetWidth = 380 * ratio;
+    const scale = targetWidth / viewport.width;
+    const scaled = page.getViewport({ scale });
+    canvas.width = scaled.width;
+    canvas.height = scaled.height;
+    canvas.style.width = (scaled.width/ratio)+'px';
+    canvas.style.height = (scaled.height/ratio)+'px';
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: scaled }).promise;
+    canvas.style.display = 'block';
+    if (loader) loader.style.display = 'none';
+  } catch(e) {
+    if (loader) loader.innerHTML = '<div class="gazette-cover-broken">Impossible de charger<br>'+edition.file+'</div>';
+  }
+}
+
+// Cache + chargement d'un PDF
+async function loadGazettePdf(url) {
+  if (gazettePdfCache[url]) return gazettePdfCache[url];
+  if (!window.pdfjsLib) throw new Error('PDF.js non chargé');
+  try {
+    const pdf = await window.pdfjsLib.getDocument({ url }).promise;
+    gazettePdfCache[url] = pdf;
+    return pdf;
+  } catch(err) {
+    console.error('[Gazette] Échec chargement PDF', url, err);
+    throw err;
+  }
 }
 
 function gazettePick(num) {
   gazetteSelectedNum = parseInt(num);
   renderGazette();
-  // Scroll vers le carrousel
   const c = document.getElementById('gazette-content');
   if (c) c.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-// ── LIGHTBOX PLEIN ÉCRAN ──────────────────────────────────────────────────
-function openLightbox(editionNum, pageIdx) {
+// ── LIGHTBOX PLEIN ÉCRAN — lecture journal double page ────────────────────
+// Mode double page : (1)(2-3)(4-5)...(N) — Une et dernière en solo
+function isDoublePageMode() {
+  return window.innerWidth >= 900;
+}
+
+async function openLightbox(editionNum) {
+  if (!window.pdfjsLib) {
+    alert('Le lecteur PDF est en cours de chargement, réessaie dans un instant.');
+    return;
+  }
   const editions = (DATA && DATA.gazette) || [];
   const ed = editions.find(e => e.num === editionNum);
   if (!ed) return;
-  lbState = { pages: ed.pages.map(p => p.url), idx: pageIdx, edition: ed };
   const box = document.getElementById('gazette-lightbox');
+  const loader = document.getElementById('lb-loader');
   box.classList.remove('hidden');
+  if (loader) loader.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  updateLightbox();
-  // touche clavier
   document.addEventListener('keydown', lbKeyHandler);
+  try {
+    const pdf = await loadGazettePdf(ed.url);
+    lbState = { pdf, numPages: pdf.numPages, leftPage: 1, edition: ed };
+    if (loader) loader.classList.add('hidden');
+    updateLightbox();
+  } catch(e) {
+    if (loader) loader.innerHTML = 'Erreur de chargement';
+  }
 }
-function updateLightbox() {
+
+// updateLightbox : rend la page (ou la paire) actuelle dans les canvas
+async function updateLightbox() {
   if (!lbState) return;
-  const img = document.getElementById('lb-img');
+  const left  = document.getElementById('lb-canvas-left');
+  const right = document.getElementById('lb-canvas-right');
   const counter = document.getElementById('lb-counter');
-  img.src = lbState.pages[lbState.idx];
-  counter.textContent = 'N°'+lbState.edition.num+' · Page '+(lbState.idx+1)+' / '+lbState.pages.length;
-  // Affiche/masque flèches selon position
-  document.querySelector('.lb-prev').style.visibility = lbState.idx>0 ? 'visible' : 'hidden';
-  document.querySelector('.lb-next').style.visibility = lbState.idx<lbState.pages.length-1 ? 'visible' : 'hidden';
+  const { pdf, numPages, leftPage, edition } = lbState;
+
+  const doubleMode = isDoublePageMode();
+  // Détermine quelles pages afficher.
+  // Règle journal : page 1 (Une) toujours solo ; en mode double les autres
+  // sont par paires (2-3, 4-5...) ; la dernière page est solo uniquement si
+  // N est pair (sinon elle complète la dernière paire).
+  let p1 = leftPage, p2 = null;
+  if (doubleMode && p1 !== 1) {
+    // En mode double, sur une paire potentielle
+    if (p1 === numPages && numPages % 2 === 0) {
+      // dernière solo si N pair
+      p2 = null;
+    } else if (p1 + 1 <= numPages) {
+      p2 = p1 + 1;
+    }
+  }
+
+  await renderPdfPageToCanvas(pdf, p1, left);
+  left.classList.remove('hidden');
+  if (p2) {
+    await renderPdfPageToCanvas(pdf, p2, right);
+    right.classList.remove('hidden');
+  } else {
+    right.classList.add('hidden');
+  }
+
+  // Compteur
+  let label;
+  if (p2) label = 'N°'+edition.num+' · Pages '+p1+'-'+p2+' / '+numPages;
+  else    label = 'N°'+edition.num+' · Page '+p1+' / '+numPages;
+  if (counter) counter.textContent = label;
+
+  // Visibilité des flèches
+  const canPrev = leftPage > 1;
+  const canNext = (p2 ? p2 : p1) < numPages;
+  document.querySelector('.lb-prev').style.visibility = canPrev ? 'visible' : 'hidden';
+  document.querySelector('.lb-next').style.visibility = canNext ? 'visible' : 'hidden';
 }
+
+async function renderPdfPageToCanvas(pdf, pageNum, canvas) {
+  const page = await pdf.getPage(pageNum);
+  const viewport = page.getViewport({ scale: 1 });
+  const ratio = window.devicePixelRatio || 1;
+  // Cible la hauteur de la viewport pour bien remplir l'écran en plein écran
+  const targetHeight = Math.floor(window.innerHeight * 0.92) * ratio;
+  const scale = targetHeight / viewport.height;
+  const scaled = page.getViewport({ scale });
+  canvas.width = scaled.width;
+  canvas.height = scaled.height;
+  canvas.style.width = (scaled.width/ratio)+'px';
+  canvas.style.height = (scaled.height/ratio)+'px';
+  await page.render({ canvasContext: canvas.getContext('2d'), viewport: scaled }).promise;
+}
+
 function lbNav(evt, dir) {
   if (evt) evt.stopPropagation();
   if (!lbState) return;
-  const newIdx = lbState.idx + dir;
-  if (newIdx < 0 || newIdx >= lbState.pages.length) return;
-  lbState.idx = newIdx;
+  const { numPages, leftPage } = lbState;
+  const doubleMode = isDoublePageMode();
+  let newLeft;
+  if (dir > 0) {
+    // Avance
+    if (doubleMode && leftPage === 1) newLeft = 2;
+    else if (doubleMode) newLeft = leftPage + 2;
+    else newLeft = leftPage + 1;
+    if (newLeft > numPages) return;
+  } else {
+    // Recule
+    if (doubleMode) {
+      if (leftPage === 1) return;
+      if (leftPage <= 2) newLeft = 1;
+      else newLeft = leftPage - 2;
+      if (newLeft < 1) newLeft = 1;
+    } else {
+      newLeft = leftPage - 1;
+    }
+    if (newLeft < 1) return;
+  }
+  lbState.leftPage = newLeft;
   updateLightbox();
 }
+
 function closeLightbox(evt, force) {
-  // Clic sur le fond ferme, clic sur l'image ne ferme pas (gestion via stopPropagation)
-  if (!force && evt && evt.target.tagName === 'IMG') return;
+  // Clic sur le fond ferme, clic sur les canvas ne ferme pas (stopPropagation sur lb-spread)
+  if (!force && evt && (evt.target.tagName === 'CANVAS' || evt.target.id === 'lb-spread')) return;
   const box = document.getElementById('gazette-lightbox');
   box.classList.add('hidden');
   document.body.style.overflow = '';
@@ -1838,6 +1995,13 @@ function lbKeyHandler(evt) {
   if (evt.key === 'Escape') closeLightbox(null, true);
   else if (evt.key === 'ArrowLeft') lbNav(null, -1);
   else if (evt.key === 'ArrowRight') lbNav(null, 1);
+}
+
+// Re-rend la lightbox au resize (changement desktop/mobile)
+if (typeof window !== 'undefined' && window.addEventListener) {
+  window.addEventListener('resize', () => {
+    if (lbState) updateLightbox();
+  });
 }
 
 // ── RENDER LEADERBOARD ────────────────────────────────────────────────────
@@ -2023,16 +2187,23 @@ function buildPlayerDetail(p, mode) {
       ptsCell = `<div class="qli-pts zero">—</div>`;
     }
 
+    const qImg = questImage(q.name);
+    const qImgHtml = qImg
+      ? `<div class="qli-thumb"><img src="${qImg}" alt="" loading="lazy" onerror="this.parentElement.style.visibility='hidden'"></div>`
+      : `<div class="qli-thumb qli-thumb-empty"></div>`;
+
     return `<div class="qli ${qliCls}">
+      ${qImgHtml}
       <div class="qli-name">${shortN}</div>
       <div class="qli-ans ${!ans?'no':ansCls}">${ans||'Non rempli'}</div>
       ${ptsCell}
     </div>`;
   }).join('');
 
+  const ini = initials(p);
   const avInner = url
-    ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${p}'">`
-    : p;
+    ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'">`
+    : ini;
 
   const ptsLbl = isFictif ? 'points fictifs' : 'points réels';
   const sqColor = isFictif ? 'var(--blue)' : 'var(--green)';
@@ -2134,6 +2305,12 @@ function initTheme() {
 }
 initTheme();
 
+// Affiche le bandeau démo si ?demo=1
+if (isDemoMode()) {
+  const b = document.getElementById('demo-banner');
+  if (b) b.classList.remove('hidden');
+}
+
 function showTab(tab) {
   activeTab=tab;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
@@ -2202,16 +2379,150 @@ function renderAll() {
   showSub(activeSub);
 }
 
+
+// ══════════════════════════════════════════════════════════════════════════
+// MODE DÉMO — ?demo=1 dans l'URL
+// Simule des matchs joués, des side quests résolues, des scores PronoContest
+// et un historique, pour visualiser le rendu pendant la compétition.
+// ══════════════════════════════════════════════════════════════════════════
+function isDemoMode() {
+  try { return new URLSearchParams(location.search).get('demo') === '1'; }
+  catch(e) { return false; }
+}
+
+function applyDemoOverrides(D) {
+  if (!D || !D.participants || !D.participants.length) return D;
+
+  // ─── 1. CALENDRIER : matchs joués + 1 en cours + reste à venir ───────────
+  if (D.calendar && D.calendar.length) {
+    // Trie par date pour être sûr (déjà trié normalement)
+    D.calendar.sort((a,b) => (a.dtMs||0) - (b.dtMs||0));
+    // Scores plausibles à appliquer aux N premiers matchs
+    const fakeScores = [
+      {a:2, b:1}, {a:1, b:1}, {a:3, b:0}, {a:0, b:0}, {a:2, b:2},
+      {a:1, b:0}, {a:4, b:1}, {a:2, b:3},
+    ];
+    let played = 0;
+    for (let i=0; i<D.calendar.length && played<fakeScores.length; i++) {
+      const m = D.calendar[i];
+      if (!m.dtMs) continue;
+      m.score = { a: fakeScores[played].a, b: fakeScores[played].b };
+      played++;
+    }
+    // Le match suivant devient "en cours" : on force son dtMs à il y a 25 min, sans score
+    const nextIdx = played;
+    if (nextIdx < D.calendar.length) {
+      D.calendar[nextIdx].dtMs = Date.now() - 25*60*1000;
+      D.calendar[nextIdx].dt   = new Date(D.calendar[nextIdx].dtMs);
+      D.calendar[nextIdx].score = null;
+    }
+    // Le match d'après devient le "prochain", calé dans 2h
+    if (nextIdx+1 < D.calendar.length) {
+      D.calendar[nextIdx+1].dtMs = Date.now() + 2*3600*1000;
+      D.calendar[nextIdx+1].dt   = new Date(D.calendar[nextIdx+1].dtMs);
+      D.calendar[nextIdx+1].score = null;
+    }
+  }
+
+  // ─── 2. SIDE QUESTS : Réponses Live + états simulés ───────────────────────
+  // Pour chaque quête, on fixe une Réponse Live et on règle qq états participants.
+  // Les pronos restent ceux du Sheets, donc certains gagnent / d'autres perdent
+  // naturellement selon ce qu'ils avaient répondu.
+  if (D.quests && D.quests.length) {
+    D.quests.forEach((q,qi) => {
+      if (q.type === 'prono') return; // gérées par PronoContest, on ne touche pas
+      if (q.type === 'vif_or') {
+        // 2 personnes validées sur le Vif d'or
+        const P = D.participants;
+        if (P.length >= 4) {
+          q.etats[P[1]] = 'validé';
+          q.etats[P[4 % P.length]] = 'validé';
+        }
+        return;
+      }
+      // Choisit comme Réponse Live le prono le plus fréquent (pour rendre vivant)
+      const counts = {};
+      D.participants.forEach(p => {
+        const a = (q.answers[p]||'').trim();
+        if (!a) return;
+        const k = a.toLowerCase();
+        counts[k] = counts[k] || {val:a, n:0};
+        counts[k].n++;
+      });
+      const sorted = Object.values(counts).sort((a,b) => b.n - a.n);
+      if (sorted.length) {
+        // Sur ~60% des quêtes, on prend le prono majoritaire (les "moutons" gagnent)
+        // Sur les autres, on prend un prono minoritaire (les "rebelles" gagnent)
+        const pick = (qi % 3 === 0 && sorted.length > 1) ? sorted[sorted.length-1] : sorted[0];
+        q.liveAns = pick.val;
+      }
+
+      // Pour les quêtes "live_3", on valide une partie aléatoire mais déterministe
+      if (q.type === 'live_3') {
+        D.participants.forEach((p,pi) => {
+          const e = (q.etats[p]||'possible').toLowerCase();
+          if (e !== 'possible') return; // on respecte ce qui était déjà mis
+          const seed = (qi*7 + pi*13) % 10;
+          if (seed < 4) q.etats[p] = 'validé';      // 40% validées
+          else if (seed < 5) q.etats[p] = 'impossible'; // 10% impossibles
+          // 50% restent "possible" -> visibles en bleu si correspondent à Réponse Live
+        });
+      } else if (q.type === 'repeches' || q.type === 'final_only') {
+        // Pour ces types, on ne valide presque rien (la phase finale n'est pas finie)
+        // Mais on peut en valider 1-2 pour démo
+        D.participants.forEach((p,pi) => {
+          const seed = (qi*5 + pi*11) % 10;
+          if (seed === 0) q.etats[p] = 'validé';
+        });
+      }
+    });
+  }
+
+  // ─── 3. SCORES PRONOCONTEST simulés ──────────────────────────────────────
+  // Scores plausibles, variés, calés sur ~mi-phase de groupes
+  // Garde les noms exacts des participants.
+  const P = D.participants;
+  const baseScores = [240,310,290,180,260,200,150,330,275,225,195,255,235,285,170];
+  // shuffle déterministe selon nb participants
+  const demoProno = {};
+  P.forEach((p,i) => {
+    demoProno[p] = baseScores[i % baseScores.length] + (i*7) % 30;
+  });
+  D.pronoScores = demoProno;
+  if (D.pronoTS) D.pronoTS.latest = demoProno;
+
+  // ─── 4. HISTORIQUE simulé sur 10 journées ────────────────────────────────
+  if (D.histoTS) {
+    const dates = ['12/06','13/06','14/06','15/06','16/06','17/06','18/06','19/06','20/06','21/06'];
+    const series = {};
+    P.forEach((p,i) => {
+      const final = demoProno[p];
+      // Génère une progression croissante avec un peu de bruit
+      const pts = [];
+      let v = 0;
+      for (let j=0; j<dates.length; j++) {
+        const target = Math.round(final * (j+1)/dates.length);
+        const noise = ((i*3 + j*5) % 7) - 3;  // -3 à +3
+        v = Math.max(0, target + noise);
+        pts.push(v);
+      }
+      series[p] = pts;
+    });
+    D.histoTS = { dates, series, latest: demoProno };
+  }
+
+  return D;
+}
+
 function tryLoadFromCache() {
+  // En mode démo, on ne lit jamais le cache (pour toujours regénérer les données simulées)
+  if (isDemoMode()) return false;
   try {
     const raw = sessionStorage.getItem(CACHE_KEY);
     if (!raw) return false;
     const cached = JSON.parse(raw);
     if (!cached.time || (Date.now() - cached.time >= COOLDOWN_MS)) return false;
     DATA = cached.data;
-    if (DATA.pseudoMap && Object.keys(DATA.pseudoMap).length) {
-      PSEUDOS = { ...PSEUDOS, ...DATA.pseudoMap };
-    }
     DATA.calendar = null;   // sera chargé juste après
     lastLoadTime = cached.time;
     renderAll();
@@ -2234,28 +2545,32 @@ async function loadData(forceFromButton) {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoTS, histoTS, calendar, gazette, pseudoMap] = await Promise.all([
-      fetchRange("'Side Quests'!A1:AG200"),
+    const [f6rows, pronoTS, histoTS, calendar, gazette] = await Promise.all([
+      fetchRange("'Side Quests'!A1:AI200"),
       fetchSeries('PronoContest'),
       fetchSeries('Historique'),
       fetchCalendar(),
       fetchGazette(),
-      fetchPseudos(),
     ]);
-    // Fusionne les pseudos du Sheets (prioritaires) dans la map
-    if (pseudoMap && Object.keys(pseudoMap).length) {
-      PSEUDOS = { ...PSEUDOS, ...pseudoMap };
-    }
     const parsed = parseFeuille6(f6rows);
     const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
-    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette, pseudoMap };
+    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette };
+
+    // Mode démo : modifie les données en mémoire avant le rendu
+    if (isDemoMode()) {
+      DATA = applyDemoOverrides(DATA);
+    }
+
     lastLoadTime = Date.now();
 
-    try {
-      // Le calendrier (objets Date) n'est pas mis en cache — il se recharge à chaque fois
-      const { calendar:_cal, ...cacheable } = DATA;
-      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: cacheable }));
-    } catch(e) { /* storage full or unavailable — ignore */ }
+    // En mode démo, on évite de polluer le cache (sinon il "fuit" en mode normal)
+    if (!isDemoMode()) {
+      try {
+        // Le calendrier (objets Date) n'est pas mis en cache — il se recharge à chaque fois
+        const { calendar:_cal, ...cacheable } = DATA;
+        sessionStorage.setItem(CACHE_KEY, JSON.stringify({ time: lastLoadTime, data: cacheable }));
+      } catch(e) { /* storage full or unavailable — ignore */ }
+    }
 
     renderAll();
   } catch(err) {
