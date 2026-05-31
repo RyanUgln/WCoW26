@@ -413,11 +413,11 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .demo-banner a { color:#ffe0a0; text-decoration:underline; }
 
 /* ── GAZETTE ── */
-.gazette-toolbar { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin-bottom:1.2rem; }
+.gazette-toolbar { display:flex; align-items:center; gap:.7rem; flex-wrap:wrap; margin-bottom:2rem; }
 .gazette-select { background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:.55rem .7rem; border-radius:8px; font-size:.82rem; font-family:'DM Sans',sans-serif; cursor:pointer; min-width:260px; }
 .gazette-select:focus { outline:none; border-color:var(--gold); }
-.gazette-edition-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold); letter-spacing:2px; line-height:1; margin-bottom:.2rem; }
-.gazette-edition-meta { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+.gazette-edition-title { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; color:var(--gold); letter-spacing:2px; line-height:1.1; margin-bottom:.3rem; text-align:center; }
+.gazette-edition-meta { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; text-align:center; margin-bottom:1rem; }
 /* Aperçu de l'édition courante : couverture + bouton lire */
 .gazette-cover-wrap { display:flex; flex-direction:column; align-items:center; gap:1rem; padding:.5rem 0 1.5rem; }
 .gazette-cover { width:min(380px,80vw); aspect-ratio:1/1.414; background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; cursor:pointer; transition:border-color .2s,transform .2s; position:relative; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,0,0,.15); }
@@ -1845,9 +1845,15 @@ async function renderGazetteCover(edition) {
 // Cache + chargement d'un PDF
 async function loadGazettePdf(url) {
   if (gazettePdfCache[url]) return gazettePdfCache[url];
-  const pdf = await window.pdfjsLib.getDocument({ url }).promise;
-  gazettePdfCache[url] = pdf;
-  return pdf;
+  if (!window.pdfjsLib) throw new Error('PDF.js non chargé');
+  try {
+    const pdf = await window.pdfjsLib.getDocument({ url }).promise;
+    gazettePdfCache[url] = pdf;
+    return pdf;
+  } catch(err) {
+    console.error('[Gazette] Échec chargement PDF', url, err);
+    throw err;
+  }
 }
 
 function gazettePick(num) {
