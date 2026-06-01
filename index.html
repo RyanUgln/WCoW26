@@ -6,6 +6,11 @@
 <title>WCoW 2026</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#070a17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WCoW 2026">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ── THÈME SOMBRE (défaut) ── */
@@ -395,12 +400,14 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 .cal-match.live-match { border-color:var(--green); }
 .cal-time { font-family:'Bebas Neue',sans-serif; font-size:1.05rem; color:var(--muted); width:54px; flex-shrink:0; text-align:center; }
 .cal-time.next-dot { color:var(--gold); }
+.cal-scorebox { width:32px; flex-shrink:0; display:flex; flex-direction:column; gap:.2rem; align-items:center; }
+.cal-scorebox-line { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--text); line-height:1.2; min-height:1.2em; }
+.cal-scorebox-line.winner { color:var(--gold); font-weight:600; }
+.cal-scorebox-empty .cal-scorebox-line { color:var(--border); font-size:.9rem; }
 .cal-teams { flex:1; display:flex; flex-direction:column; gap:.2rem; min-width:0; }
-.cal-team { display:flex; align-items:center; justify-content:space-between; gap:.6rem; font-size:.86rem; }
+.cal-team { display:flex; align-items:center; gap:.6rem; font-size:.86rem; line-height:1.2; min-height:1.2em; }
 .cal-team-name { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .cal-team.winner .cal-team-name { font-weight:600; color:var(--text); }
-.cal-team.winner .cal-score { font-weight:600; color:var(--text); }
-.cal-score { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--text); flex-shrink:0; min-width:20px; text-align:right; }
 .cal-vs { font-size:.78rem; color:var(--muted); }
 .cal-meta { font-size:.66rem; color:var(--muted); flex-shrink:0; text-align:right; max-width:120px; }
 .cal-meta .cal-group { color:var(--gold); }
@@ -593,7 +600,7 @@ let PSEUDOS = {};
 const PHOTO_MAP = {
   'Luka "Guts" Vušković': 'luka-guts-vuskovic.png',
   'Tom Bradusor':           'tom-bradusor.png',
-  "Johnny 'Al' Fantino": 'johnny-al-fantino.png',
+  "Johnny 'Al' Fantino":    'johnny-al-fantino.png',
   'Imadiño':                'imadino.png',
   'Apoula':                 'apoula.png',
   'Coco Prono':             'coco-prono.png',
@@ -1694,11 +1701,18 @@ function renderCalendar(){
       const meta = [m.group, m.ground].filter(Boolean).join(' · ');
       html += '<div class="cal-match'+(played?' played':'')+(isLive?' live-match':'')+'">';
       html += '<div class="cal-time'+(isNext?' next-dot':'')+'">'+frTime(m.dt)+'</div>';
+      // Colonne score (toujours présente pour l'alignement vertical, même vide)
+      if (played) {
+        html += '<div class="cal-scorebox">'
+              +   '<div class="cal-scorebox-line'+(w1?' winner':'')+'">'+m.score.a+'</div>'
+              +   '<div class="cal-scorebox-line'+(w2?' winner':'')+'">'+m.score.b+'</div>'
+              + '</div>';
+      } else {
+        html += '<div class="cal-scorebox cal-scorebox-empty"><div class="cal-scorebox-line">–</div><div class="cal-scorebox-line">–</div></div>';
+      }
       html += '<div class="cal-teams">';
-      html += '<div class="cal-team'+(w1?' winner':'')+'"><span class="cal-team-name">'+(m.t1||'?')+'</span>'
-            + (played?'<span class="cal-score">'+m.score.a+'</span>':'')+'</div>';
-      html += '<div class="cal-team'+(w2?' winner':'')+'"><span class="cal-team-name">'+(m.t2||'?')+'</span>'
-            + (played?'<span class="cal-score">'+m.score.b+'</span>':'')+'</div>';
+      html += '<div class="cal-team'+(w1?' winner':'')+'"><span class="cal-team-name">'+(m.t1||'?')+'</span></div>';
+      html += '<div class="cal-team'+(w2?' winner':'')+'"><span class="cal-team-name">'+(m.t2||'?')+'</span></div>';
       html += '</div>';
       html += '<div class="cal-meta">'+(m.group?'<span class="cal-group">'+m.group+'</span><br>':'')
             + (m.ground||'')+'</div>';
@@ -2584,6 +2598,17 @@ async function loadData(forceFromButton) {
 // On page load: use cache if fresh (<1min), else call API
 if (!tryLoadFromCache()) {
   loadData(false);
+}
+
+// ── ENREGISTREMENT DU SERVICE WORKER (PWA) ────────────────────────────────
+// Permet l'installation sur l'écran d'accueil et un mode hors-ligne basique.
+// On enregistre en arrière-plan après le chargement de la page pour ne pas
+// bloquer l'affichage initial.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .catch(err => console.warn('[PWA] Service worker registration failed:', err));
+  });
 }
 </script>
 </body>
