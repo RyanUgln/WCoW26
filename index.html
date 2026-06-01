@@ -6,6 +6,11 @@
 <title>WCoW 2026</title>
 <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#070a17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WCoW 2026">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ── THÈME SOMBRE (défaut) ── */
@@ -2593,6 +2598,17 @@ async function loadData(forceFromButton) {
 // On page load: use cache if fresh (<1min), else call API
 if (!tryLoadFromCache()) {
   loadData(false);
+}
+
+// ── ENREGISTREMENT DU SERVICE WORKER (PWA) ────────────────────────────────
+// Permet l'installation sur l'écran d'accueil et un mode hors-ligne basique.
+// On enregistre en arrière-plan après le chargement de la page pour ne pas
+// bloquer l'affichage initial.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .catch(err => console.warn('[PWA] Service worker registration failed:', err));
+  });
 }
 </script>
 </body>
