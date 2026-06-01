@@ -1,0 +1,26 @@
+{
+  "name": "WCoW 2026 — World Champion of What",
+  "short_name": "WCoW 2026",
+  "description": "Concours de pronostics de la Coupe du Monde 2026 entre amis",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070a17",
+  "theme_color": "#C9A83C",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/RyanUgln/WCoW26/main/photos/app/wcow26.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
