@@ -678,6 +678,11 @@ function displayName(p) { return PSEUDOS[p] || p; }
 function escJs(s) {
   return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
 }
+// Échappe une chaîne pour la mettre dans un attribut HTML (ex: id="...", alt="...").
+// Convertit &, <, >, " et ' en entités HTML.
+function escAttr(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
 function photoUrl(p) { return PHOTO_MAP[p] ? PHOTOS_BASE+PHOTO_MAP[p] : null; }
 // Initiales lisibles depuis un pseudo (ex: "Coco Prono" -> "CP", "Tib" -> "TI")
@@ -693,7 +698,7 @@ function initials(p) {
 function mkAvatar(p, size, cls) {
   const c=avColor(p), url=photoUrl(p);
   const ini = initials(p);
-  if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${p}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'"></div>`;
+  if (url) return `<div class="${cls}" style="width:${size}px;height:${size}px;border-color:var(--gold-dim)"><img src="${url}" alt="${escAttr(p)}" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'"></div>`;
   return `<div class="${cls}" style="width:${size}px;height:${size}px;background:${c.bg};color:${c.fg};border-color:${c.fg}33">${ini}</div>`;
 }
 
@@ -898,7 +903,7 @@ function renderHighlightBanner() {
     const c = avColor(p), url = photoUrl(p);
     const ini = initials(p);
     const inner = url
-      ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
+      ? '<img src="'+url+'" alt="'+escAttr(p)+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
       : ini;
     html = '<div class="hl-banner">'
       + '<div class="hl-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>'
@@ -926,14 +931,14 @@ function toggleSegIsolate(segEl) {
 function avMini(p, size) {
   const c = avColor(p), url = photoUrl(p);
   const ini = initials(p);
-  if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'"></div>';
+  if (url) return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px"><img src="'+url+'" alt="'+escAttr(p)+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'"></div>';
   return '<div class="trophy-av" style="width:'+size+'px;height:'+size+'px;background:'+c.bg+';color:'+c.fg+'">'+ini+'</div>';
 }
 // Contenu intérieur d'un avatar (img ou initiales), sans wrapper div
 function avInner(p) {
   const c = avColor(p), url = photoUrl(p);
   const ini = initials(p);
-  if (url) return '<img src="'+url+'" alt="'+p+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">';
+  if (url) return '<img src="'+url+'" alt="'+escAttr(p)+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">';
   return ini;
 }
 function avBg(p) { return avColor(p).bg; }
@@ -959,7 +964,7 @@ function barChart(items, opts) {
     const color = it.color || CHART_PALETTE[idx % CHART_PALETTE.length];
     const pkey = it.key || it.label;
     const tip = "ttShow(event,'<div class=&quot;tt-title&quot;>"+it.label+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+it.value+(opts.suffix||'')+"</span> "+(opts.metric||'points')+"')";
-    return '<div class="bar-row clickable" data-pkey="'+pkey+'" '
+    return '<div class="bar-row clickable" data-pkey="'+escAttr(pkey)+'" '
       + 'onmousemove="'+tip+'" onmouseleave="ttHide()" '
       + 'onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
       + '<div class="bar-name">'+it.label+'</div>'
@@ -992,20 +997,20 @@ function lineChart(series, labels) {
     const pkey=s.key||s.name;
     let d='',started=false;
     s.points.forEach((v,i)=>{ if(v==null)return; d+=(started?'L':'M')+xAt(i).toFixed(1)+','+yAt(v).toFixed(1)+' '; started=true; });
-    paths+='<path data-pkey="'+pkey+'" d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
+    paths+='<path data-pkey="'+escAttr(pkey)+'" d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round"/>';
     s.points.forEach((v,i)=>{
       if(v==null) return;
       const cx=xAt(i).toFixed(1), cy=yAt(v).toFixed(1);
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+labels[i]+" : <span class=&quot;tt-val&quot;>"+v+"</span> pts')";
-      dots+='<circle data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
-      dots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
+      dots+='<circle data-pkey="'+escAttr(pkey)+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
+      dots+='<circle class="hit-zone" data-pkey="'+escAttr(pkey)+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
         + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+escJs(pkey)+'\')"></circle>';
     });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     const pkey=s.key||s.name;
-    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
+    return '<div class="legend-item clickable" data-pkey="'+escAttr(pkey)+'" onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
   return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" data-chart="'+chartId+'">'+grid+paths+dots+xlabels+'</svg>'
@@ -1055,20 +1060,20 @@ function radarChart(axes, series) {
     const pkey=s.key||s.name;
     let pts='';
     s.values.forEach((v,i)=>{ const rr=R*Math.max(0,Math.min(1,v)); pts+=(cx+rr*Math.cos(angAt(i)))+','+(cy+rr*Math.sin(angAt(i)))+' '; });
-    polys+='<polygon data-pkey="'+pkey+'" points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
+    polys+='<polygon data-pkey="'+escAttr(pkey)+'" points="'+pts+'" fill="'+color+'22" stroke="'+color+'" stroke-width="2"/>';
     s.values.forEach((v,i)=>{
       const rr=R*Math.max(0,Math.min(1,v));
       const px=(cx+rr*Math.cos(angAt(i))).toFixed(1), py=(cy+rr*Math.sin(angAt(i))).toFixed(1);
       const rawVal=(s.raw&&s.raw[i]!=null)?s.raw[i]:Math.round(v*100)+'%';
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
-      rdots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+escJs(pkey)+'\')"></circle>';
-      rdots+='<circle data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
+      rdots+='<circle class="hit-zone" data-pkey="'+escAttr(pkey)+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+escJs(pkey)+'\')"></circle>';
+      rdots+='<circle data-pkey="'+escAttr(pkey)+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
     });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     const pkey=s.key||s.name;
-    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
+    return '<div class="legend-item clickable" data-pkey="'+escAttr(pkey)+'" onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
   return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340" data-chart="'+chartId+'">'+grid+polys+rdots+'</svg><div class="chart-legend" data-chart="'+chartId+'" style="margin-top:0">'+legend+'</div></div>';
@@ -1384,7 +1389,7 @@ function oppHeadAv(p) {
   const c=avColor(p), url=photoUrl(p);
   const ini = initials(p);
   const inner = url
-    ? '<img src="'+url+'" alt="'+p+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
+    ? '<img src="'+url+'" alt="'+escAttr(p)+'" onerror="this.style.display=\'none\';this.parentElement.style.background=\''+c.bg+'\';this.parentElement.style.color=\''+c.fg+'\';this.parentElement.textContent=\''+ini+'\'">'
     : ini;
   return '<div class="opp-head-av" style="background:'+(url?'transparent':c.bg)+';color:'+c.fg+'">'+inner+'</div>';
 }
@@ -2046,9 +2051,10 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
     }
     const ptsColor = (isFictif && sq > 0) ? 'style="color:var(--blue)"' : '';
     const rowId = `${mode}-${p}`;
+    const rowIdAttr = escAttr(rowId);  // version safe pour les attributs HTML
     return `
     <div class="player-wrap">
-    <div class="player-row ${medals[i]||''}" id="prow-${rowId}" onclick="togglePlayerDetail('${escJs(p)}','${mode}')">
+    <div class="player-row ${medals[i]||''}" id="prow-${rowIdAttr}" onclick="togglePlayerDetail('${escJs(p)}','${mode}')">
       <div class="rank-num ${rclass[i]||'rx'}">${i+1}</div>
       ${mkAvatar(p,42,'avatar')}
       <div class="player-info">
@@ -2059,9 +2065,9 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
         <div class="pts-big" ${ptsColor}>${total}</div>
         <div class="pts-label">pts</div>
       </div>
-      <div class="player-chevron" id="pchev-${rowId}">▼</div>
+      <div class="player-chevron" id="pchev-${rowIdAttr}">▼</div>
     </div>
-    <div class="player-detail" id="pdetail-${rowId}"></div>
+    <div class="player-detail" id="pdetail-${rowIdAttr}"></div>
     </div>`;
   }).join('');
 }
@@ -2222,7 +2228,7 @@ function buildPlayerDetail(p, mode) {
 
   const ini = initials(p);
   const avInner = url
-    ? `<img src="${url}" alt="${p}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'">`
+    ? `<img src="${url}" alt="${escAttr(p)}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.style.background='${c.bg}';this.parentElement.style.color='${c.fg}';this.parentElement.innerHTML='${ini}'">`
     : ini;
 
   const ptsLbl = isFictif ? 'points fictifs' : 'points réels';
