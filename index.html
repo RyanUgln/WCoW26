@@ -672,6 +672,12 @@ const COOLDOWN_MS = 60000;
 const CACHE_KEY = 'wcow_cache_v1';
 
 function displayName(p) { return PSEUDOS[p] || p; }
+// Échappe une chaîne pour qu'elle puisse être insérée en sécurité dans un appel JS
+// placé à l'intérieur d'un attribut HTML (ex: onclick="fn('${escJs(p)}')").
+// Convertit \, ', et " pour ne pas casser ni le JS ni l'attribut HTML.
+function escJs(s) {
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
 function avColor(p) { let h=0; for(let c of p) h=(h*31+c.charCodeAt(0))&0xffff; return AV_COLORS[h%AV_COLORS.length]; }
 function photoUrl(p) { return PHOTO_MAP[p] ? PHOTOS_BASE+PHOTO_MAP[p] : null; }
 // Initiales lisibles depuis un pseudo (ex: "Coco Prono" -> "CP", "Tib" -> "TI")
@@ -955,7 +961,7 @@ function barChart(items, opts) {
     const tip = "ttShow(event,'<div class=&quot;tt-title&quot;>"+it.label+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+it.value+(opts.suffix||'')+"</span> "+(opts.metric||'points')+"')";
     return '<div class="bar-row clickable" data-pkey="'+pkey+'" '
       + 'onmousemove="'+tip+'" onmouseleave="ttHide()" '
-      + 'onclick="setStatsHighlight(\''+pkey+'\')">'
+      + 'onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
       + '<div class="bar-name">'+it.label+'</div>'
       + '<div class="bar-track"><div class="bar-fill" style="width:'+Math.max(pct,3)+'%;background:'+color+'">'+(pct>18&&opts.showVal!==false?it.value:'')+'</div></div>'
       + '<div class="bar-val">'+it.value+(opts.suffix||'')+'</div></div>';
@@ -993,13 +999,13 @@ function lineChart(series, labels) {
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+labels[i]+" : <span class=&quot;tt-val&quot;>"+v+"</span> pts')";
       dots+='<circle data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
       dots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
-        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+pkey+'\')"></circle>';
+        + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+escJs(pkey)+'\')"></circle>';
     });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     const pkey=s.key||s.name;
-    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+pkey+'\')">'
+    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
   return '<svg class="chart-svg" viewBox="0 0 '+W+' '+H+'" data-chart="'+chartId+'">'+grid+paths+dots+xlabels+'</svg>'
@@ -1055,14 +1061,14 @@ function radarChart(axes, series) {
       const px=(cx+rr*Math.cos(angAt(i))).toFixed(1), py=(cy+rr*Math.sin(angAt(i))).toFixed(1);
       const rawVal=(s.raw&&s.raw[i]!=null)?s.raw[i]:Math.round(v*100)+'%';
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
-      rdots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+pkey+'\')"></circle>';
+      rdots+='<circle class="hit-zone" data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+escJs(pkey)+'\')"></circle>';
       rdots+='<circle data-pkey="'+pkey+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
     });
   });
   const legend=series.map((s,si)=>{
     const color=s.color||CHART_PALETTE[si%CHART_PALETTE.length];
     const pkey=s.key||s.name;
-    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+pkey+'\')">'
+    return '<div class="legend-item clickable" data-pkey="'+pkey+'" onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
       + '<div class="legend-dot" style="background:'+color+'"></div>'+s.name+'</div>';
   }).join('');
   return '<div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><svg width="360" height="320" viewBox="0 0 360 340" data-chart="'+chartId+'">'+grid+polys+rdots+'</svg><div class="chart-legend" data-chart="'+chartId+'" style="margin-top:0">'+legend+'</div></div>';
@@ -2042,7 +2048,7 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
     const rowId = `${mode}-${p}`;
     return `
     <div class="player-wrap">
-    <div class="player-row ${medals[i]||''}" id="prow-${rowId}" onclick="togglePlayerDetail('${p}','${mode}')">
+    <div class="player-row ${medals[i]||''}" id="prow-${rowId}" onclick="togglePlayerDetail('${escJs(p)}','${mode}')">
       <div class="rank-num ${rclass[i]||'rx'}">${i+1}</div>
       ${mkAvatar(p,42,'avatar')}
       <div class="player-info">
