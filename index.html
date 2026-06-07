@@ -464,6 +464,12 @@ main { max-width:1000px; margin:0 auto; padding:2rem; }
 @media (max-width:600px){
   .lb-nav { width:42px; height:42px; font-size:1.5rem; }
   .lb-close { width:38px; height:38px; font-size:1.1rem; }
+  .gazette-cover { width:min(260px,65vw); }
+  .gazette-cover-wrap { padding:.25rem 0 1rem; }
+  .gazette-edition-title { font-size:1.15rem; }
+  .gazette-open-btn { padding:.55rem 1.2rem; font-size:.9rem; }
+  .gazette-select { min-width:200px; font-size:.78rem; }
+  .gazette-toolbar { margin-bottom:1.2rem; }
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs" type="module"></script>
@@ -672,14 +678,12 @@ const COOLDOWN_MS = 60000;
 const CACHE_KEY = 'wcow_cache_v1';
 
 function displayName(p) { return PSEUDOS[p] || p; }
-// Échappe une chaîne pour qu'elle puisse être insérée en sécurité dans un appel JS
-// placé à l'intérieur d'un attribut HTML (ex: onclick="fn('${escJs(p)}')").
-// Convertit \, ', et " pour ne pas casser ni le JS ni l'attribut HTML.
+// Échappe pour injection dans un appel JS à l'intérieur d'un attribut HTML
+// (onclick="fn('${escJs(p)}')" ou onmousemove="ttShow(event,'...'+escJs(label)+'...')")
 function escJs(s) {
   return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
 }
-// Échappe une chaîne pour la mettre dans un attribut HTML (ex: id="...", alt="...").
-// Convertit &, <, >, " et ' en entités HTML.
+// Échappe pour valeur d'attribut HTML pur (id="...", data-pkey="...", alt="...")
 function escAttr(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
@@ -963,7 +967,7 @@ function barChart(items, opts) {
     const pct = Math.round(it.value/max*100);
     const color = it.color || CHART_PALETTE[idx % CHART_PALETTE.length];
     const pkey = it.key || it.label;
-    const tip = "ttShow(event,'<div class=&quot;tt-title&quot;>"+it.label+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+it.value+(opts.suffix||'')+"</span> "+(opts.metric||'points')+"')";
+    const tip = "ttShow(event,'<div class=&quot;tt-title&quot;>"+escJs(it.label)+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+it.value+(opts.suffix||'')+"</span> "+(opts.metric||'points')+"')";
     return '<div class="bar-row clickable" data-pkey="'+escAttr(pkey)+'" '
       + 'onmousemove="'+tip+'" onmouseleave="ttHide()" '
       + 'onclick="setStatsHighlight(\''+escJs(pkey)+'\')">'
@@ -1001,7 +1005,7 @@ function lineChart(series, labels) {
     s.points.forEach((v,i)=>{
       if(v==null) return;
       const cx=xAt(i).toFixed(1), cy=yAt(v).toFixed(1);
-      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+labels[i]+" : <span class=&quot;tt-val&quot;>"+v+"</span> pts')";
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+escJs(s.name)+"</div><div class=&quot;tt-line&quot;>"+labels[i]+" : <span class=&quot;tt-val&quot;>"+v+"</span> pts')";
       dots+='<circle data-pkey="'+escAttr(pkey)+'" cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+color+'"/>';
       dots+='<circle class="hit-zone" data-pkey="'+escAttr(pkey)+'" cx="'+cx+'" cy="'+cy+'" r="9" fill="transparent" '
         + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+escJs(pkey)+'\')"></circle>';
@@ -1028,7 +1032,7 @@ function donutChart(slices) {
     const xi1=cx+r*Math.cos(angle),yi1=cy+r*Math.sin(angle);
     const color=s.color||CHART_PALETTE[i%CHART_PALETTE.length];
     const pct=Math.round(frac*100);
-    const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+String(s.label).replace(/'/g,'')+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+s.value+"</span> prono(s) · "+pct+"%')";
+    const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+escJs(String(s.label))+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+s.value+"</span> prono(s) · "+pct+"%')";
     paths+='<path class="hit-zone seg-iso" d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2+' L'+xi2+','+yi2+' A'+r+','+r+' 0 '+large+',0 '+xi1+','+yi1+' Z" fill="'+color+'" '
       + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)"/>';
     angle=a2;
@@ -1065,7 +1069,7 @@ function radarChart(axes, series) {
       const rr=R*Math.max(0,Math.min(1,v));
       const px=(cx+rr*Math.cos(angAt(i))).toFixed(1), py=(cy+rr*Math.sin(angAt(i))).toFixed(1);
       const rawVal=(s.raw&&s.raw[i]!=null)?s.raw[i]:Math.round(v*100)+'%';
-      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+s.name+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
+      const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+escJs(s.name)+"</div><div class=&quot;tt-line&quot;>"+axes[i]+" : <span class=&quot;tt-val&quot;>"+rawVal+"</span>')";
       rdots+='<circle class="hit-zone" data-pkey="'+escAttr(pkey)+'" cx="'+px+'" cy="'+py+'" r="8" fill="transparent" onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="setStatsHighlight(\''+escJs(pkey)+'\')"></circle>';
       rdots+='<circle data-pkey="'+escAttr(pkey)+'" cx="'+px+'" cy="'+py+'" r="2.5" fill="'+color+'"/>';
     });
@@ -1332,8 +1336,8 @@ function renderStats() {
     if(!total) return;
     const segs=qc.choices.map((c,i)=>{
       const pct=c.count/total*100, color=CHART_PALETTE[i%CHART_PALETTE.length];
-      const whoNames=c.who.map(p=>displayName(p)).join(', ').replace(/'/g,'');
-      const cval=String(c.val).replace(/'/g,'');
+      const whoNames=escJs(c.who.map(p=>displayName(p)).join(', '));
+      const cval=escJs(String(c.val));
       const tip="ttShow(event,'<div class=&quot;tt-title&quot;>"+cval+"</div><div class=&quot;tt-line&quot;><span class=&quot;tt-val&quot;>"+c.count+"</span> prono(s) · "+Math.round(pct)+"%</div><div class=&quot;tt-line&quot;>"+whoNames+"')";
       return '<div class="qstat-seg hit-zone seg-iso" style="width:'+pct+'%;background:'+color+'" '
         + 'onmousemove="'+tip+'" onmouseleave="ttHide()" onclick="toggleSegIsolate(this)">'+(pct>6?c.count:'')+'</div>';
@@ -2051,10 +2055,10 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
     }
     const ptsColor = (isFictif && sq > 0) ? 'style="color:var(--blue)"' : '';
     const rowId = `${mode}-${p}`;
-    const rowIdAttr = escAttr(rowId);  // version safe pour les attributs HTML
+    const rowIdSafe = escAttr(rowId);
     return `
     <div class="player-wrap">
-    <div class="player-row ${medals[i]||''}" id="prow-${rowIdAttr}" onclick="togglePlayerDetail('${escJs(p)}','${mode}')">
+    <div class="player-row ${medals[i]||''}" id="prow-${rowIdSafe}" onclick="togglePlayerDetail('${escJs(p)}','${mode}')">
       <div class="rank-num ${rclass[i]||'rx'}">${i+1}</div>
       ${mkAvatar(p,42,'avatar')}
       <div class="player-info">
@@ -2065,9 +2069,9 @@ function renderLeaderboard(containerId, participants, quests, pronoScores, mode)
         <div class="pts-big" ${ptsColor}>${total}</div>
         <div class="pts-label">pts</div>
       </div>
-      <div class="player-chevron" id="pchev-${rowIdAttr}">▼</div>
+      <div class="player-chevron" id="pchev-${rowIdSafe}">▼</div>
     </div>
-    <div class="player-detail" id="pdetail-${rowIdAttr}"></div>
+    <div class="player-detail" id="pdetail-${rowIdSafe}"></div>
     </div>`;
   }).join('');
 }
