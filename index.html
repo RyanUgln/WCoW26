@@ -753,9 +753,10 @@ function parseFeuille6(rows) {
   return { participants, quests };
 }
 
-// ── FETCH SÉRIES TEMPORELLES (PronoContest + Historique) ──────────────────
-// Les deux onglets ont la même structure : ligne d'en-tête avec dates en
-// colonnes B..., puis une ligne par participant.
+// ── FETCH SÉRIES TEMPORELLES (PronoContest) ──────────────────────────────
+// L'onglet PronoContest a la structure : ligne d'en-tête avec dates en
+// colonnes B..., puis une ligne par participant. Sert à la fois pour les
+// scores actuels (dernière colonne remplie) et pour les courbes de progression.
 function parseTimeSeries(rows) {
   if (!rows || rows.length < 2) return { dates:[], series:{}, latest:{} };
   const header = rows[0];
@@ -1089,7 +1090,7 @@ function argMin(P,fn){ let best=null,bv=Infinity; P.forEach(p=>{const v=fn(p); i
 function rankBy(P,fn,desc){ return P.map(p=>({p,v:fn(p)})).sort((a,b)=>desc?b.v-a.v:a.v-b.v); }
 
 function computeStats() {
-  const { participants, quests, pronoScores, pronoTS, histoTS } = DATA;
+  const { participants, quests, pronoScores, pronoTS } = DATA;
   const P = participants;
   const sideQuests = quests.filter(q=>q.type!=='prono');
   const totFictif={},totReel={},sqFictif={},sqReel={};
@@ -1177,14 +1178,14 @@ function computeStats() {
       if((q.answers[p]||'').trim().toLowerCase()==='oui') yesCount[p]++;
     });
   });
-  const histoDates=histoTS.dates||[];
+  const progDates=pronoTS.dates||[];
   const filledIdx=[];
-  histoDates.forEach((d,i)=>{ if(P.some(p=>(histoTS.series[p]||[])[i]!=null)) filledIdx.push(i); });
+  progDates.forEach((d,i)=>{ if(P.some(p=>(pronoTS.series[p]||[])[i]!=null)) filledIdx.push(i); });
   let lastProg={},biggestRise=null,biggestFall=null;
   if(filledIdx.length>=2){
     const a=filledIdx[filledIdx.length-2],b=filledIdx[filledIdx.length-1];
     P.forEach(p=>{
-      const va=(histoTS.series[p]||[])[a],vb=(histoTS.series[p]||[])[b];
+      const va=(pronoTS.series[p]||[])[a],vb=(pronoTS.series[p]||[])[b];
       if(va!=null&&vb!=null){
         const d=vb-va; lastProg[p]=d;
         if(!biggestRise||d>biggestRise.d) biggestRise={p:p,d:d};
@@ -1194,7 +1195,7 @@ function computeStats() {
   }
   const regularity={};
   P.forEach(p=>{
-    const s=(histoTS.series[p]||[]).filter(v=>v!=null);
+    const s=(pronoTS.series[p]||[]).filter(v=>v!=null);
     if(s.length<3){ regularity[p]=null; return; }
     const deltas=[]; for(let i=1;i<s.length;i++) deltas.push(s[i]-s[i-1]);
     const mean=deltas.reduce((a,b)=>a+b,0)/deltas.length;
@@ -1205,20 +1206,20 @@ function computeStats() {
   P.forEach(p=>timesLeader[p]=0);
   filledIdx.forEach(i=>{
     let best=null,bestV=-1;
-    P.forEach(p=>{ const v=(histoTS.series[p]||[])[i]; if(v!=null&&v>bestV){bestV=v;best=p;} });
+    P.forEach(p=>{ const v=(pronoTS.series[p]||[])[i]; if(v!=null&&v>bestV){bestV=v;best=p;} });
     if(best) timesLeader[best]++;
   });
   const bestRank={};
   P.forEach(p=>bestRank[p]=99);
   filledIdx.forEach(i=>{
-    const ranked=P.map(p=>({p:p,v:(histoTS.series[p]||[])[i]})).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v);
+    const ranked=P.map(p=>({p:p,v:(pronoTS.series[p]||[])[i]})).filter(x=>x.v!=null).sort((a,b)=>b.v-a.v);
     ranked.forEach((x,idx)=>{ if(idx+1<bestRank[x.p]) bestRank[x.p]=idx+1; });
   });
   return {P:P,sideQuests:sideQuests,totFictif:totFictif,totReel:totReel,sqFictif:sqFictif,sqReel:sqReel,
     cntValide:cntValide,cntImpossible:cntImpossible,cntPossible:cntPossible,cntValideWin:cntValideWin,cntValideLose:cntValideLose,
     liveHits:liveHits,uniquePicks:uniquePicks,questChoices:questChoices,conformity:conformity,
     twinPair:twinPair,twinScore:twinScore,lonePair:lonePair,loneScore:loneScore,yesCount:yesCount,
-    histoTS:histoTS,histoDates:histoDates,filledIdx:filledIdx,lastProg:lastProg,biggestRise:biggestRise,biggestFall:biggestFall,
+    pronoTS:pronoTS,progDates:progDates,filledIdx:filledIdx,lastProg:lastProg,biggestRise:biggestRise,biggestFall:biggestFall,
     regularity:regularity,timesLeader:timesLeader,bestRank:bestRank};
 }
 
@@ -1367,8 +1368,8 @@ function renderStats() {
     if(nbLead.v>0) progCards.push(trophyCard('\u{1F3C5}','Le plus souvent en tete',nbLead.p,nbLead.v+' journee(s) en position de leader','gold'));
     if(progCards.length) pr+='<div class="stats-section"><div class="stats-section-title">Les temps forts</div><div class="stats-grid">'+progCards.join('')+'</div></div>';
 
-    const labels=S.filledIdx.map(i=>S.histoDates[i]);
-    const series=P.map((p,i)=>({key:p,name:displayName(p),points:S.filledIdx.map(idx=>(S.histoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
+    const labels=S.filledIdx.map(i=>S.progDates[i]);
+    const series=P.map((p,i)=>({key:p,name:displayName(p),points:S.filledIdx.map(idx=>(S.pronoTS.series[p]||[])[idx]),color:CHART_PALETTE[i%CHART_PALETTE.length]}));
     pr+='<div class="stats-section"><div class="stats-section-title">Evolution du classement</div><div class="stats-section-sub">Total de points journee par journee</div>'+chartCard('Courbe d\'evolution','Clique un nom pour isoler sa courbe',lineChart(series,labels))+'</div>';
 
     pr+='<div class="stats-section"><div class="stats-section-title">Classements de progression</div><div class="stats-grid wide">';
@@ -2521,8 +2522,8 @@ function applyDemoOverrides(D) {
   D.pronoScores = demoProno;
   if (D.pronoTS) D.pronoTS.latest = demoProno;
 
-  // ─── 4. HISTORIQUE simulé sur 10 journées ────────────────────────────────
-  if (D.histoTS) {
+  // ─── 4. PROGRESSION simulée sur 10 journées (via PronoContest) ───────────
+  if (D.pronoTS) {
     const dates = ['12/06','13/06','14/06','15/06','16/06','17/06','18/06','19/06','20/06','21/06'];
     const series = {};
     P.forEach((p,i) => {
@@ -2538,7 +2539,7 @@ function applyDemoOverrides(D) {
       }
       series[p] = pts;
     });
-    D.histoTS = { dates, series, latest: demoProno };
+    D.pronoTS = { dates, series, latest: demoProno };
   }
 
   return D;
@@ -2575,16 +2576,15 @@ async function loadData(forceFromButton) {
   setStatus('loading','Chargement des données...');
   document.getElementById('error-box').classList.add('hidden');
   try {
-    const [f6rows, pronoTS, histoTS, calendar, gazette] = await Promise.all([
+    const [f6rows, pronoTS, calendar, gazette] = await Promise.all([
       fetchRange("'Side Quests'!A1:AI200"),
       fetchSeries('PronoContest'),
-      fetchSeries('Historique'),
       fetchCalendar(),
       fetchGazette(),
     ]);
     const parsed = parseFeuille6(f6rows);
     const pronoScores = pronoTS.latest;   // dernier score PronoContest connu
-    DATA = { ...parsed, pronoScores, pronoTS, histoTS, calendar, gazette };
+    DATA = { ...parsed, pronoScores, pronoTS, calendar, gazette };
 
     // Mode démo : modifie les données en mémoire avant le rendu
     if (isDemoMode()) {
