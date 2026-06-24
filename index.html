@@ -802,11 +802,12 @@ function calcQuestPts(q, p, mode) {
   // VIF D'OR: validé par l'admin → 300 pts (fictif + réel)
   if (type === 'vif_or') return etat === 'validé' ? 300 : 0;
 
-  // REPÊCHÉS: uniquement quand validé — cherche combien de pays correspondent
+  // REPÊCHÉS: fictif si des pays correspondent à la Réponse Live ; réel seulement si validé
   if (type === 'repeches') {
-    if (etat !== 'validé' || !ref || !ans) return 0;
-    const refList = ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
-    const ansList = ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+    if (!ref || !ans) return 0;
+    if (mode === 'reel' && etat !== 'validé') return 0;
+    const refList = ref.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
+    const ansList = ans.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
     return ansList.reduce((acc,pick) => acc+(pick&&refList.includes(pick)?20:0), 0);
   }
 
@@ -1119,8 +1120,8 @@ function computeStats() {
       const ans=(q.answers[p]||'').trim().toLowerCase();
       const ref=q.liveAns.trim().toLowerCase();
       if(q.type==='repeches'){
-        const rl=ref.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
-        const al=ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+        const rl=ref.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
+        const al=ans.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
         if(al.some(x=>rl.indexOf(x)>=0)) liveHits[p]++;
       } else if(ans&&ans===ref) liveHits[p]++;
     });
@@ -2121,6 +2122,9 @@ function renderQuests(participants, quests) {
         // red if validé but 0 points (wrong prediction).
         if (ptsReel > 0) { chipCls='state-validé'; etatLabel='validé ✓'; }
         else             { chipCls='state-lost';   etatLabel='validé ✗'; }
+      } else if (type==='repeches' && ptsFictif > 0) {
+        // Repêchés : au moins un pays correspond
+        chipCls='state-possible-hit'; etatLabel='en cours ✓';
       } else if (ref && ansL && ansL===ref) {
         chipCls='state-possible-hit'; etatLabel='en cours ✓';
       } else {
@@ -2137,8 +2141,8 @@ function renderQuests(participants, quests) {
       // Build the answer value markup — vertical list for repeches
       let ansValHtml;
       if (type==='repeches' && ans) {
-        const refList = ref.split(/[,;\/\n]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
-        const items = ans.split(/[,;\/\n]/).map(s=>s.trim()).filter(Boolean);
+        const refList = ref.split(/[,;\/\n\r]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+        const items = ans.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
         ansValHtml = `<ul class="ans-list">` + items.map(c => {
           const isMatch = refList.length>0 && refList.includes(c.toLowerCase());
           return `<li class="${isMatch?'match':'nomatch'}">${c}</li>`;
