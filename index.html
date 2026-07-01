@@ -730,8 +730,6 @@ function parseFeuille6(rows) {
   }
 
   const quests = [];
-  // Quest types that have NO 'impossible' state — possible → validé only
-  const NO_IMPOSSIBLE = ['repeches','final_only','prono'];
   for (let i = 2; i < rows.length; i++) {
     const row = rows[i]||[];
     const name = (row[1]||'').trim();
@@ -744,8 +742,6 @@ function parseFeuille6(rows) {
     participants.forEach(p => {
       answers[p] = (row[pCols[p].pro ]||'').trim();
       let etat   = (row[pCols[p].etat]||'possible').trim().toLowerCase();
-      // For quests without an impossible state, treat a stray 'impossible' as 'possible'
-      if (NO_IMPOSSIBLE.includes(type) && etat === 'impossible') etat = 'possible';
       etats[p] = etat;
     });
     quests.push({ name, ptsRaw, ptsNum, liveAns, answers, etats, type });
@@ -797,19 +793,11 @@ function calcQuestPts(q, p, mode) {
   const etat  = (etats[p]||'possible').toLowerCase();
 
   if (type === 'prono') return 0;
+  if (type === 'repeches') return 0;  // points gérés via PronoContest, affichage visuel conservé
   if (etat === 'impossible') return 0;
 
   // VIF D'OR: validé par l'admin → 300 pts (fictif + réel)
   if (type === 'vif_or') return etat === 'validé' ? 300 : 0;
-
-  // REPÊCHÉS: fictif si des pays correspondent à la Réponse Live ; réel seulement si validé
-  if (type === 'repeches') {
-    if (!ref || !ans) return 0;
-    if (mode === 'reel' && etat !== 'validé') return 0;
-    const refList = ref.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
-    const ansList = ans.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
-    return ansList.reduce((acc,pick) => acc+(pick&&refList.includes(pick)?20:0), 0);
-  }
 
   // FINAL_ONLY: pas de fictif, réel uniquement si validé
   if (type === 'final_only') {
@@ -2122,9 +2110,13 @@ function renderQuests(participants, quests) {
         // red if validé but 0 points (wrong prediction).
         if (ptsReel > 0) { chipCls='state-validé'; etatLabel='validé ✓'; }
         else             { chipCls='state-lost';   etatLabel='validé ✗'; }
-      } else if (type==='repeches' && ptsFictif > 0) {
-        // Repêchés : au moins un pays correspond
-        chipCls='state-possible-hit'; etatLabel='en cours ✓';
+      } else if (type==='repeches' && ref && ans) {
+        // Repêchés : en bleu si au moins un pays correspond
+        const _rl = ref.split(/[,;\/\n\r]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+        const _al = (ans||'').split(/[,;\/\n\r]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+        const _hits = _al.filter(x=>_rl.includes(x)).length;
+        if (_hits > 0) { chipCls='state-possible-hit'; etatLabel=_hits+'/'+_rl.length+' trouvé'+((_hits>1)?'s':''); }
+        else { etatLabel='possible'; }
       } else if (ref && ansL && ansL===ref) {
         chipCls='state-possible-hit'; etatLabel='en cours ✓';
       } else {
