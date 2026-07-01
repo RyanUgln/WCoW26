@@ -2123,8 +2123,14 @@ function renderQuests(participants, quests) {
         etatLabel = 'possible';
       }
 
+      // Points badge — Repêchés : calcul direct des correspondances (points gérés via PronoContest)
       let ptsBadge = '';
-      if (ptsReel > 0) {
+      if (type==='repeches' && ref && ans) {
+        const _rl2 = ref.split(/[,;\/\n\r]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+        const _al2 = (ans||'').split(/[,;\/\n\r]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+        const _repPts = _al2.filter(x=>_rl2.includes(x)).length * 20;
+        if (_repPts > 0) ptsBadge = `<div class="chip-pts confirmed">+${_repPts}</div>`;
+      } else if (ptsReel > 0) {
         ptsBadge = `<div class="chip-pts confirmed">+${ptsReel}</div>`;
       } else if (ptsFictif > 0) {
         ptsBadge = `<div class="chip-pts fictif">+${ptsFictif}</div>`;
@@ -2206,7 +2212,17 @@ function buildPlayerDetail(p, mode) {
     else if (ref&&ansL&&ansL===ref) { ansCls='hit-live'; qliCls='qli-hit'; }
 
     let ptsCell;
-    if (earnedReel > 0) {
+    if (q.type==='repeches' && ref && ans) {
+      // Repêchés : calcul direct des correspondances (points gérés via PronoContest)
+      const _rl = ref.split(/[,;\/\n\r]/).map(s=>s.trim().toLowerCase()).filter(Boolean);
+      const _al = ansL.split(/[,;\/\n\r]/).map(s=>s.trim()).filter(Boolean);
+      const _repPts = _al.filter(x=>_rl.includes(x)).length * 20;
+      if (_repPts > 0) {
+        ptsCell = `<div class="qli-pts confirmed">+${_repPts}</div>`;
+      } else {
+        ptsCell = `<div class="qli-pts zero">0</div>`;
+      }
+    } else if (earnedReel > 0) {
       ptsCell = `<div class="qli-pts confirmed">+${earnedReel}</div>`;
     } else if (earnedFictif > 0) {
       ptsCell = `<div class="qli-pts fictif">+${earnedFictif}</div>`;
